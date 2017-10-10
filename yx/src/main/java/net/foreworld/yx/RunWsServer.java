@@ -9,7 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-import net.foreworld.yx.server.WsNormalServer;
+import net.foreworld.yx.server.WsServer;
 
 /**
  *
@@ -18,20 +18,20 @@ import net.foreworld.yx.server.WsNormalServer;
  */
 @SpringBootApplication
 @ComponentScan("net.foreworld")
-public class RunWsNormalServer implements CommandLineRunner {
+public class RunWsServer implements CommandLineRunner {
 
-	private static final Logger logger = LoggerFactory.getLogger(RunWsNormalServer.class);
+	private static final Logger logger = LoggerFactory.getLogger(RunWsServer.class);
 
-	@Resource(name = "wsNormalServer")
-	private WsNormalServer wsNormalServer;
+	@Resource(name = "wsServer")
+	private WsServer wsServer;
 
 	public static void main(String[] args) {
-		SpringApplication.run(RunWsNormalServer.class, args);
+		SpringApplication.run(RunWsServer.class, args);
 	}
 
 	public void run(String... strings) throws Exception {
 		try {
-			wsNormalServer.start();
+			wsServer.start();
 			Thread.currentThread().join();
 		} catch (Exception e) {
 			logger.error("", e);

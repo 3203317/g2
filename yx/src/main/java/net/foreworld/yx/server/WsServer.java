@@ -33,7 +33,7 @@ import redis.clients.jedis.Jedis;
 @PropertySource("classpath:activemq.properties")
 @PropertySource("classpath:redis.properties")
 @Component
-public class WsNormalServer extends Server {
+public class WsServer extends Server {
 
 	@Value("${sha.server.open}")
 	private String sha_server_open;
@@ -44,7 +44,7 @@ public class WsNormalServer extends Server {
 	@Value("${db.redis.database}")
 	private String db_redis_database;
 
-	private static final Logger logger = LoggerFactory.getLogger(WsNormalServer.class);
+	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
 
 	@Value("${server.port:1234}")
 	private int port;
