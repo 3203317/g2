@@ -1,0 +1,73 @@
+<form id='frm' role='form' class="form-horizontal">
+	<input type="hidden" name='verify_token' value='${(verify_token)!}' />
+	<input type='hidden' name='id' value='${(data_user.id)!}' />
+
+	<div class="control-group">
+		<label class="control-label" for="frm_user_name">用户名<i>*</i></label>
+
+		<div class="controls">
+			<input type="text" class='input-large' id="frm_user_name" name='user_name' placeholder="用户名" value='${(data_user.user_name)!}' />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="frm_mobile">手机号码<i>*</i></label>
+
+		<div class="controls">
+			<input type="text" class='input-large' id="frm_mobile" name='mobile' placeholder="手机号码" value='${(data_user.mobile)!}' />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="frm_email">电子邮箱<i>*</i></label>
+
+		<div class="controls">
+			<input type="text" class='input-large' id="frm_email" name='email' placeholder="电子邮箱" value='${(data_user.email)!}' />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="frm_nickname">昵称<i>*</i></label>
+
+		<div class="controls">
+			<input type="text" class='input-large' id="frm_nickname" name='nickname' placeholder="昵称" value='${(data_user.nickname)!}' />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="frm_real_name">姓名</label>
+
+		<div class="controls">
+			<input type="text" class='input-large' id="frm_real_name" name='real_name' placeholder="姓名" value='${(data_user.real_name)!}' />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="frm_alipay_account">支付宝</label>
+
+		<div class="controls">
+			<input type="text" class='input-large' id="frm_alipay_account" name='alipay_account' placeholder="支付宝" value='${(data_user.alipay_account)!}' />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="frm_wx_account">微信号</label>
+
+		<div class="controls">
+			<input type="text" class='input-large' id="frm_wx_account" name='wx_account' placeholder="微信号" value='${(data_user.wx_account)!}' />
+		</div>
+	</div>
+
+	<div class="form-actions">
+		<button class="btn btn-info" onclick="return false;" id='btn_submit'>
+			<i class="icon-ok bigger-110"></i>
+			提交
+		</button>
+
+		&nbsp; &nbsp;
+		<button class="btn" type="reset">
+			<i class="icon-undo bigger-110"></i>
+			重置
+		</button>
+	</div>
+</form>

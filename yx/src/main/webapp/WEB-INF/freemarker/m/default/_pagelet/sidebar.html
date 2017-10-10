@@ -1,0 +1,135 @@
+<div class="sidebar" id="sidebar">
+	<div class="sidebar-shortcuts" id="sidebar-shortcuts">
+		<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+			<button class="btn btn-small btn-success">
+				<i class="icon-signal"></i>
+			</button>
+
+			<button class="btn btn-small btn-info">
+				<i class="icon-pencil"></i>
+			</button>
+
+			<button class="btn btn-small btn-warning">
+				<i class="icon-group"></i>
+			</button>
+
+			<button class="btn btn-small btn-danger">
+				<i class="icon-cogs"></i>
+			</button>
+		</div>
+
+		<div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+			<span class="btn btn-success"></span>
+
+			<span class="btn btn-info"></span>
+
+			<span class="btn btn-warning"></span>
+
+			<span class="btn btn-danger"></span>
+		</div>
+	</div><!--#sidebar-shortcuts-->
+
+	<ul class="nav nav-list">
+		<li<#if nav_choose?? && nav_choose?index_of(",01,") != -1> class='active'</#if>>
+			<a href="/manage/">
+				<i class="icon-dashboard"></i>
+				<span class="menu-text"> 系统首页 </span>
+			</a>
+		</li>
+
+		<li<#if nav_choose?? && nav_choose?index_of(",08,") != -1> class='active open'</#if>>
+			<a href='javascript:;' class="dropdown-toggle">
+				<i class="icon-comments "></i>
+				<span class="menu-text"> 系统管理 </span>
+
+				<b class="arrow icon-angle-down"></b>
+			</a>
+
+			<ul class="submenu">
+				<li<#if nav_choose?? && nav_choose?index_of(",0801,") != -1> class='active'</#if>>
+					<a href="/manage/settings/">
+						<i class="icon-double-angle-right"></i>
+						系统参数
+					</a>
+				</li>
+
+				<li<#if nav_choose?? && nav_choose?index_of(",0803,") != -1> class='active'</#if>>
+					<a href="/manage/menu/">
+						<i class="icon-double-angle-right"></i>
+						模块管理
+					</a>
+				</li>
+
+				<li<#if nav_choose?? && nav_choose?index_of(",0802,") != -1> class='active'</#if>>
+					<a href="/manage/role/">
+						<i class="icon-double-angle-right"></i>
+						角色管理
+					</a>
+				</li>
+			</ul>
+		</li>
+
+		<li<#if nav_choose?? && nav_choose?index_of(",09,") != -1> class='active open'</#if>>
+			<a href='javascript:;' class="dropdown-toggle">
+				<i class="icon-comments "></i>
+				<span class="menu-text"> 会员管理 </span>
+
+				<b class="arrow icon-angle-down"></b>
+			</a>
+
+			<ul class="submenu">
+
+				<li<#if nav_choose?? && nav_choose?index_of(",0901,") != -1> class='active'</#if>>
+					<a href="/manage/user/">
+						<i class="icon-double-angle-right"></i>
+						会员资料
+					</a>
+				</li>
+
+				<li<#if nav_choose?? && nav_choose?index_of(",0902,") != -1> class='active'</#if>>
+					<a href="/manage/user/role/">
+						<i class="icon-double-angle-right"></i>
+						角色设置
+					</a>
+				</li>
+			</ul>
+		</li>
+
+		<li<#if nav_choose?? && nav_choose?index_of(",03,") != -1> class='active open'</#if>>
+			<a href='javascript:;' class="dropdown-toggle">
+				<i class="icon-cog"></i>
+				<span class="menu-text"> 帐户管理 </span>
+
+				<b class="arrow icon-angle-down"></b>
+			</a>
+
+			<ul class="submenu">
+				<li<#if nav_choose?? && nav_choose?index_of(",0301,") != -1> class='active'</#if>>
+					<a href="/manage/user/profile">
+						<i class="icon-double-angle-right"></i>
+						修改资料
+					</a>
+				</li>
+
+				<li<#if nav_choose?? && nav_choose?index_of(",0302,") != -1> class='active'</#if>>
+					<a href="/manage/user/changePwd">
+						<i class="icon-double-angle-right"></i>
+						变更密码
+					</a>
+				</li>
+			</ul>
+		</li>
+
+		<li>
+			<a href="/manage/user/logout">
+				<i class="icon-lock"></i>
+				<span class="menu-text"> 安全退出 </span>
+			</a>
+		</li>
+
+	</ul><!--/.nav-list-->
+
+	<div class="sidebar-collapse" id="sidebar-collapse">
+		<i class="icon-double-angle-left"></i>
+	</div>
+</div>
