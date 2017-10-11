@@ -6,27 +6,11 @@
 	</head>
 	<body>
 
-    <input type='button' id='payment' value='充值'><p></p>
     <input type='button' id='logout' value='logout'><p></p>
 
     <input type='button' id='wrongTest' value='wrongTest'><p></p>
     <input type='button' id='myInfo' value='myInfo'><p></p>
     <input type='button' id='re_entry' value='重连'><p></p>
-
-    创建群组：
-    <input type='button' id='createGroup' value='createGroup'><p></p>
-
-    加入群组：
-    <input type='text' id='group_id' />
-    <input type='button' id='entryGroup' value='entryGroup'><p></p>
-    <input type='button' id='exitGroup' value='exitGroup'><p></p>
-
-    <textarea rows='8' cols='50'></textarea>
-    <textarea rows='8' cols='50'></textarea><p></p>
-
-    <input type='button' id='_5001_ready' value='举手'><p></p>
-
-    <input type='button' id='_5013_craps' value='用户摇骰子'><p></p>
 
     发送给：
     <input type='text' id='user_id' placeholder='ALL,GROUP,PERSON,...' />
@@ -48,111 +32,14 @@ var random = function(){
 
 $(function(){
   random();
-  $('#group_id').val(_.random(100000, 999999));
-})
+});
 
 var socket = null;
 
 $(function(){
 
-  $('#payment').click(function(){
-    $.ajax({
-      url: '$!{conf.html.virtualPath}user/da426e6076be11e7ad1a29fa785dd421',
-      type: 'POST',
-      dataType: 'TEXT',
-      data: {
-        user_id:    '1',
-        product_id: '3',
-        order_id:   '123321',
-      },
-      success: function(data){
-        console.log(data);
-      },
-      error: function(){
-        alert(arguments[2]);
-      }
-    });
-  });
-
   $('#wrongTest').click(function(){
     socket.send(JSON.stringify({}));
-  });
-
-  $('#createGroup').click(function(){
-    var p = [
-      102,
-      3001,
-      Math.random() * 1000,
-      new Date().getTime(),
-      JSON.stringify({
-        group_name: '房间名'+ new Date().getTime(),
-        visitor_count: 6,  // n个钓鱼人
-        round_count: 4,  // n圈
-        fund: 1000,  // 组局基金
-      }),
-      null,
-    ];
-    socket.send(JSON.stringify(p));
-  });
-
-  $('#re_entry').click(function(){
-    var p = [
-      102,
-      3003,
-      Math.random() * 1000,
-      new Date().getTime(),
-      null,
-      null,
-    ];
-    socket.send(JSON.stringify(p));
-  });
-
-  $('#entryGroup').click(function(){
-    var p = [
-      102,
-      3007,
-      Math.random() * 1000,
-      new Date().getTime(),
-      $('#group_id').val(),
-      null,
-    ];
-    socket.send(JSON.stringify(p));
-  });
-
-  $('#exitGroup').click(function(){
-    var p = [
-      102,
-      3005,
-      Math.random() * 1000,
-      new Date().getTime(),
-      null,
-      null,
-    ];
-    socket.send(JSON.stringify(p));
-  });
-
-  $('#_5001_ready').click(function(){
-    var p = [
-      102,
-      5001,
-      Math.random() * 1000,
-      new Date().getTime(),
-      null,
-      null,
-    ];
-    socket.send(JSON.stringify(p));
-  });
-
-  $('#_5013_craps').click(function(){
-    var p = [
-      102,
-      5013,
-      Math.random() * 1000,
-      new Date().getTime(),
-      null,
-      null,
-    ];
-    socket.send(JSON.stringify(p));
   });
 
   $('#myInfo').click(function(){
@@ -174,18 +61,6 @@ $(function(){
       Math.random() * 1000,
       new Date().getTime(),
       JSON.stringify([$('#user_id').val(), $('#msg').val()]),
-      null,
-    ];
-    socket.send(JSON.stringify(p));
-  });
-
-  $('#send_all').click(function(){
-    var p = [
-      102,
-      2003,
-      Math.random() * 1000,
-      new Date().getTime(),
-      $('#msg_all').val(),
       null,
     ];
     socket.send(JSON.stringify(p));
