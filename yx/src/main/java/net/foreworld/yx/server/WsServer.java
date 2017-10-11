@@ -157,30 +157,31 @@ public class WsServer extends Server {
 	}
 
 	private void afterStart() {
-		jmsMessagingTemplate.convertAndSend(queue_front_start, server_id);
+		// jmsMessagingTemplate.convertAndSend(queue_front_start, server_id);
 		logger.info("front amq start: {}", server_id);
 	}
 
 	private boolean beforeStart() {
+		return true;
 
-		List<String> s = new ArrayList<String>();
-		s.add(db_redis_database);
-		s.add(server_id);
-
-		List<String> b = new ArrayList<String>();
-		b.add(String.valueOf(System.currentTimeMillis()));
-
-		Jedis j = RedisUtil.getDefault().getJedis();
-
-		if (null == j)
-			return false;
-
-		Object o = j.evalsha(sha_server_open, s, b);
-		j.close();
-
-		String str = o.toString();
-
-		return Constants.OK.equals(str);
+		// List<String> s = new ArrayList<String>();
+		// s.add(db_redis_database);
+		// s.add(server_id);
+		//
+		// List<String> b = new ArrayList<String>();
+		// b.add(String.valueOf(System.currentTimeMillis()));
+		//
+		// Jedis j = RedisUtil.getDefault().getJedis();
+		//
+		// if (null == j)
+		// return false;
+		//
+		// Object o = j.evalsha(sha_server_open, s, b);
+		// j.close();
+		//
+		// String str = o.toString();
+		//
+		// return Constants.OK.equals(str);
 	}
 
 }

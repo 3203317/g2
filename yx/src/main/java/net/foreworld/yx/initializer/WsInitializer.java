@@ -23,6 +23,7 @@ import net.foreworld.yx.handler.ExceptionHandler;
 import net.foreworld.yx.handler.HeartbeatV2Handler;
 import net.foreworld.yx.handler.LoginV2Handler;
 import net.foreworld.yx.handler.ProtocolSafeV2Handler;
+import net.foreworld.yx.handler.TestHandler;
 import net.foreworld.yx.handler.TimeV2Handler;
 import net.foreworld.yx.handler.TimeVersionV2Handler;
 import net.foreworld.yx.handler.TimeoutHandler;
@@ -74,6 +75,9 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "timeV2Handler")
 	private TimeV2Handler timeV2Handler;
 
+	@Resource(name = "testHandler")
+	private TestHandler testHandler;
+
 	@Override
 	protected void initChannel(NioSocketChannel ch) throws Exception {
 		ChannelPipeline pipe = ch.pipeline();
@@ -98,11 +102,12 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 		pipe.addLast(jSONCodecV3);
 
 		pipe.addLast(timeVersionV2Handler);
-		pipe.addLast(loginV2Handler);
+		// pipe.addLast(loginV2Handler);
 		pipe.addLast(heartbeatV2Handler);
 
 		// pipe.addLast(echoHandler);
-		pipe.addLast(timeV2Handler);
+		// pipe.addLast(timeV2Handler);
+		pipe.addLast(testHandler);
 	}
 
 }
