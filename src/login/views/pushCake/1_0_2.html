@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+  <head>
+    <meta charset='utf-8' />
+    <style>
+    html, body{
+      font-size: 9px;
+    }
+    </style>
+	</head>
+	<body>
+
+    <p>
+      <button id='create_room'>创建房间</button>
+      <button id='see_room'>查看房间</button>
+      <button id='see_player'>查看玩家</button>
+    </p>
+
+    <p>
+      刘一：
+      <button onClick='room_entry("123456", "刘一", 1)'>进入</button>
+      <button onClick='room_quit("123456")'>退出</button>
+      <button onClick='room_ready("123456")'>举手</button>
+      <button onClick='room_re_entry("123456")'>重连</button>
+      <button onClick='room_craps("123456")'>craps</button>
+    </p>
+
+    <p>
+      陈二：
+      <button onClick='room_entry("234567", "陈二", 2)'>进入</button>
+      <button onClick='room_quit("234567")'>退出</button>
+      <button onClick='room_ready("234567")'>举手</button>
+      <button onClick='room_re_entry("234567")'>重连</button>
+      <button onClick='room_craps("234567")'>craps</button>
+    </p>
+
+    <p>
+      张三：
+      <button onClick='room_entry("345678", "张三", 3)'>进入</button>
+      <button onClick='room_quit("345678")'>退出</button>
+      <button onClick='room_ready("345678")'>举手</button>
+      <button onClick='room_re_entry("345678")'>重连</button>
+      <button onClick='room_craps("345678")'>craps</button>
+    </p>
+
+    <p>
+      李四：
+      <button onClick='room_entry("456789", "李四", 4)'>进入</button>
+      <button onClick='room_quit("456789")'>退出</button>
+      <button onClick='room_ready("456789")'>举手</button>
+      <button onClick='room_re_entry("456789")'>重连</button>
+      <button onClick='room_craps("456789")'>craps</button>
+    </p>
+
+    <p>
+      王五：
+      <button onClick='room_entry("567890", "王五", 5)'>进入</button>
+      <button onClick='room_quit("567890")'>退出</button>
+      <button onClick='room_ready("567890")'>举手</button>
+      <button onClick='room_re_entry("567890")'>重连</button>
+      <button onClick='room_craps("567890")'>craps</button>
+    </p>
+
+    <p>
+      赵六：
+      <button onClick='room_entry("678901", "赵六", 6)'>进入</button>
+      <button onClick='room_quit("678901")'>退出</button>
+      <button onClick='room_ready("678901")'>举手</button>
+      <button onClick='room_re_entry("678901")'>重连</button>
+      <button onClick='room_craps("678901")'>craps</button>
+    </p>
+
+  </body>
+
+  <script type='text/javascript' src='./room.js'></script>
+  <script>
+
+  var room = new Room({
+    id:            '129321',
+    name:          '张三的房间',
+    user_id:       '234567',
+    visitor_count: 1,
+    fund:          1000,
+    round_count:   2,
+  });
+
+  $(function(){
+    $('#see_room').click(function(){
+      console.info(room);
+    });
+
+    $('#see_player').click(function(){
+      console.info(room._players);
+    });
+  });
+
+  function room_entry(id, user_name, gold_count){
+    var _entry = room.entry({
+      id:         id,
+      user_name:  user_name,
+      gold_count: gold_count,
+    });
+    console.log(_entry);
+  }
+
+  function room_quit(id){
+    console.log(room.quit(id));
+  }
+
+  function room_ready(id){
+    console.log(room.ready(id));
+  }
+
+  function room_re_entry(id){
+    console.log(room.re_entry({
+      id:         id,
+      server_id:  new Date().getTime(),
+      channel_id: new Date().getTime(),
+    }));
+  }
+
+  function room_craps(id){
+    console.log(room.craps4(id));
+  }
+
+  console.log(room);
+  </script>
+</html>
