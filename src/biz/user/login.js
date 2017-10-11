@@ -30,7 +30,8 @@ _.mixin(_.str.exports());
     return new Promise((resolve, reject) => {
       biz.user.getByName(logInfo.user_name)
       .then(p1.bind(null, logInfo))
-      .then(doc => resolve(doc))
+      .then(loginToken)
+      .then(token => resolve(token))
       .catch(reject);
     });
   };
@@ -43,4 +44,8 @@ _.mixin(_.str.exports());
 
     return Promise.resolve(user);
   }
+
+  function loginToken(user){
+    return Promise.resolve([utils.replaceAll(uuid.v4(), '-', ''), '68']);
+  };
 })();
