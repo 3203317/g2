@@ -33,6 +33,7 @@ _.mixin(_.str.exports());
       id:        '123456',
       user_name: 'hx',
       user_pass: 'e10adc3949ba59abbe56e057f20f883e',
+      status:    1,
     });
   };
 })();
