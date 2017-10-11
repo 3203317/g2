@@ -26,16 +26,13 @@ _.mixin(_.str.exports());
   /**
    * 获取用户
    *
-   * @param id 用户id
    * @return
    */
   exports = module.exports = function(user_name, trans){
-    return new Promise((resolve, reject) => {
-      resolve({
-        id:        '123456',
-        user_name: 'hx',
-        user_pass: 'e10adc3949ba59abbe56e057f20f883e',
-      });
+    return Promise.resolve({
+      id:        '123456',
+      user_name: 'hx',
+      user_pass: 'e10adc3949ba59abbe56e057f20f883e',
     });
   };
 })();

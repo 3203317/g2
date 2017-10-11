@@ -1,5 +1,5 @@
 /*!
- * emag.login
+ * g2.login
  * Copyright(c) 2016 huangxin <3203317@qq.com>
  * MIT Licensed
  */
@@ -15,7 +15,7 @@ const express = require('express'),
 
 const conf = require('./settings');
 
-const macro = require('emag.lib').macro;
+const macro = require('g2.lib').macro;
 
 const log4js = require('log4js');
 
