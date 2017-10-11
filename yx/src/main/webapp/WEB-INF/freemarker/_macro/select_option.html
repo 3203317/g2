@@ -1,5 +1,0 @@
-<#macro m list key value selValue>
-<#list list as doc>
-<option value="${doc[key]}"<#if selValue="${doc[key]}"> selected</#if>>${doc[value]}</option>
-</#list>
-</#macro>
