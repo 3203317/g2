@@ -19,7 +19,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import net.foreworld.util.Server;
-import net.foreworld.yx.initializer.WsNormalInitializer;
+import net.foreworld.yx.initializer.WsInitializer;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
 import net.foreworld.yx.util.RedisUtil;
@@ -67,8 +67,8 @@ public class WsServer extends Server {
 	@Value("${queue.front.stop}")
 	private String queue_front_stop;
 
-	@Resource(name = "wsNormalInitializer")
-	private WsNormalInitializer wsNormalInitializer;
+	@Resource(name = "wsInitializer")
+	private WsInitializer wsInitializer;
 
 	private ChannelFuture f;
 	private EventLoopGroup bossGroup, workerGroup;
@@ -97,7 +97,7 @@ public class WsServer extends Server {
 
 		// b.handler(new LoggingHandler(LogLevel.INFO));
 
-		b.childHandler(wsNormalInitializer);
+		b.childHandler(wsInitializer);
 
 		try {
 			f = b.bind().sync();

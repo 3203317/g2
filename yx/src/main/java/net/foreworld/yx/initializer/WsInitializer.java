@@ -33,7 +33,7 @@ import net.foreworld.yx.handler.TimeoutHandler;
  *
  */
 @Component
-public class WsNormalInitializer extends ChannelInitializer<NioSocketChannel> {
+public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 
 	// @Resource(name = "echoHandler")
 	// private EchoHandler echoHandler;
