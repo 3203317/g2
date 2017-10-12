@@ -1,6 +1,7 @@
 package net.foreworld.yx.codec;
 
 import java.net.SocketAddress;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import net.foreworld.yx.model.ProtocolModel;
 
@@ -27,7 +29,7 @@ import net.foreworld.yx.model.ProtocolModel;
  */
 @Component
 @Sharable
-public class JSONCodecV3 extends MessageToMessageCodec<TextWebSocketFrame, String> {
+public class JSONCodecV3 extends MessageToMessageCodec<TextWebSocketFrame, byte[]> {
 
 	@Value("${msg.body.max:512}")
 	private int msg_body_max;
@@ -35,8 +37,14 @@ public class JSONCodecV3 extends MessageToMessageCodec<TextWebSocketFrame, Strin
 	private static final Logger logger = LoggerFactory.getLogger(JSONCodecV3.class);
 
 	@Override
-	protected void encode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
-		out.add(new TextWebSocketFrame(msg));
+	protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
+//		out.add(new TextWebSocketFrame(msg));
+		
+		System.out.println(msg);
+		
+		ByteBuffer buf = ByteBuffer.wrap(msg);	
+		
+		out.add(new BinaryWebSocketFrame(buf));
 	}
 
 	@Override

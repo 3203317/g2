@@ -23,14 +23,13 @@ import net.foreworld.yx.handler.ExceptionHandler;
 import net.foreworld.yx.handler.HeartbeatV2Handler;
 import net.foreworld.yx.handler.LoginV2Handler;
 import net.foreworld.yx.handler.ProtocolSafeV2Handler;
-import net.foreworld.yx.handler.TestHandler;
 import net.foreworld.yx.handler.TimeV2Handler;
 import net.foreworld.yx.handler.TimeVersionV2Handler;
 import net.foreworld.yx.handler.TimeoutHandler;
 
 /**
- *
- * @author huangxin
+ * 
+ * @author huangxin <3203317@qq.com>
  *
  */
 @Component
@@ -75,9 +74,6 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "timeV2Handler")
 	private TimeV2Handler timeV2Handler;
 
-	@Resource(name = "testHandler")
-	private TestHandler testHandler;
-
 	@Override
 	protected void initChannel(NioSocketChannel ch) throws Exception {
 		ChannelPipeline pipe = ch.pipeline();
@@ -85,10 +81,10 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 		// pipe.addLast(new LoggingHandler(LogLevel.INFO));
 
 		pipe.addLast(exceptionHandler);
-		pipe.addLast(blacklistHandler);
-
-		pipe.addLast(new IdleStateHandler(readerIdleTime, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
-		pipe.addLast(timeoutHandler);
+//		pipe.addLast(blacklistHandler);
+//
+//		pipe.addLast(new IdleStateHandler(readerIdleTime, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
+//		pipe.addLast(timeoutHandler);
 
 		pipe.addLast(new HttpServerCodec());
 		pipe.addLast(new HttpObjectAggregator(1024 * 64));
@@ -102,12 +98,11 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 		pipe.addLast(jSONCodecV3);
 
 		pipe.addLast(timeVersionV2Handler);
-		// pipe.addLast(loginV2Handler);
+//		pipe.addLast(loginV2Handler);
 		pipe.addLast(heartbeatV2Handler);
 
-		// pipe.addLast(echoHandler);
-		// pipe.addLast(timeV2Handler);
-		pipe.addLast(testHandler);
+//		 pipe.addLast(echoHandler);
+//		pipe.addLast(timeV2Handler);
 	}
 
 }
