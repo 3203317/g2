@@ -83,6 +83,23 @@ $(function(){
         console.log(data)
         var type = typeof data;
 
+        // console.log(type)
+
+
+        if(data instanceof Blob){
+          console.log('Blob')
+
+        } else if(data instanceof ArrayBuffer){
+          // console.log('ArrayBuffer')
+          console.log(data.byteLength)
+
+          arrayBufferToString(data, 'UTF-8', console.log.bind(console)); //"ABC"
+
+        }
+
+
+        return;
+
         data = JSON.parse(data);
 
         console.log('++++');
@@ -160,6 +177,38 @@ $(function(){
   });
 
 });
+
+function arrayBufferToString( buffer, encoding, callback ) {
+    var blob = new Blob([buffer],{type:'text/plain'});
+    var reader = new FileReader();
+    reader.onload = function(evt){callback(evt.target.result);};
+    reader.readAsText(blob, encoding);
+}
+
+
+
+
+
+// function arrayBufferToString( buffer, encoding, callback ) {
+//     var blob = new Blob([buffer],{type:'text/plain'});
+//     var reader = new FileReader();
+//     reader.onload = function(evt){callback(evt.target.result);};
+//     reader.readAsText(blob, encoding);
+// }
+
+// function stringToArrayBuffer( string, encoding, callback ) {
+//     var blob = new Blob([string],{type:'text/plain;charset='+encoding});
+//     var reader = new FileReader();
+//     reader.onload = function(evt){callback(evt.target.result);};
+//     reader.readAsArrayBuffer(blob);
+// }
+
+
+// //example:
+// var buf = new Uint8Array([65,66,67]);
+// arrayBufferToString(buf, 'UTF-8', console.log.bind(console)); //"ABC"
+
+// stringToArrayBuffer('ABC', 'UTF-8', console.log.bind(console)); //[65,66,67]
 
 </script>
 

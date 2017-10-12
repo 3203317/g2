@@ -26,17 +26,21 @@ public class HeartbeatV2Handler extends SimpleChannelInboundHandler<ProtocolMode
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
 		logger.info("method: {}", msg.getMethod());
 		logger.info("method: {}", msg.getMethod());
-		
+
 //		ChannelUtil.getDefault().broadcast("asa");
-		
-		
+
+
 
 		String str = "%5B%7B%2s啥宋德福2lastUpdateTime%22%3A%222011-10-28+9%3A39%3A41%22%2C%22smsList%22%3A%5B%7B%22liveState%22%3A%221啥h打饭";
 //		System.out.println("原长度：" + str.length());
 
 		byte[] b = GZIPUtil.compress(str);
 
-		ctx.writeAndFlush(b);
+		System.out.println(str.length());
+		System.out.println(b.length);
+
+
+		ctx.writeAndFlush(str.getBytes());
 
 //		if (666 == msg.getMethod()) {
 //			ctx.flush();

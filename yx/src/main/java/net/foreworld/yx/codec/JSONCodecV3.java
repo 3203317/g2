@@ -1,6 +1,9 @@
 package net.foreworld.yx.codec;
 
 import java.net.SocketAddress;
+
+
+import static io.netty.buffer.Unpooled.wrappedBuffer;
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -39,12 +42,11 @@ public class JSONCodecV3 extends MessageToMessageCodec<TextWebSocketFrame, byte[
 	@Override
 	protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
 //		out.add(new TextWebSocketFrame(msg));
-		
+
 		System.out.println(msg);
-		
-		ByteBuffer buf = ByteBuffer.wrap(msg);	
-		
-		out.add(new BinaryWebSocketFrame(buf));
+
+
+		out.add(new BinaryWebSocketFrame(wrappedBuffer(msg)));
 	}
 
 	@Override
