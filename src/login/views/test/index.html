@@ -74,8 +74,13 @@ $(function(){
 
     socket.onopen = function(evt){
 
+       socket.binaryType = "arraybuffer"; 
+
+
+
       socket.onmessage = function(evt){
         var data = evt.data;
+        console.log(data)
         var type = typeof data;
 
         data = JSON.parse(data);
