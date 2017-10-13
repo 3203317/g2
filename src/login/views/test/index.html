@@ -151,7 +151,11 @@ $(function(){
         }),
         null,
       ];
-      socket.send(JSON.stringify(p));
+
+      stringToArrayBuffer(JSON.stringify(p), 'UTF-8', function(abc){
+        socket.send(abc);
+      });
+
     };
 
     socket.onclose = function(evt){
@@ -196,12 +200,12 @@ function arrayBufferToString( buffer, encoding, callback ) {
 //     reader.readAsText(blob, encoding);
 // }
 
-// function stringToArrayBuffer( string, encoding, callback ) {
-//     var blob = new Blob([string],{type:'text/plain;charset='+encoding});
-//     var reader = new FileReader();
-//     reader.onload = function(evt){callback(evt.target.result);};
-//     reader.readAsArrayBuffer(blob);
-// }
+function stringToArrayBuffer( string, encoding, callback ) {
+    var blob = new Blob([string],{type:'text/plain;charset='+encoding});
+    var reader = new FileReader();
+    reader.onload = function(evt){callback(evt.target.result);};
+    reader.readAsArrayBuffer(blob);
+}
 
 
 // //example:
@@ -209,6 +213,12 @@ function arrayBufferToString( buffer, encoding, callback ) {
 // arrayBufferToString(buf, 'UTF-8', console.log.bind(console)); //"ABC"
 
 // stringToArrayBuffer('ABC', 'UTF-8', console.log.bind(console)); //[65,66,67]
+
+
+// stringToArrayBuffer('ABC', 'UTF-8', function(abc){
+//   console.log(abc)
+//   console.log('---')
+// });
 
 </script>
 
