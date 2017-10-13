@@ -1,10 +1,8 @@
 package net.foreworld.yx.codec;
 
-import java.net.SocketAddress;
-
-
 import static io.netty.buffer.Unpooled.wrappedBuffer;
-import java.nio.ByteBuffer;
+
+import java.net.SocketAddress;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -16,13 +14,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import net.foreworld.yx.model.ProtocolModel;
 
 /**
@@ -32,7 +30,7 @@ import net.foreworld.yx.model.ProtocolModel;
  */
 @Component
 @Sharable
-public class JSONCodecV3 extends MessageToMessageCodec<TextWebSocketFrame, byte[]> {
+public class JSONCodecV3 extends MessageToMessageCodec<BinaryWebSocketFrame, byte[]> {
 
 	@Value("${msg.body.max:512}")
 	private int msg_body_max;
@@ -50,8 +48,18 @@ public class JSONCodecV3 extends MessageToMessageCodec<TextWebSocketFrame, byte[
 	}
 
 	@Override
-	protected void decode(ChannelHandlerContext ctx, TextWebSocketFrame msg, List<Object> out) throws Exception {
-		String text = msg.text();
+	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {
+		
+
+		
+		  ByteBuf bf =msg.content();
+	        byte[] byteArray = new byte[bf.capacity()];  
+	        bf.readBytes(byteArray);  
+	        String text = new String(byteArray);
+		
+		
+		
+		
 
 		if (msg_body_max < text.length()) {
 			logout(ctx);
