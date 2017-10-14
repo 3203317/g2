@@ -24,40 +24,36 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import net.foreworld.yx.model.ProtocolModel;
 
 /**
- *
- * @author huangxin
+ * 
+ * @author huangxin <3203317@qq.com>
  *
  */
 @Component
 @Sharable
-public class JSONCodecV3 extends MessageToMessageCodec<BinaryWebSocketFrame, byte[]> {
+public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, byte[]> {
 
 	@Value("${msg.body.max:512}")
 	private int msg_body_max;
 
-	private static final Logger logger = LoggerFactory.getLogger(JSONCodecV3.class);
+	private static final Logger logger = LoggerFactory.getLogger(BinaryCodec.class);
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
-		// out.add(new TextWebSocketFrame(msg));
-
-		System.out.println(msg);
-
 		out.add(new BinaryWebSocketFrame(wrappedBuffer(msg)));
 	}
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {
-
 		ByteBuf bf = msg.content();
-		byte[] byteArray = new byte[bf.capacity()];
-		bf.readBytes(byteArray);
-		String text = new String(byteArray);
 
-		if (msg_body_max < text.length()) {
+		if (msg_body_max < bf.capacity()) {
 			logout(ctx);
 			return;
 		}
+
+		byte[] bytes = new byte[bf.capacity()];
+		bf.readBytes(bytes);
+		String text = new String(bytes);
 
 		JsonArray ja = null;
 

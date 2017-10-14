@@ -14,7 +14,7 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import net.foreworld.yx.codec.JSONCodecV3;
+import net.foreworld.yx.codec.BinaryCodec;
 import net.foreworld.yx.handler.BlacklistHandler;
 import net.foreworld.yx.handler.ExceptionHandler;
 import net.foreworld.yx.handler.HeartbeatV2Handler;
@@ -31,12 +31,6 @@ import net.foreworld.yx.handler.TimeoutHandler;
 @Component
 public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 
-	// @Resource(name = "echoHandler")
-	// private EchoHandler echoHandler;
-
-	@Resource
-	private JSONCodecV3 jSONCodecV3;
-
 	@Value("${server.idle.readerIdleTime:3}")
 	private int readerIdleTime;
 
@@ -45,6 +39,9 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 
 	@Value("${server.idle.allIdleTime:10}")
 	private int allIdleTime;
+
+	@Resource
+	private BinaryCodec binaryCodec;
 
 	@Resource(name = "timeoutHandler")
 	private TimeoutHandler timeoutHandler;
@@ -89,7 +86,7 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 
 		pipe.addLast(new WebSocketServerCompressionHandler());
 
-		pipe.addLast(jSONCodecV3);
+		pipe.addLast(binaryCodec);
 
 		// pipe.addLast(loginV2Handler);
 		pipe.addLast(heartbeatV2Handler);

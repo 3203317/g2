@@ -16,10 +16,20 @@ public class ProtocolModel implements Serializable {
 	private Long timestamp;
 	private String data;
 
+	private String signature;
+
 	private String serverId;
 	private String channelId;
 
 	private String backendId;
+
+	public String getSignature() {
+		return signature;
+	}
+
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
 
 	public Integer getMethod() {
 		return method;
