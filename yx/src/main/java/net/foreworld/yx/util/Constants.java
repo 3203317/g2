@@ -1,8 +1,8 @@
 package net.foreworld.yx.util;
 
 /**
- *
- * @author huangxin
+ * 
+ * @author huangxin <3203317@qq.com>
  *
  */
 public interface Constants {

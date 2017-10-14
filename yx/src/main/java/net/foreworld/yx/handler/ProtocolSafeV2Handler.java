@@ -37,7 +37,8 @@ public class ProtocolSafeV2Handler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
-		if (msg instanceof BinaryWebSocketFrame || msg instanceof FullHttpRequest || msg instanceof CloseWebSocketFrame) {
+		if (msg instanceof BinaryWebSocketFrame || msg instanceof FullHttpRequest
+				|| msg instanceof CloseWebSocketFrame) {
 			ctx.fireChannelRead(msg);
 			return;
 		}

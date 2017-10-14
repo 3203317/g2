@@ -39,27 +39,20 @@ public class JSONCodecV3 extends MessageToMessageCodec<BinaryWebSocketFrame, byt
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
-//		out.add(new TextWebSocketFrame(msg));
+		// out.add(new TextWebSocketFrame(msg));
 
 		System.out.println(msg);
-
 
 		out.add(new BinaryWebSocketFrame(wrappedBuffer(msg)));
 	}
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {
-		
 
-		
-		  ByteBuf bf =msg.content();
-	        byte[] byteArray = new byte[bf.capacity()];  
-	        bf.readBytes(byteArray);  
-	        String text = new String(byteArray);
-		
-		
-		
-		
+		ByteBuf bf = msg.content();
+		byte[] byteArray = new byte[bf.capacity()];
+		bf.readBytes(byteArray);
+		String text = new String(byteArray);
 
 		if (msg_body_max < text.length()) {
 			logout(ctx);

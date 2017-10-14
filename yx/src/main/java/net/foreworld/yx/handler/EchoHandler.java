@@ -1,11 +1,5 @@
 package net.foreworld.yx.handler;
 
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import net.foreworld.yx.model.LoginModel;
-import net.foreworld.yx.model.ProtocolModel;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,6 +7,12 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import net.foreworld.yx.model.LoginModel;
+import net.foreworld.yx.model.ProtocolModel;
 
 /**
  *
@@ -23,8 +23,7 @@ import com.google.gson.JsonParser;
 @Sharable
 public class EchoHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(EchoHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(EchoHandler.class);
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
@@ -63,20 +62,17 @@ public class EchoHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	}
 
 	@Override
-	public void channelWritabilityChanged(ChannelHandlerContext ctx)
-			throws Exception {
+	public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
 		logger.info("channelWritabilityChanged");
 		super.channelWritabilityChanged(ctx);
 	}
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg)
-			throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
 		logger.info(msg.getSeqId() + ":" + msg.getTimestamp());
 
 		JsonObject jo = new JsonParser().parse(msg.getData()).getAsJsonObject();
-		logger.info(jo.get("user_name").getAsString() + ":"
-				+ jo.get("user_pass").getAsString());
+		logger.info(jo.get("user_name").getAsString() + ":" + jo.get("user_pass").getAsString());
 
 		ProtocolModel model = new ProtocolModel();
 		model.setVersion(msg.getVersion());

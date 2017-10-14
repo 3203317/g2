@@ -8,8 +8,6 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.foreworld.yx.model.ProtocolModel;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.GZIPUtil;
 
 /**
  *
@@ -27,27 +25,19 @@ public class HeartbeatV2Handler extends SimpleChannelInboundHandler<ProtocolMode
 		logger.info("method: {}", msg.getMethod());
 		logger.info("method: {}", msg.getMethod());
 
-//		ChannelUtil.getDefault().broadcast("asa");
-
-
+		// ChannelUtil.getDefault().broadcast("asa");
 
 		String str = "%5B%7B%2s啥宋德福2lastUpdateTime%22%3A%222011-10-28+9%3A39%3A41%22%2C%22smsList%22%3A%5B%7B%22liveState%22%3A%221啥h打饭";
-//		System.out.println("原长度：" + str.length());
-
-		byte[] b = GZIPUtil.compress(str);
-
-		System.out.println(str.length());
-		System.out.println(b.length);
-
+		// System.out.println("原长度：" + str.length());
 
 		ctx.writeAndFlush(str.getBytes());
 
-//		if (666 == msg.getMethod()) {
-//			ctx.flush();
-//			return;
-//		}
+		// if (666 == msg.getMethod()) {
+		// ctx.flush();
+		// return;
+		// }
 
-//		ctx.fireChannelRead(msg);
+		// ctx.fireChannelRead(msg);
 	}
 
 }
