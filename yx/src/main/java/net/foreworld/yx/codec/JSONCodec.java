@@ -53,7 +53,7 @@ public class JSONCodec extends MessageToMessageCodec<TextWebSocketFrame, String>
 			}
 
 			if (jo.has("seqId")) {
-				model.setSeqId(jo.get("seqId").getAsLong());
+				model.setSeqId(jo.get("seqId").getAsInt());
 			}
 
 			if (jo.has("timestamp")) {

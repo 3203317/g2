@@ -12,7 +12,7 @@ public class ProtocolModel implements Serializable {
 	private static final long serialVersionUID = -7476803059012167127L;
 
 	private Integer method;
-	private Long seqId;
+	private Integer seqId;
 	private Long timestamp;
 	private String data;
 
@@ -29,11 +29,11 @@ public class ProtocolModel implements Serializable {
 		this.method = method;
 	}
 
-	public Long getSeqId() {
+	public Integer getSeqId() {
 		return seqId;
 	}
 
-	public void setSeqId(Long seqId) {
+	public void setSeqId(Integer seqId) {
 		this.seqId = seqId;
 	}
 
