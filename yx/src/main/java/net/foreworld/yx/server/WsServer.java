@@ -41,10 +41,8 @@ public class WsServer extends Server {
 	@Value("${sha.server.close}")
 	private String sha_server_close;
 
-	@Value("${db.redis.database}")
+	@Value("${db.redis.database:1}")
 	private String db_redis_database;
-
-	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
 
 	@Value("${server.port:1234}")
 	private int port;
@@ -70,11 +68,13 @@ public class WsServer extends Server {
 	@Resource(name = "wsInitializer")
 	private WsInitializer wsInitializer;
 
-	private ChannelFuture f;
-	private EventLoopGroup bossGroup, workerGroup;
-
 	@Resource(name = "jmsMessagingTemplate")
 	private JmsMessagingTemplate jmsMessagingTemplate;
+
+	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
+
+	private ChannelFuture f;
+	private EventLoopGroup bossGroup, workerGroup;
 
 	@Override
 	public void start() {
@@ -150,38 +150,33 @@ public class WsServer extends Server {
 
 		String str = o.toString();
 
-		if (Constants.OK.equals(str)) {
-			jmsMessagingTemplate.convertAndSend(queue_front_stop, server_id);
-			logger.info("front amq stop: {}", server_id);
+		if (!Constants.OK.equals(str)) {
+			logger.error("front stop");
 		}
 	}
 
 	private void afterStart() {
-		// jmsMessagingTemplate.convertAndSend(queue_front_start, server_id);
-		logger.info("front amq start: {}", server_id);
 	}
 
 	private boolean beforeStart() {
-		return true;
+		List<String> s = new ArrayList<String>();
+		s.add(db_redis_database);
+		s.add(server_id);
 
-		// List<String> s = new ArrayList<String>();
-		// s.add(db_redis_database);
-		// s.add(server_id);
-		//
-		// List<String> b = new ArrayList<String>();
-		// b.add(String.valueOf(System.currentTimeMillis()));
-		//
-		// Jedis j = RedisUtil.getDefault().getJedis();
-		//
-		// if (null == j)
-		// return false;
-		//
-		// Object o = j.evalsha(sha_server_open, s, b);
-		// j.close();
-		//
-		// String str = o.toString();
-		//
-		// return Constants.OK.equals(str);
+		List<String> b = new ArrayList<String>();
+		b.add(String.valueOf(System.currentTimeMillis()));
+
+		Jedis j = RedisUtil.getDefault().getJedis();
+
+		if (null == j)
+			return false;
+
+		Object o = j.evalsha(sha_server_open, s, b);
+		j.close();
+
+		String str = o.toString();
+
+		return Constants.OK.equals(str);
 	}
 
 }
