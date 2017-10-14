@@ -76,7 +76,6 @@ public class JSONCodecV3 extends MessageToMessageCodec<BinaryWebSocketFrame, byt
 		ProtocolModel model = new ProtocolModel();
 
 		try {
-			model.setVersion(ja.get(0).getAsInt());
 			model.setMethod(ja.get(1).getAsInt());
 			model.setSeqId(ja.get(2).getAsLong());
 			model.setTimestamp(ja.get(3).getAsLong());

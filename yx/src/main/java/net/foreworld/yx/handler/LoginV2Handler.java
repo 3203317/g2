@@ -68,7 +68,7 @@ public class LoginV2Handler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, final ProtocolModel msg) throws Exception {
-		logger.info("{}:{}:{}:{}", msg.getVersion(), msg.getMethod(), msg.getSeqId(), msg.getTimestamp());
+		logger.info("{}:{}:{}", msg.getMethod(), msg.getSeqId(), msg.getTimestamp());
 
 		String jsonStr = StringUtil.isJSON(msg.getData());
 

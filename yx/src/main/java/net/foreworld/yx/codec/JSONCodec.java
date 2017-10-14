@@ -48,10 +48,6 @@ public class JSONCodec extends MessageToMessageCodec<TextWebSocketFrame, String>
 
 			JsonObject jo = new JsonParser().parse(text).getAsJsonObject();
 
-			if (jo.has("version")) {
-				model.setVersion(jo.get("version").getAsInt());
-			}
-
 			if (jo.has("method")) {
 				model.setMethod(jo.get("method").getAsInt());
 			}

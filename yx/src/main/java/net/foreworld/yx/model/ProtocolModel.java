@@ -3,15 +3,14 @@ package net.foreworld.yx.model;
 import java.io.Serializable;
 
 /**
- *
- * @author huangxin
+ * 
+ * @author huangxin <3203317@qq.com>
  *
  */
 public class ProtocolModel implements Serializable {
 
 	private static final long serialVersionUID = -7476803059012167127L;
 
-	private Integer version;
 	private Integer method;
 	private Long seqId;
 	private Long timestamp;
@@ -21,38 +20,6 @@ public class ProtocolModel implements Serializable {
 	private String channelId;
 
 	private String backendId;
-
-	public String getBackendId() {
-		return backendId;
-	}
-
-	public void setBackendId(String backendId) {
-		this.backendId = backendId;
-	}
-
-	public String getServerId() {
-		return serverId;
-	}
-
-	public void setServerId(String serverId) {
-		this.serverId = serverId;
-	}
-
-	public String getChannelId() {
-		return channelId;
-	}
-
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
 
 	public Integer getMethod() {
 		return method;
@@ -84,6 +51,30 @@ public class ProtocolModel implements Serializable {
 
 	public void setData(String data) {
 		this.data = data;
+	}
+
+	public String getServerId() {
+		return serverId;
+	}
+
+	public void setServerId(String serverId) {
+		this.serverId = serverId;
+	}
+
+	public String getChannelId() {
+		return channelId;
+	}
+
+	public void setChannelId(String channelId) {
+		this.channelId = channelId;
+	}
+
+	public String getBackendId() {
+		return backendId;
+	}
+
+	public void setBackendId(String backendId) {
+		this.backendId = backendId;
 	}
 
 }
