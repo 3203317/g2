@@ -5,6 +5,7 @@ import static io.netty.buffer.Unpooled.wrappedBuffer;
 import java.net.SocketAddress;
 import java.util.List;
 
+import org.apache.commons.codec.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,21 +45,23 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, byt
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {
-		ByteBuf bf = msg.content();
+		ByteBuf _bf = msg.content();
 
-		if (msg_body_max < bf.capacity()) {
+		int _size = _bf.capacity();
+
+		if (msg_body_max < _size) {
 			logout(ctx);
 			return;
 		}
 
-		byte[] bytes = new byte[bf.capacity()];
-		bf.readBytes(bytes);
-		String text = new String(bytes);
+		byte[] _bytes = new byte[_size];
+		_bf.readBytes(_bytes);
+		String _text = new String(_bytes, Charsets.UTF_8);
 
 		JsonArray ja = null;
 
 		try {
-			ja = new JsonParser().parse(text).getAsJsonArray();
+			ja = new JsonParser().parse(_text).getAsJsonArray();
 		} catch (Exception ex) {
 			logout(ctx);
 			return;
@@ -72,14 +75,20 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, byt
 		ProtocolModel model = new ProtocolModel();
 
 		try {
+			model.setSignature(ja.get(0).getAsString());
 			model.setMethod(ja.get(1).getAsInt());
-			model.setSeqId(ja.get(2).getAsInt());
-			model.setTimestamp(ja.get(3).getAsLong());
+			model.setTimestamp(ja.get(2).getAsLong());
+
+			JsonElement _je_3 = ja.get(3);
+
+			if (!_je_3.isJsonNull()) {
+				model.setData(_je_3.getAsString());
+			}
 
 			JsonElement _je_4 = ja.get(4);
 
 			if (!_je_4.isJsonNull()) {
-				model.setData(_je_4.getAsString());
+				model.setSeqId(_je_4.getAsInt());
 			}
 
 			JsonElement _je_5 = ja.get(5);
