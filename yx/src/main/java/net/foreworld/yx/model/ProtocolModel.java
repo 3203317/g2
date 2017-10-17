@@ -21,8 +21,6 @@ public class ProtocolModel implements Serializable {
 	private String serverId;
 	private String channelId;
 
-	private String backendId;
-
 	public String getSignature() {
 		return signature;
 	}
@@ -77,14 +75,6 @@ public class ProtocolModel implements Serializable {
 
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
-	}
-
-	public String getBackendId() {
-		return backendId;
-	}
-
-	public void setBackendId(String backendId) {
-		this.backendId = backendId;
 	}
 
 }

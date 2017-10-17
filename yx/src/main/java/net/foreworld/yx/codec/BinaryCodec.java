@@ -91,12 +91,6 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, byt
 				model.setSeqId(_je_4.getAsInt());
 			}
 
-			JsonElement _je_5 = ja.get(5);
-
-			if (!_je_5.isJsonNull()) {
-				model.setBackendId(_je_5.getAsString());
-			}
-
 		} catch (Exception ex) {
 			logout(ctx);
 			return;
