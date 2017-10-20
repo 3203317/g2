@@ -25,9 +25,9 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
  */
 @Component
 @Sharable
-public class ProtocolSafeV2Handler extends ChannelInboundHandlerAdapter {
+public class ProtocolSafeHandler extends ChannelInboundHandlerAdapter {
 
-	private static final Logger logger = LoggerFactory.getLogger(ProtocolSafeV2Handler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProtocolSafeHandler.class);
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {

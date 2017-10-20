@@ -16,9 +16,9 @@ import net.foreworld.yx.model.ProtocolModel;
  */
 @Component
 @Sharable
-public class HeartbeatV2Handler extends SimpleChannelInboundHandler<ProtocolModel> {
+public class HeartbeatHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
-	private static final Logger logger = LoggerFactory.getLogger(HeartbeatV2Handler.class);
+	private static final Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {

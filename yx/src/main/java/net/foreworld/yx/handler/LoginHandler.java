@@ -38,7 +38,7 @@ import redis.clients.jedis.Jedis;
 @PropertySource("classpath:redis.properties")
 @Component
 @Sharable
-public class LoginV2Handler extends SimpleChannelInboundHandler<ProtocolModel> {
+public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 	@Value("${sha.token}")
 	private String sha_token;
@@ -64,7 +64,7 @@ public class LoginV2Handler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Resource(name = "unRegChannelHandler")
 	private UnRegChannelHandler unRegChannelHandler;
 
-	private static final Logger logger = LoggerFactory.getLogger(LoginV2Handler.class);
+	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, final ProtocolModel msg) throws Exception {

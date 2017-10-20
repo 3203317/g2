@@ -20,14 +20,14 @@ import io.netty.handler.timeout.IdleStateHandler;
 import net.foreworld.yx.codec.BinaryCodec;
 import net.foreworld.yx.handler.BlacklistHandler;
 import net.foreworld.yx.handler.ExceptionHandler;
-import net.foreworld.yx.handler.HeartbeatV2Handler;
-import net.foreworld.yx.handler.LoginV2Handler;
-import net.foreworld.yx.handler.ProtocolSafeV2Handler;
+import net.foreworld.yx.handler.HeartbeatHandler;
+import net.foreworld.yx.handler.LoginHandler;
+import net.foreworld.yx.handler.ProtocolSafeHandler;
 import net.foreworld.yx.handler.TimeV2Handler;
 import net.foreworld.yx.handler.TimeoutHandler;
 
 /**
- * 
+ *
  * @author huangxin <3203317@qq.com>
  *
  */
@@ -55,14 +55,14 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "exceptionHandler")
 	private ExceptionHandler exceptionHandler;
 
-	@Resource(name = "protocolSafeV2Handler")
-	private ProtocolSafeV2Handler protocolSafeV2Handler;
+	@Resource(name = "protocolSafeHandler")
+	private ProtocolSafeHandler protocolSafeHandler;
 
-	@Resource(name = "heartbeatV2Handler")
-	private HeartbeatV2Handler heartbeatV2Handler;
+	@Resource(name = "heartbeatHandler")
+	private HeartbeatHandler heartbeatHandler;
 
-	@Resource(name = "loginV2Handler")
-	private LoginV2Handler loginV2Handler;
+	@Resource(name = "loginHandler")
+	private LoginHandler loginHandler;
 
 	@Resource(name = "timeV2Handler")
 	private TimeV2Handler timeV2Handler;
@@ -83,15 +83,15 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 		pipe.addLast(new HttpObjectAggregator(1024 * 64));
 		pipe.addLast(new ChunkedWriteHandler());
 		pipe.addLast(new HttpContentCompressor());
-		pipe.addLast(protocolSafeV2Handler);
+		pipe.addLast(protocolSafeHandler);
 		pipe.addLast(new WebSocketServerProtocolHandler("/", null, false));
 
 		pipe.addLast(new WebSocketServerCompressionHandler());
 
 		pipe.addLast(binaryCodec);
 
-		pipe.addLast(loginV2Handler);
-		pipe.addLast(heartbeatV2Handler);
+		pipe.addLast(loginHandler);
+		pipe.addLast(heartbeatHandler);
 
 		pipe.addLast(timeV2Handler);
 	}
