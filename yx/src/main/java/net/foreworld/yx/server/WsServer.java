@@ -1,9 +1,22 @@
 package net.foreworld.yx.server;
 
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+
+import net.foreworld.util.Server;
+import net.foreworld.yx.initializer.WsInitializer;
+import net.foreworld.yx.util.ChannelUtil;
+import net.foreworld.yx.util.Constants;
+import net.foreworld.yx.util.RedisUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,17 +25,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import net.foreworld.util.Server;
-import net.foreworld.yx.initializer.WsInitializer;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.Constants;
-import net.foreworld.yx.util.RedisUtil;
 import redis.clients.jedis.Jedis;
 
 /**
@@ -59,6 +61,9 @@ public class WsServer extends Server {
 	@Value("${server.id}")
 	private String server_id;
 
+	@Value("${server.host}")
+	private String server_host;
+
 	@Value("${queue.front.start}")
 	private String queue_front_start;
 
@@ -71,7 +76,8 @@ public class WsServer extends Server {
 	@Resource(name = "jmsMessagingTemplate")
 	private JmsMessagingTemplate jmsMessagingTemplate;
 
-	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(WsServer.class);
 
 	private ChannelFuture f;
 	private EventLoopGroup bossGroup, workerGroup;
@@ -145,14 +151,8 @@ public class WsServer extends Server {
 		if (null == j)
 			return;
 
-		Object o = j.evalsha(sha_server_close, s, b);
+		j.evalsha(sha_server_close, s, b);
 		j.close();
-
-		String str = o.toString();
-
-		if (!Constants.OK.equals(str)) {
-			logger.error("front stop");
-		}
 	}
 
 	private void afterStart() {
@@ -165,6 +165,7 @@ public class WsServer extends Server {
 
 		List<String> b = new ArrayList<String>();
 		b.add(String.valueOf(System.currentTimeMillis()));
+		b.add(server_host);
 
 		Jedis j = RedisUtil.getDefault().getJedis();
 
@@ -174,9 +175,7 @@ public class WsServer extends Server {
 		Object o = j.evalsha(sha_server_open, s, b);
 		j.close();
 
-		String str = o.toString();
-
-		return Constants.OK.equals(str);
+		return Constants.OK.equals(o.toString());
 	}
 
 }
