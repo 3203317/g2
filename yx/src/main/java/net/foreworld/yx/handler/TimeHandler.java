@@ -30,7 +30,7 @@ import net.foreworld.yx.util.Constants;
 @PropertySource("classpath:activemq.properties")
 @Component
 @Sharable
-public class TimeV2Handler extends SimpleChannelInboundHandler<ProtocolModel> {
+public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 	@Resource(name = "jmsMessagingTemplate")
 	private JmsMessagingTemplate jmsMessagingTemplate;
@@ -41,7 +41,7 @@ public class TimeV2Handler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Value("${allow.queue}")
 	private String allow_queue;
 
-	private static final Logger logger = LoggerFactory.getLogger(TimeV2Handler.class);
+	private static final Logger logger = LoggerFactory.getLogger(TimeHandler.class);
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {

@@ -23,7 +23,7 @@ import net.foreworld.yx.handler.ExceptionHandler;
 import net.foreworld.yx.handler.HeartbeatHandler;
 import net.foreworld.yx.handler.LoginHandler;
 import net.foreworld.yx.handler.ProtocolSafeHandler;
-import net.foreworld.yx.handler.TimeV2Handler;
+import net.foreworld.yx.handler.TimeHandler;
 import net.foreworld.yx.handler.TimeoutHandler;
 
 /**
@@ -64,8 +64,8 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "loginHandler")
 	private LoginHandler loginHandler;
 
-	@Resource(name = "timeV2Handler")
-	private TimeV2Handler timeV2Handler;
+	@Resource(name = "timeHandler")
+	private TimeHandler timeHandler;
 
 	@Override
 	protected void initChannel(NioSocketChannel ch) throws Exception {
@@ -93,7 +93,7 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 		pipe.addLast(loginHandler);
 		pipe.addLast(heartbeatHandler);
 
-		pipe.addLast(timeV2Handler);
+		pipe.addLast(timeHandler);
 	}
 
 }

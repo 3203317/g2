@@ -58,16 +58,16 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, byt
 		_bf.readBytes(_bytes);
 		String _text = new String(_bytes, Charsets.UTF_8);
 
-		JsonArray ja = null;
+		JsonArray _ja = null;
 
 		try {
-			ja = new JsonParser().parse(_text).getAsJsonArray();
+			_ja = new JsonParser().parse(_text).getAsJsonArray();
 		} catch (Exception ex) {
 			logout(ctx);
 			return;
 		}
 
-		if (null == ja || 6 != ja.size()) {
+		if (null == _ja || 3 > _ja.size() || 6 < _ja.size()) {
 			logout(ctx);
 			return;
 		}
@@ -75,20 +75,26 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, byt
 		ProtocolModel model = new ProtocolModel();
 
 		try {
-			model.setSignature(ja.get(0).getAsString());
-			model.setMethod(ja.get(1).getAsInt());
-			model.setTimestamp(ja.get(2).getAsLong());
+			model.setSignature(_ja.get(0).getAsString());
+			model.setMethod(_ja.get(1).getAsInt());
+			model.setTimestamp(_ja.get(2).getAsLong());
 
-			JsonElement _je_3 = ja.get(3);
+			JsonElement _je_3 = _ja.get(3);
 
 			if (!_je_3.isJsonNull()) {
 				model.setData(_je_3.getAsString());
 			}
 
-			JsonElement _je_4 = ja.get(4);
+			JsonElement _je_4 = _ja.get(4);
 
 			if (!_je_4.isJsonNull()) {
 				model.setSeqId(_je_4.getAsInt());
+			}
+
+			JsonElement _je_5 = _ja.get(5);
+
+			if (!_je_5.isJsonNull()) {
+				model.setBackendId(_je_5.getAsString());
 			}
 
 		} catch (Exception ex) {
@@ -100,7 +106,6 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, byt
 	}
 
 	private void logout(ChannelHandlerContext ctx) {
-
 		ChannelFuture future = ctx.close();
 
 		future.addListener(new ChannelFutureListener() {

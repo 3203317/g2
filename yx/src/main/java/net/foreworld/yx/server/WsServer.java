@@ -1,22 +1,9 @@
 package net.foreworld.yx.server;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
-
-import net.foreworld.util.Server;
-import net.foreworld.yx.initializer.WsInitializer;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.Constants;
-import net.foreworld.yx.util.RedisUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +12,17 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import net.foreworld.util.Server;
+import net.foreworld.yx.initializer.WsInitializer;
+import net.foreworld.yx.util.ChannelUtil;
+import net.foreworld.yx.util.Constants;
+import net.foreworld.yx.util.RedisUtil;
 import redis.clients.jedis.Jedis;
 
 /**
@@ -76,8 +74,7 @@ public class WsServer extends Server {
 	@Resource(name = "jmsMessagingTemplate")
 	private JmsMessagingTemplate jmsMessagingTemplate;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(WsServer.class);
+	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
 
 	private ChannelFuture f;
 	private EventLoopGroup bossGroup, workerGroup;
@@ -109,7 +106,6 @@ public class WsServer extends Server {
 			f = b.bind().sync();
 			if (f.isSuccess()) {
 				logger.info("ws start {}", port);
-				afterStart();
 			}
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage(), e);
@@ -153,9 +149,6 @@ public class WsServer extends Server {
 
 		j.evalsha(sha_server_close, s, b);
 		j.close();
-	}
-
-	private void afterStart() {
 	}
 
 	private boolean beforeStart() {
