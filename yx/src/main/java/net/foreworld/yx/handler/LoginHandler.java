@@ -1,10 +1,23 @@
 package net.foreworld.yx.handler;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+
+import net.foreworld.util.StringUtil;
+import net.foreworld.yx.model.ProtocolModel;
+import net.foreworld.yx.util.ChannelUtil;
+import net.foreworld.yx.util.Constants;
+import net.foreworld.yx.util.RedisUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,22 +26,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import redis.clients.jedis.Jedis;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import net.foreworld.util.StringUtil;
-import net.foreworld.yx.model.ProtocolModel;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.Constants;
-import net.foreworld.yx.util.RedisUtil;
-import redis.clients.jedis.Jedis;
 
 /**
  *
@@ -64,13 +66,20 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Resource(name = "unRegChannelHandler")
 	private UnRegChannelHandler unRegChannelHandler;
 
-	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(LoginHandler.class);
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, final ProtocolModel msg) throws Exception {
-		logger.info("{}:{}:{}", msg.getMethod(), msg.getSeqId(), msg.getTimestamp());
+	protected void channelRead0(ChannelHandlerContext ctx,
+			final ProtocolModel msg) throws Exception {
+		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
 		String jsonStr = StringUtil.isJSON(msg.getData());
+
+		if (null == jsonStr) {
+			logout(ctx);
+			return;
+		}
 
 		if (null != jsonStr) {
 
@@ -91,33 +100,16 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 					ctx.pipeline().replace(this, "unReg", unRegChannelHandler);
 
 					ChannelUtil.getDefault().putChannel(channel_id, channel);
-					jmsMessagingTemplate.convertAndSend(queue_channel_open, server_id + "::" + channel_id);
-					logger.info("channel amq open: {}:{}", server_id, channel_id);
+					jmsMessagingTemplate.convertAndSend(queue_channel_open,
+							server_id + "::" + channel_id);
+					logger.info("channel amq open: {}:{}", server_id,
+							channel_id);
 
 					ctx.flush();
 					return;
 				}
 			}
-
 		}
-
-		ChannelFuture future = ctx.close();
-
-		future.addListener(new ChannelFutureListener() {
-
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				SocketAddress addr = ctx.channel().remoteAddress();
-
-				if (future.isSuccess()) {
-					logger.info("ctx close: {}", addr);
-					return;
-				}
-
-				logger.info("ctx close failure: {}", addr);
-				ctx.close();
-			}
-		});
 	}
 
 	/**
@@ -163,9 +155,34 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		String[] text = str.split("::");
 
-		jmsMessagingTemplate.convertAndSend(queue_front_force + "." + text[0], text[1]);
+		jmsMessagingTemplate.convertAndSend(queue_front_force + "." + text[0],
+				text[1]);
 
 		return true;
 	}
 
+	/**
+	 *
+	 * @param ctx
+	 */
+	private void logout(ChannelHandlerContext ctx) {
+		ChannelFuture future = ctx.close();
+
+		future.addListener(new ChannelFutureListener() {
+
+			@Override
+			public void operationComplete(ChannelFuture future)
+					throws Exception {
+				SocketAddress addr = ctx.channel().remoteAddress();
+
+				if (future.isSuccess()) {
+					logger.info("ctx close: {}", addr);
+					return;
+				}
+
+				logger.info("ctx close failure: {}", addr);
+				ctx.close();
+			}
+		});
+	}
 }
