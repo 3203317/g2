@@ -1,11 +1,5 @@
 package net.foreworld.yx.util;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
@@ -13,14 +7,15 @@ import io.netty.channel.group.ChannelMatcher;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  *
  * @author huangxin
  *
  */
 public final class ChannelUtil {
-
-	private static final Logger logger = LoggerFactory.getLogger(ChannelUtil.class);
 
 	// 定义一个静态私有变量
 	// 不初始化

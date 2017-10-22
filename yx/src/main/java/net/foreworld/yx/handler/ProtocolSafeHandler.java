@@ -1,11 +1,5 @@
 package net.foreworld.yx.handler;
 
-import java.net.SocketAddress;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -18,6 +12,12 @@ import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 
+import java.net.SocketAddress;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 /**
  *
  * @author huangxin
@@ -27,17 +27,21 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 @Sharable
 public class ProtocolSafeHandler extends ChannelInboundHandlerAdapter {
 
-	private static final Logger logger = LoggerFactory.getLogger(ProtocolSafeHandler.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ProtocolSafeHandler.class);
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
 		if (msg instanceof PingWebSocketFrame) {
-			ctx.channel().write(new PongWebSocketFrame(((WebSocketFrame) msg).content().retain()));
+			ctx.channel().write(
+					new PongWebSocketFrame(((WebSocketFrame) msg).content()
+							.retain()));
 			return;
 		}
 
-		if (msg instanceof BinaryWebSocketFrame || msg instanceof FullHttpRequest
+		if (msg instanceof BinaryWebSocketFrame
+				|| msg instanceof FullHttpRequest
 				|| msg instanceof CloseWebSocketFrame) {
 			ctx.fireChannelRead(msg);
 			return;
@@ -45,12 +49,17 @@ public class ProtocolSafeHandler extends ChannelInboundHandlerAdapter {
 
 		logger.error("protocol error: {}", msg);
 
+		logout(ctx);
+	}
+
+	private void logout(ChannelHandlerContext ctx) {
 		ChannelFuture future = ctx.close();
 
 		future.addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
+			public void operationComplete(ChannelFuture future)
+					throws Exception {
 				SocketAddress addr = ctx.channel().remoteAddress();
 
 				if (future.isSuccess()) {
