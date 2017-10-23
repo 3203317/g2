@@ -45,7 +45,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
-		logger.info("{}:{}:{}", msg.getMethod(), msg.getSeqId(), msg.getTimestamp());
+		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
 		String destName = msg.getMethod().toString();
 
@@ -55,19 +55,25 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 			destName += '.' + sb;
 		}
 
-		if (-1 < allow_queue.indexOf("," + destName + ",")) {
-
-			msg.setServerId(server_id);
-			msg.setChannelId(ctx.channel().id().asLongText());
-
-			Gson gson = new Gson();
-
-			jmsMessagingTemplate.convertAndSend(Constants.PLUGIN + destName, gson.toJson(msg));
-			ctx.flush();
-
+		if (0 > allow_queue.indexOf("," + destName + ",")) {
+			logout(ctx);
 			return;
 		}
 
+		msg.setServerId(server_id);
+		msg.setChannelId(ctx.channel().id().asLongText());
+
+		Gson gson = new Gson();
+
+		jmsMessagingTemplate.convertAndSend(Constants.PLUGIN + destName, gson.toJson(msg));
+		ctx.flush();
+	}
+
+	/**
+	 * 
+	 * @param ctx
+	 */
+	private void logout(ChannelHandlerContext ctx) {
 		ChannelFuture future = ctx.close();
 
 		future.addListener(new ChannelFutureListener() {
