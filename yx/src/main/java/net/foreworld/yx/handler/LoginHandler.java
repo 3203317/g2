@@ -70,40 +70,40 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	protected void channelRead0(ChannelHandlerContext ctx, final ProtocolModel msg) throws Exception {
 		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
-		String jsonStr = StringUtil.isJSON(msg.getData());
+		JsonObject _jo = null;
 
-		if (null == jsonStr) {
+		try {
+			_jo = new JsonParser().parse(msg.getData()).getAsJsonObject();
+		} catch (Exception ex) {
 			logout(ctx);
 			return;
 		}
 
-		if (null != jsonStr) {
+		JsonElement _joo = _jo.get("code");
 
-			JsonObject jo = new JsonParser().parse(jsonStr).getAsJsonObject();
-
-			JsonElement joo = jo.get("code");
-
-			if (null != joo) {
-
-				String code = joo.getAsString();
-
-				final Channel channel = ctx.channel();
-
-				final String channel_id = channel.id().asLongText();
-
-				if (verify(code, channel_id)) {
-
-					ctx.pipeline().replace(this, "unReg", unRegChannelHandler);
-
-					ChannelUtil.getDefault().putChannel(channel_id, channel);
-					jmsMessagingTemplate.convertAndSend(queue_channel_open, server_id + "::" + channel_id);
-					logger.info("channel amq open: {}:{}", server_id, channel_id);
-
-					ctx.flush();
-					return;
-				}
-			}
+		if (null == _joo) {
+			logout(ctx);
+			return;
 		}
+
+		String code = _joo.getAsString();
+
+		final Channel channel = ctx.channel();
+
+		final String channel_id = channel.id().asLongText();
+
+		if (!verify(code, channel_id)) {
+			logout(ctx);
+			return;
+		}
+
+		ctx.pipeline().replace(this, "unReg", unRegChannelHandler);
+
+		ChannelUtil.getDefault().putChannel(channel_id, channel);
+		jmsMessagingTemplate.convertAndSend(queue_channel_open, server_id + "::" + channel_id);
+		logger.info("channel amq open: {}:{}", server_id, channel_id);
+
+		ctx.flush();
 	}
 
 	/**
@@ -176,5 +176,14 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		jmsMessagingTemplate.convertAndSend(queue_front_force + "." + text[0], text[1]);
 
 		return true;
+	}
+
+	public static void main(String[] args) {
+		String str = "{code:1234}";
+
+		JsonObject jo = new JsonParser().parse(str).getAsJsonObject();
+
+		System.err.println(jo);
+		System.err.println(jo.get("code").getAsString());
 	}
 }
