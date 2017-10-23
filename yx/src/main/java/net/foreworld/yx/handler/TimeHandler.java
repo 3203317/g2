@@ -65,7 +65,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		Gson gson = new Gson();
 
-		jmsMessagingTemplate.convertAndSend(Constants.PLUGIN + destName, gson.toJson(msg));
+		jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + destName, gson.toJson(msg));
 		ctx.flush();
 	}
 
