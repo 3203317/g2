@@ -38,6 +38,10 @@ public class TimeoutHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
+		logout(ctx);
+	}
+
+	private void logout(ChannelHandlerContext ctx) {
 		ChannelFuture future = ctx.close();
 
 		future.addListener(new ChannelFutureListener() {
@@ -56,5 +60,4 @@ public class TimeoutHandler extends ChannelInboundHandlerAdapter {
 			}
 		});
 	}
-
 }
