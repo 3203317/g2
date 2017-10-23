@@ -31,12 +31,12 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 		InetSocketAddress addr = (InetSocketAddress) ctx.channel().remoteAddress();
 		String incoming = addr.getAddress().getHostAddress();
 
-		if (check(incoming)) {
-			ctx.pipeline().remove(this);
+		if (!check(incoming)) {
+			logout(ctx);
 			return;
 		}
 
-		logout(ctx);
+		ctx.pipeline().remove(this);
 	}
 
 	/**

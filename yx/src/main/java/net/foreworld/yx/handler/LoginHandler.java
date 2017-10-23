@@ -132,13 +132,12 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param code
 	 * @param channel_id
 	 * @return
 	 */
 	private boolean verify(String code, String channel_id) {
-
 		code = StringUtil.isEmpty(code);
 
 		if (null == code) {

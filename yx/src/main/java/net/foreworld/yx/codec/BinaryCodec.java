@@ -31,7 +31,7 @@ import net.foreworld.yx.model.ProtocolModel;
  */
 @Component
 @Sharable
-public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, byte[]> {
+public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, String> {
 
 	@Value("${msg.body.max:512}")
 	private int msg_body_max;
@@ -39,8 +39,8 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, byt
 	private static final Logger logger = LoggerFactory.getLogger(BinaryCodec.class);
 
 	@Override
-	protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
-		out.add(new BinaryWebSocketFrame(wrappedBuffer(msg)));
+	protected void encode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
+		out.add(new BinaryWebSocketFrame(wrappedBuffer(msg.getBytes())));
 	}
 
 	@Override

@@ -93,4 +93,8 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		});
 	}
 
+	public static void main(String[] args) {
+		System.err.println(",111,222,".indexOf(",333,"));
+	}
+
 }
