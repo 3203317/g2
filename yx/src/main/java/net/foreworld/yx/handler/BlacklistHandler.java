@@ -2,9 +2,13 @@ package net.foreworld.yx.handler;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.ChannelFuture;
@@ -12,6 +16,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import net.foreworld.yx.util.Constants;
 import net.foreworld.yx.util.RedisUtil;
 import redis.clients.jedis.Jedis;
 
@@ -20,9 +25,16 @@ import redis.clients.jedis.Jedis;
  * @author huangxin
  *
  */
+@PropertySource("classpath:redis.properties")
 @Component
 @Sharable
 public class BlacklistHandler extends ChannelInboundHandlerAdapter {
+
+	@Value("${db.redis.database:1}")
+	private String db_redis_database;
+
+	@Value("${sha.blacklist}")
+	private String sha_blacklist;
 
 	private static final Logger logger = LoggerFactory.getLogger(BlacklistHandler.class);
 
@@ -45,13 +57,21 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 	 * @return
 	 */
 	private boolean check(String ip) {
+		List<String> s = new ArrayList<String>();
+		s.add(db_redis_database);
+		s.add(ip);
+
+		List<String> b = new ArrayList<String>();
+
 		Jedis j = RedisUtil.getDefault().getJedis();
 
 		if (null == j)
 			return false;
 
+		Object o = j.evalsha(sha_blacklist, s, b);
 		j.close();
-		return true;
+
+		return Constants.OK.equals(o.toString());
 	}
 
 	/**
