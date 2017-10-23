@@ -10,9 +10,9 @@ local front_host = ARGV[2];
 
 redis.call('SELECT', db);
 
-redis.call('HMSET', 'prop::front::'.. front_id, 'open_time',  open_time,
-                                                'host',       front_host,
-                                                'user_count', 0);
+redis.call('HMSET', 'prop::front::'.. front_id, 'open_time',    open_time,
+                                                'host',         front_host,
+                                                'online_count', 0);
 
 redis.call('SADD', 'set::front', front_id);
 
