@@ -15,8 +15,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.foreworld.yx.util.ChannelUtil;
 
 /**
- *
- * @author huangxin
+ * 
+ * @author huangxin <3203317@qq.com>
  *
  */
 @PropertySource("classpath:activemq.properties")
@@ -43,7 +43,8 @@ public class UnRegChannelHandler extends ChannelInboundHandlerAdapter {
 
 	private void removeChannel(String channel_id) {
 		ChannelUtil.getDefault().removeChannel(channel_id);
+
 		jmsMessagingTemplate.convertAndSend(queue_channel_close, server_id + "::" + channel_id);
-		logger.info("channel amq close: {}:{}", server_id, channel_id);
+		logger.info("channel close: {}:{}", server_id, channel_id);
 	}
 }

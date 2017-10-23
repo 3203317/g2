@@ -52,8 +52,8 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Value("${queue.channel.open}")
 	private String queue_channel_open;
 
-	@Value("${queue.front.force}")
-	private String queue_front_force;
+	@Value("${queue.channel.close.force}")
+	private String queue_channel_close_force;
 
 	@Value("${db.redis.database}")
 	private String db_redis_database;
@@ -100,8 +100,9 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		ctx.pipeline().replace(this, "unReg", unRegChannelHandler);
 
 		ChannelUtil.getDefault().putChannel(channel_id, channel);
+
 		jmsMessagingTemplate.convertAndSend(queue_channel_open, server_id + "::" + channel_id);
-		logger.info("channel amq open: {}:{}", server_id, channel_id);
+		logger.info("channel open: {}:{}", server_id, channel_id);
 
 		ctx.flush();
 	}
@@ -173,7 +174,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		String[] text = str.split("::");
 
-		jmsMessagingTemplate.convertAndSend(queue_front_force + "." + text[0], text[1]);
+		jmsMessagingTemplate.convertAndSend(queue_channel_close_force + "." + text[0], text[1]);
 
 		return true;
 	}
