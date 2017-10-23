@@ -2,17 +2,14 @@ package net.foreworld.yx.amq;
 
 import java.net.SocketAddress;
 
-import javax.annotation.Resource;
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 
 import org.apache.commons.codec.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonArray;
@@ -33,15 +30,6 @@ import net.foreworld.yx.util.Constants;
 @Component
 public class Consumer {
 
-	@Value("${server.id}")
-	private String server_id;
-
-	@Value("${queue.channel.close}")
-	private String queue_channel_close;
-
-	@Resource(name = "jmsMessagingTemplate")
-	private JmsMessagingTemplate jmsMessagingTemplate;
-
 	private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
 
 	@JmsListener(destination = "${queue.back.send}.${server.id}")
@@ -53,11 +41,11 @@ public class Consumer {
 
 			String s = new String(data, Charsets.UTF_8);
 
-			JsonArray ja = new JsonParser().parse(s).getAsJsonArray();
+			JsonArray _ja = new JsonParser().parse(s).getAsJsonArray();
 
-			String _receiver = ja.get(0).getAsString();
+			String _receiver = _ja.get(0).getAsString();
 
-			String _data = ja.get(1).getAsString();
+			String _data = _ja.get(1).getAsString();
 
 			// 开始发送
 
@@ -68,13 +56,8 @@ public class Consumer {
 
 			Channel c = ChannelUtil.getDefault().getChannel(_receiver);
 
-			if (null != c) {
+			if (null != c)
 				c.writeAndFlush(_data);
-				return;
-			}
-
-			jmsMessagingTemplate.convertAndSend(queue_channel_close, server_id + "::" + _receiver);
-			logger.info("channel amq close: {}:{}", server_id, _receiver);
 
 		} catch (JMSException e) {
 			logger.error("", e);
@@ -92,10 +75,8 @@ public class Consumer {
 
 			Channel c = ChannelUtil.getDefault().getChannel(s);
 
-			if (null == c)
-				return;
-
-			logout(c);
+			if (null != c)
+				logout(c);
 
 		} catch (JMSException e) {
 			logger.error("", e);
