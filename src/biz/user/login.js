@@ -39,7 +39,8 @@ _.mixin(_.str.exports());
   function p1(logInfo, user){
     if(!user)             return Promise.reject('用户不存在');
     if(1 !== user.status) return Promise.reject('禁用状态');
-    if(md5.hex(logInfo.user_pass) !== user.user_pass)
+
+    if(md5.hex(user.salt + logInfo.user_pass) !== user.user_pass)
       return Promise.reject('用户名或密码输入错误');
 
     return Promise.resolve(user);

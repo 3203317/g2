@@ -32,7 +32,8 @@ _.mixin(_.str.exports());
     return Promise.resolve({
       id:        '123456',
       user_name: 'hx',
-      user_pass: 'e10adc3949ba59abbe56e057f20f883e',
+      user_pass: '3d443c78c61c1361a4189432e8fd2c1e',
+      salt:      '901014',
       status:    1,
     });
   };
