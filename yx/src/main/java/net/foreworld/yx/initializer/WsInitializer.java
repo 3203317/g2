@@ -91,7 +91,7 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 		pipe.addLast(binaryCodec);
 
 		pipe.addLast(loginHandler);
-		pipe.addLast(heartbeatHandler);
+		// pipe.addLast(heartbeatHandler);
 
 		pipe.addLast(timeHandler);
 	}

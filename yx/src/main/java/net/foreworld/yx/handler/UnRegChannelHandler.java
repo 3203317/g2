@@ -24,8 +24,6 @@ import net.foreworld.yx.util.ChannelUtil;
 @Sharable
 public class UnRegChannelHandler extends ChannelInboundHandlerAdapter {
 
-	private static final Logger logger = LoggerFactory.getLogger(UnRegChannelHandler.class);
-
 	@Value("${server.id}")
 	private String server_id;
 
@@ -34,6 +32,8 @@ public class UnRegChannelHandler extends ChannelInboundHandlerAdapter {
 
 	@Resource(name = "jmsMessagingTemplate")
 	private JmsMessagingTemplate jmsMessagingTemplate;
+
+	private static final Logger logger = LoggerFactory.getLogger(UnRegChannelHandler.class);
 
 	@Override
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
