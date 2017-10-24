@@ -14,6 +14,8 @@ const uuid  = require('node-uuid');
 const md5   = require('speedt-utils').md5;
 const utils = require('speedt-utils').utils;
 
+const redis  = require('g2.db').redis;
+
 const biz = require('g2.biz');
 
 const _  = require('underscore');
@@ -55,7 +57,7 @@ _.mixin(_.str.exports());
     });
   };
 
-  var sha1    = '5d6ae7790c5575549e66e87a5bc40cb3c8e182dc';
+  var sha1    = 'ea395f32573f71954e35e0d2b2d084eeea960c3b';
   var numkeys = 4;
   var seconds = 5;
 

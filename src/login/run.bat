@@ -1,1 +1,1 @@
-set HTML_CDN=http://foreworld.net/& del logs\*.log /q & npm install & npm install ..\lib & npm install ..\biz &  node app.js
+set HTML_CDN=http://foreworld.net/& del logs\*.log /q & npm install & npm install ..\lib & npm install ..\db & npm install ..\biz &  node app.js

@@ -142,13 +142,13 @@ $(function(){
 
       // first
       var p = [
-        102,
+        '',
         1,
         Math.random() * 1000,
-        new Date().getTime(),
         JSON.stringify({
           code: location.search.match(/code=([\w\-]+)/) ? RegExp.$1 : ''
         }),
+        null,
         null,
       ];
 

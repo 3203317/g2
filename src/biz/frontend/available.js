@@ -14,11 +14,7 @@ const uuid  = require('node-uuid');
 const md5   = require('speedt-utils').md5;
 const utils = require('speedt-utils').utils;
 
-const mysql  = require('emag.db').mysql;
-const redis  = require('emag.db').redis;
-
-const cfg = require('emag.cfg');
-const biz = require('emag.biz');
+const biz = require('g2.biz');
 
 const _  = require('underscore');
 _.str    = require('underscore.string');
