@@ -1,11 +1,20 @@
 package net.foreworld.yx.codec;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 
 import java.net.SocketAddress;
 import java.util.List;
 
-import org.apache.commons.codec.Charsets;
+import net.foreworld.yx.model.ProtocolModel;
+
+import org.apache.commons.codec.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,15 +24,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageCodec;
-import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import net.foreworld.yx.model.ProtocolModel;
-
 /**
  *
  * @author huangxin <3203317@qq.com>
@@ -31,32 +31,36 @@ import net.foreworld.yx.model.ProtocolModel;
  */
 @Component
 @Sharable
-public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, String> {
+public class BinaryCodec extends
+		MessageToMessageCodec<BinaryWebSocketFrame, String> {
 
 	@Value("${msg.body.max:512}")
 	private int msg_body_max;
 
-	private static final Logger logger = LoggerFactory.getLogger(BinaryCodec.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(BinaryCodec.class);
 
 	@Override
-	protected void encode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
+	protected void encode(ChannelHandlerContext ctx, String msg,
+			List<Object> out) throws Exception {
 		out.add(new BinaryWebSocketFrame(wrappedBuffer(msg.getBytes())));
 	}
 
 	@Override
-	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {
+	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg,
+			List<Object> out) throws Exception {
 		ByteBuf _bf = msg.content();
 
-		int _size = _bf.capacity();
+		int _len = _bf.capacity();
 
-		if (msg_body_max < _size) {
+		if (msg_body_max < _len) {
 			logout(ctx);
 			return;
 		}
 
-		byte[] _bytes = new byte[_size];
+		byte[] _bytes = new byte[_len];
 		_bf.readBytes(_bytes);
-		String _text = new String(_bytes, Charsets.UTF_8);
+		String _text = new String(_bytes, CharEncoding.UTF_8);
 
 		JsonArray _ja = null;
 
@@ -67,7 +71,9 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 			return;
 		}
 
-		if (null == _ja || 6 != _ja.size()) {
+		int _size = _ja.size();
+
+		if (null == _ja || 3 > _size || 6 < _size) {
 			logout(ctx);
 			return;
 		}
@@ -79,22 +85,28 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 			model.setMethod(_ja.get(1).getAsInt());
 			model.setTimestamp(_ja.get(2).getAsLong());
 
-			JsonElement _je_3 = _ja.get(3);
+			if (3 < _size) {
+				JsonElement _je_3 = _ja.get(3);
 
-			if (!_je_3.isJsonNull()) {
-				model.setData(_je_3.getAsString());
+				if (!_je_3.isJsonNull()) {
+					model.setData(_je_3.getAsString());
+				}
 			}
 
-			JsonElement _je_4 = _ja.get(4);
+			if (4 < _size) {
+				JsonElement _je_4 = _ja.get(4);
 
-			if (!_je_4.isJsonNull()) {
-				model.setSeqId(_je_4.getAsInt());
+				if (!_je_4.isJsonNull()) {
+					model.setSeqId(_je_4.getAsInt());
+				}
 			}
 
-			JsonElement _je_5 = _ja.get(5);
+			if (5 < _size) {
+				JsonElement _je_5 = _ja.get(5);
 
-			if (!_je_5.isJsonNull()) {
-				model.setBackendId(_je_5.getAsString());
+				if (!_je_5.isJsonNull()) {
+					model.setBackendId(_je_5.getAsString());
+				}
 			}
 
 		} catch (Exception ex) {
@@ -111,7 +123,8 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 		future.addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
+			public void operationComplete(ChannelFuture future)
+					throws Exception {
 				SocketAddress addr = ctx.channel().remoteAddress();
 
 				if (future.isSuccess()) {
