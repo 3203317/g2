@@ -1,6 +1,7 @@
 package net.foreworld.yx.handler;
 
 import java.net.SocketAddress;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ public class ProtocolSafeHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
 		if (msg instanceof PingWebSocketFrame) {
+			logger.info("client ping: {}", new Date());
 			ctx.channel().write(new PongWebSocketFrame(((WebSocketFrame) msg).content().retain()));
 			return;
 		}
