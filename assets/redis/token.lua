@@ -1,4 +1,4 @@
-
+-- huangxin <3203317@qq.com>
 
 local db         = KEYS[1];
 local server_id  = KEYS[2];
@@ -15,6 +15,12 @@ redis.call('SELECT', db);
 local user_id = redis.call('HGET', code, 'id');
 
 if (false == user_id) then return 'invalid_code'; end;
+
+local front_id = redis.call('HGET', code, 'front_id');
+
+if (server_id ~= front_id) then return 'invalid_code'; end;
+
+-- 
 
 local client_id = redis.call('HGET', code, 'client_id');
 
@@ -40,8 +46,7 @@ redis.call('RENAME', code, 'prop::user::'.. user_id);
 
 -- 给当前用户（会话）增加新属性
 
-redis.call('HMSET',  'prop::user::'.. user_id, 'server_id',  server_id,
-                                               'channel_id', channel_id,
+redis.call('HMSET',  'prop::user::'.. user_id, 'channel_id', channel_id,
                                                'open_time',  open_time);
 redis.call('EXPIRE', 'prop::user::'.. user_id, seconds);
 
