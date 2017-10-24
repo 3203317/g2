@@ -47,6 +47,33 @@ _.mixin(_.str.exports());
   }
 
   function loginToken(user){
-    return Promise.resolve([utils.replaceAll(uuid.v4(), '-', ''), '68']);
+    return new Promise((resolve, reject) => {
+      biz.frontend.available()
+      .then(authorize.bind(null, user))
+      .then(token => resolve(token))
+      .catch(reject);
+    });
   };
+
+  var sha1    = '5d6ae7790c5575549e66e87a5bc40cb3c8e182dc';
+  var numkeys = 4;
+  var seconds = 5;
+
+  function authorize(user, server_id){
+    return new Promise((resolve, reject) => {
+      redis.evalsha(
+        sha1,
+        numkeys,
+        conf.redis.database,                   /* */
+        conf.app.id,                           /* */
+        user.id,                               /* */
+        utils.replaceAll(uuid.v4(), '-', ''),  /* */
+        seconds,
+        server_id,
+        (err, code) => {
+          if(err) return reject(err);
+          resolve([code, server_id]);
+        });
+    });
+  }
 })();

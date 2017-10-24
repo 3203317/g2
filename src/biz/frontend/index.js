@@ -5,5 +5,4 @@
  */
 'use strict';
 
-exports.user     = require('./user/');
-exports.frontend = require('./frontend/');
+exports.available = require('./available');
