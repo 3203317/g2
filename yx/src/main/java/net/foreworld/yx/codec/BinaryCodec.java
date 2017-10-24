@@ -67,7 +67,7 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 			return;
 		}
 
-		if (null == _ja || 3 > _ja.size() || 6 < _ja.size()) {
+		if (null == _ja || 6 != _ja.size()) {
 			logout(ctx);
 			return;
 		}
