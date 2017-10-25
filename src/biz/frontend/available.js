@@ -24,7 +24,7 @@ _.mixin(_.str.exports());
  *
  * @return
  */
-exports = module.exports = function(){
+exports = module.exports = function(id){
   return new Promise((resolve, reject) => {
     resolve(['68', '127.0.0.1']);
   });
