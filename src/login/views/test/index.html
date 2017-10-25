@@ -11,6 +11,7 @@
     <input type='button' id='wrongTest' value='wrongTest'><p></p>
     <input type='button' id='myInfo' value='myInfo'><p></p>
     <input type='button' id='re_entry' value='重连'><p></p>
+    <input type='button' id='heartbeat' value='心跳'><p></p>
 
     发送给：
     <input type='text' id='user_id' placeholder='ALL,GROUP,PERSON,...' />
@@ -40,6 +41,18 @@ $(function(){
 
   $('#wrongTest').click(function(){
     socket.send(JSON.stringify({}));
+  });
+
+  $('#heartbeat').click(function(){
+    var p = [
+      '',
+      666,
+      Math.random() * 1000,
+    ];
+
+    stringToArrayBuffer(JSON.stringify(p), 'UTF-8', function(abc){
+      socket.send(abc);
+    });
   });
 
   $('#myInfo').click(function(){
@@ -74,17 +87,14 @@ $(function(){
 
     socket.onopen = function(evt){
 
-       socket.binaryType = "arraybuffer"; 
-
-
+      socket.binaryType = "arraybuffer"; 
 
       socket.onmessage = function(evt){
         var data = evt.data;
-        console.log(data)
+        // console.log(data)
         var type = typeof data;
 
         // console.log(type)
-
 
         if(data instanceof Blob){
           console.log('Blob')
@@ -94,9 +104,7 @@ $(function(){
           console.log(data.byteLength)
 
           arrayBufferToString(data, 'UTF-8', console.log.bind(console)); //"ABC"
-
         }
-
 
         return;
 
@@ -148,14 +156,11 @@ $(function(){
         JSON.stringify({
           code: location.search.match(/code=([\w\-]+)/) ? RegExp.$1 : ''
         }),
-        null,
-        null,
       ];
 
       stringToArrayBuffer(JSON.stringify(p), 'UTF-8', function(abc){
         socket.send(abc);
       });
-
     };
 
     socket.onclose = function(evt){
@@ -189,10 +194,6 @@ function arrayBufferToString( buffer, encoding, callback ) {
     reader.readAsText(blob, encoding);
 }
 
-
-
-
-
 // function arrayBufferToString( buffer, encoding, callback ) {
 //     var blob = new Blob([buffer],{type:'text/plain'});
 //     var reader = new FileReader();
@@ -206,7 +207,6 @@ function stringToArrayBuffer( string, encoding, callback ) {
     reader.onload = function(evt){callback(evt.target.result);};
     reader.readAsArrayBuffer(blob);
 }
-
 
 // //example:
 // var buf = new Uint8Array([65,66,67]);

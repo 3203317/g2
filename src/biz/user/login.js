@@ -61,7 +61,7 @@ _.mixin(_.str.exports());
   var numkeys = 4;
   var seconds = 5;
 
-  function authorize(user, front_info){
+  function authorize(user, frontInfo){
     return new Promise((resolve, reject) => {
       redis.evalsha(
         sha1,
@@ -71,10 +71,10 @@ _.mixin(_.str.exports());
         user.id,                               /* */
         utils.replaceAll(uuid.v4(), '-', ''),  /* */
         seconds,
-        front_info[1],
+        frontInfo[0],
         (err, code) => {
           if(err) return reject(err);
-          resolve([code, front_info[0], front_info[1]]);
+          resolve([code, frontInfo]);
         });
     });
   }
