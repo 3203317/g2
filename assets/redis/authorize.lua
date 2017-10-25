@@ -10,10 +10,12 @@ redis.call('SELECT', db);
 
 local  _key = client_id ..'::'.. user_id;
 
-local code = redis.call('GET', _key);
-if   (code) then return code; end;
+local _code = redis.call('GET', _key);
+if   (_code) then return _code; end;
 
-      code     = KEYS[4];
+-- 
+
+local code     = KEYS[4];
 local seconds  = ARGV[1];
 local front_id = ARGV[2];
 
