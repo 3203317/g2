@@ -16,15 +16,11 @@ local _user_id = redis.call('HGET', code, 'id');
 
 if (false == _user_id) then return 'invalid_code'; end;
 
-local _front_id = redis.call('HGET', code, 'front_id');
-
-if (front_id ~= _front_id) then return 'invalid_code'; end;
+if (front_id ~= redis.call('HGET', code, 'front_id')) then return 'invalid_code'; end;
 
 -- 
 
-local client_id = redis.call('HGET', code, 'client_id');
-
-redis.call('DEL', client_id ..'::'.. _user_id);
+redis.call('DEL', redis.call('HGET', code, 'client_id') ..'::'.. _user_id);
 
 -- 
 
@@ -47,7 +43,7 @@ redis.call('RENAME', code, 'prop::user::'.. _user_id);
 -- 给当前用户（会话）增加新属性
 
 redis.call('HMSET',  'prop::user::'.. _user_id, 'channel_id', channel_id,
-                                               'open_time',  open_time);
+                                                'open_time',  open_time);
 redis.call('EXPIRE', 'prop::user::'.. _user_id, seconds);
 
 redis.call('SET',    front_id ..'::'.. channel_id, _user_id);
