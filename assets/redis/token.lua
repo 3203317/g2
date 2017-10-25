@@ -5,9 +5,6 @@ local front_id   = KEYS[2];
 local channel_id = KEYS[3];
 local code       = KEYS[4];
 
-local seconds    = ARGV[1];
-local open_time  = ARGV[2];
-
 redis.call('SELECT', db);
 
 -- 
@@ -42,8 +39,10 @@ redis.call('RENAME', code, 'prop::user::'.. _user_id);
 
 -- 给当前用户（会话）增加新属性
 
+local seconds = ARGV[1];
+
 redis.call('HMSET',  'prop::user::'.. _user_id, 'channel_id', channel_id,
-                                                'open_time',  open_time);
+                                                'open_time',  ARGV[2]);
 redis.call('EXPIRE', 'prop::user::'.. _user_id, seconds);
 
 redis.call('SET',    front_id ..'::'.. channel_id, _user_id);
