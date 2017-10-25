@@ -17,7 +17,6 @@ if   (_code) then return _code; end;
 
 local code     = KEYS[4];
 local seconds  = ARGV[1];
-local front_id = ARGV[2];
 
 redis.call('SET',    _key, code);
 redis.call('EXPIRE', _key, seconds);
@@ -33,7 +32,7 @@ redis.call('EXPIRE', _key, seconds);
 --]]
 redis.call('HMSET', code, 'client_id', client_id,
                           'id',        user_id,
-                          'front_id',  front_id);
+                          'front_id',  ARGV[2]);
 
 redis.call('EXPIRE', code, seconds);
 
