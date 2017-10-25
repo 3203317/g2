@@ -57,7 +57,7 @@ _.mixin(_.str.exports());
     });
   };
 
-  var sha1    = 'ea395f32573f71954e35e0d2b2d084eeea960c3b';
+  var sha1    = 'cdb7efbcf82f489dddec1d38a8f59a22a6e151a5';
   var numkeys = 4;
   var seconds = 5;
 
