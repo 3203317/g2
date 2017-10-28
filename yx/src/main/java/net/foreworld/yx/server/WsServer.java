@@ -17,11 +17,11 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import net.foreworld.util.RedisUtil;
 import net.foreworld.util.Server;
 import net.foreworld.yx.initializer.WsInitializer;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
-import net.foreworld.yx.util.RedisUtil;
 import redis.clients.jedis.Jedis;
 
 /**

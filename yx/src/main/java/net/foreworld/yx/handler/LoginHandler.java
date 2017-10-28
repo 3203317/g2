@@ -23,11 +23,11 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import net.foreworld.util.RedisUtil;
 import net.foreworld.util.StringUtil;
 import net.foreworld.yx.model.ProtocolModel;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
-import net.foreworld.yx.util.RedisUtil;
 import redis.clients.jedis.Jedis;
 
 /**
