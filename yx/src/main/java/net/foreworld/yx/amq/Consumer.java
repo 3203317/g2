@@ -58,13 +58,8 @@ public class Consumer {
 
 			ChannelInfo ci = ChannelUtil.getDefault().getChannel(_receiver);
 
-			if (null == ci)
-				return;
-
-			Channel c = ci.getChannel();
-
-			if (null != c)
-				c.writeAndFlush(_data);
+			if (null != ci)
+				ci.getChannel().writeAndFlush(_data);
 
 		} catch (JMSException e) {
 			logger.error("", e);
@@ -77,13 +72,8 @@ public class Consumer {
 
 			ChannelInfo ci = ChannelUtil.getDefault().getChannel(msg.getText());
 
-			if (null == ci)
-				return;
-
-			Channel c = ci.getChannel();
-
-			if (null != c)
-				logout(c);
+			if (null != ci)
+				logout(ci.getChannel());
 
 		} catch (JMSException e) {
 			logger.error("", e);

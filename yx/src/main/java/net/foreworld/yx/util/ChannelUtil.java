@@ -63,17 +63,21 @@ public final class ChannelUtil {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param id
-	 * @param channel
+	 * @param channelInfo
 	 */
-	public void putChannel(String id, ChannelInfo channel) {
-		all.add(channel.getChannel());
-		map.put(id, channel);
+	public void putChannel(String id, ChannelInfo channelInfo) {
+		all.add(channelInfo.getChannel());
+		map.put(id, channelInfo);
 	}
 
 	public void removeChannel(String id) {
-		all.remove(this.getChannel(id));
+		ChannelInfo ci = this.getChannel(id);
+
+		if (null != ci)
+			all.remove(ci.getChannel());
+
 		map.remove(id);
 	}
 
