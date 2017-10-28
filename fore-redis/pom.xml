@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.foreworld</groupId>
-	<artifactId>yx</artifactId>
+	<artifactId>fore-util-redis</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0.1</version>
-	<name>yx</name>
+	<name>foreworld :: util :: redis</name>
 	<url>http://www.foreworld.net/</url>
 
 	<properties>
