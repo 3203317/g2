@@ -25,6 +25,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.foreworld.util.RedisUtil;
 import net.foreworld.util.StringUtil;
+import net.foreworld.yx.model.ChannelInfo;
 import net.foreworld.yx.model.ProtocolModel;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
@@ -99,7 +100,10 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		ctx.pipeline().replace(this, "unReg", unRegChannelHandler);
 
-		ChannelUtil.getDefault().putChannel(channel_id, channel);
+		ChannelInfo ci = new ChannelInfo();
+		ci.setChannel(channel);
+
+		ChannelUtil.getDefault().putChannel(channel_id, ci);
 
 		jmsMessagingTemplate.convertAndSend(queue_channel_open, server_id + "::" + channel_id);
 		logger.info("channel open: {}:{}", server_id, channel_id);

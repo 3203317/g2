@@ -1,17 +1,10 @@
 package net.foreworld.yx.amq;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-
 import java.net.SocketAddress;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.Constants;
 
 import org.apache.commons.codec.Charsets;
 import org.slf4j.Logger;
@@ -23,6 +16,13 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import net.foreworld.yx.model.ChannelInfo;
+import net.foreworld.yx.util.ChannelUtil;
+import net.foreworld.yx.util.Constants;
+
 /**
  *
  * @author huangxin <3203317@qq.com>
@@ -32,8 +32,7 @@ import com.google.gson.JsonParser;
 @Component
 public class Consumer {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(Consumer.class);
+	private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
 
 	@JmsListener(destination = "${queue.back.send}.${server.id}")
 	public void back_send(BytesMessage msg) {
@@ -57,7 +56,12 @@ public class Consumer {
 				return;
 			}
 
-			Channel c = ChannelUtil.getDefault().getChannel(_receiver);
+			ChannelInfo ci = ChannelUtil.getDefault().getChannel(_receiver);
+
+			if (null == ci)
+				return;
+
+			Channel c = ci.getChannel();
 
 			if (null != c)
 				c.writeAndFlush(_data);
@@ -70,7 +74,13 @@ public class Consumer {
 	@JmsListener(destination = "${queue.channel.close.force}.${server.id}")
 	public void channel_close_force(TextMessage msg) {
 		try {
-			Channel c = ChannelUtil.getDefault().getChannel(msg.getText());
+
+			ChannelInfo ci = ChannelUtil.getDefault().getChannel(msg.getText());
+
+			if (null == ci)
+				return;
+
+			Channel c = ci.getChannel();
 
 			if (null != c)
 				logout(c);
@@ -90,8 +100,7 @@ public class Consumer {
 		future.addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
+			public void operationComplete(ChannelFuture future) throws Exception {
 				SocketAddress addr = channel.remoteAddress();
 
 				if (future.isSuccess()) {

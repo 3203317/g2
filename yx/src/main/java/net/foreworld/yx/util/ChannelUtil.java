@@ -3,12 +3,12 @@ package net.foreworld.yx.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.ChannelMatcher;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import net.foreworld.yx.model.ChannelInfo;
 
 /**
  *
@@ -26,11 +26,11 @@ public final class ChannelUtil {
 	private static volatile ChannelUtil instance;
 
 	private ChannelUtil() {
-		map = new ConcurrentHashMap<String, Channel>();
+		map = new ConcurrentHashMap<String, ChannelInfo>();
 		all = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 	}
 
-	private Map<String, Channel> map;
+	private Map<String, ChannelInfo> map;
 
 	private ChannelGroup all;
 
@@ -67,8 +67,8 @@ public final class ChannelUtil {
 	 * @param id
 	 * @param channel
 	 */
-	public void putChannel(String id, Channel channel) {
-		all.add(channel);
+	public void putChannel(String id, ChannelInfo channel) {
+		all.add(channel.getChannel());
 		map.put(id, channel);
 	}
 
@@ -77,11 +77,11 @@ public final class ChannelUtil {
 		map.remove(id);
 	}
 
-	public Channel getChannel(String id) {
+	public ChannelInfo getChannel(String id) {
 		return map.get(id);
 	}
 
-	public Map<String, Channel> getChannels() {
+	public Map<String, ChannelInfo> getChannels() {
 		return map;
 	}
 
