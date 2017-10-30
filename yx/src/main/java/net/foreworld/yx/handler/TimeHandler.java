@@ -45,7 +45,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
-		logger.info("{}:{}", msg.getMethod(), msg.getSignature());
+		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
 		String destName = msg.getMethod().toString();
 

@@ -70,7 +70,7 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 
 		int _size = _ja.size();
 
-		if (null == _ja || 2 > _size || 5 < _size) {
+		if (null == _ja || 3 > _size || 6 < _size) {
 			logout(ctx);
 			return;
 		}
@@ -80,20 +80,13 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 		try {
 			model.setSignature(_ja.get(0).getAsString());
 			model.setMethod(_ja.get(1).getAsInt());
-
-			if (2 < _size) {
-				JsonElement _je_2 = _ja.get(2);
-
-				if (!_je_2.isJsonNull()) {
-					model.setData(_je_2.getAsString());
-				}
-			}
+			model.setTimestamp(_ja.get(2).getAsLong());
 
 			if (3 < _size) {
 				JsonElement _je_3 = _ja.get(3);
 
 				if (!_je_3.isJsonNull()) {
-					model.setSeqId(_je_3.getAsInt());
+					model.setData(_je_3.getAsString());
 				}
 			}
 
@@ -101,7 +94,15 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 				JsonElement _je_4 = _ja.get(4);
 
 				if (!_je_4.isJsonNull()) {
-					model.setBackendId(_je_4.getAsString());
+					model.setSeqId(_je_4.getAsInt());
+				}
+			}
+
+			if (5 < _size) {
+				JsonElement _je_5 = _ja.get(5);
+
+				if (!_je_5.isJsonNull()) {
+					model.setBackendId(_je_5.getAsString());
 				}
 			}
 

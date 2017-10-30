@@ -13,7 +13,7 @@ public class ProtocolModel implements Serializable {
 
 	private Integer method;
 	private Integer seqId;
-	// private Long timestamp;
+	private Long timestamp;
 	private String data;
 
 	private String signature;
@@ -22,6 +22,14 @@ public class ProtocolModel implements Serializable {
 	private String channelId;
 
 	private String backendId;
+
+	public Long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
+	}
 
 	public String getBackendId() {
 		return backendId;

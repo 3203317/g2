@@ -69,7 +69,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, final ProtocolModel msg) throws Exception {
-		logger.info("{}:{}", msg.getMethod(), msg.getSignature());
+		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
 		JsonObject _jo = null;
 
