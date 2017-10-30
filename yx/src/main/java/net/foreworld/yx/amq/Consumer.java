@@ -58,9 +58,26 @@ public class Consumer {
 
 			ChannelInfo ci = ChannelUtil.getDefault().getChannel(_receiver);
 
-			if (null != ci)
-				ci.getChannel().writeAndFlush(_data);
+			if (null == ci)
+				return;
 
+			Channel c = ci.getChannel();
+
+			if (null == c)
+				return;
+
+			if (!c.isWritable()) {
+				c.writeAndFlush(_data).sync();
+				return;
+			}
+
+			c.writeAndFlush(_data).addListener(f -> {
+				if (!f.isSuccess()) {
+				}
+			});
+
+		} catch (InterruptedException e) {
+			logger.error("", e);
 		} catch (JMSException e) {
 			logger.error("", e);
 		}
