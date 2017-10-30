@@ -89,8 +89,15 @@ public class Consumer {
 
 			ChannelInfo ci = ChannelUtil.getDefault().getChannel(msg.getText());
 
-			if (null != ci)
-				logout(ci.getChannel());
+			if (null == ci)
+				return;
+
+			Channel c = ci.getChannel();
+
+			if (null == c)
+				return;
+
+			logout(c);
 
 		} catch (JMSException e) {
 			logger.error("", e);
