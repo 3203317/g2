@@ -56,15 +56,17 @@ $(function(){
   });
 
   $('#myInfo').click(function(){
+    // first
     var p = [
-      102,
+      '',
       1001,
       Math.random() * 1000,
-      new Date().getTime(),
-      null,
-      null,
+      'myInfo'
     ];
-    socket.send(JSON.stringify(p));
+
+    stringToArrayBuffer(JSON.stringify(p), 'UTF-8', function(abc){
+      socket.send(abc);
+    });
   });
 
   $('#send').click(function(){
