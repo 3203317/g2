@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 
 import java.net.SocketAddress;
@@ -20,26 +21,18 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Sharable
-public class ProtocolSafeHandler extends ChannelInboundHandlerAdapter {
+public class HttpSafeHandler extends ChannelInboundHandlerAdapter {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(ProtocolSafeHandler.class);
+			.getLogger(HttpSafeHandler.class);
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		// if (msg instanceof PingWebSocketFrame) {
-		// logger.info("client ping: {}", new Date());
-		// ctx.channel().write(new PongWebSocketFrame(((WebSocketFrame)
-		// msg).content().retain()));
-		// return;
-		// }
-
-		if (msg instanceof BinaryWebSocketFrame) {
+		if (msg instanceof BinaryWebSocketFrame
+				|| msg instanceof FullHttpRequest) {
 			ctx.fireChannelRead(msg);
 			return;
 		}
-
-		// logger.error("protocol error: {}", msg);
 
 		logout(ctx);
 	}

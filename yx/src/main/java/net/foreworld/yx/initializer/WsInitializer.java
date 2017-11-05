@@ -19,8 +19,8 @@ import net.foreworld.yx.codec.BinaryCodec;
 import net.foreworld.yx.handler.BlacklistHandler;
 import net.foreworld.yx.handler.ExceptionHandler;
 import net.foreworld.yx.handler.HeartbeatHandler;
+import net.foreworld.yx.handler.HttpSafeHandler;
 import net.foreworld.yx.handler.LoginHandler;
-import net.foreworld.yx.handler.ProtocolSafeHandler;
 import net.foreworld.yx.handler.TimeHandler;
 import net.foreworld.yx.handler.TimeoutHandler;
 
@@ -56,8 +56,8 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "exceptionHandler")
 	private ExceptionHandler exceptionHandler;
 
-	@Resource(name = "protocolSafeHandler")
-	private ProtocolSafeHandler protocolSafeHandler;
+	// @Resource(name = "protocolSafeHandler")
+	// private ProtocolSafeHandler protocolSafeHandler;
 
 	@Resource(name = "heartbeatHandler")
 	private HeartbeatHandler heartbeatHandler;
@@ -67,6 +67,9 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 
 	@Resource(name = "timeHandler")
 	private TimeHandler timeHandler;
+
+	@Resource(name = "httpSafeHandler")
+	private HttpSafeHandler httpSafeHandler;
 
 	@Override
 	protected void initChannel(NioSocketChannel ch) throws Exception {
@@ -85,7 +88,8 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 		pipe.addLast(new HttpObjectAggregator(1024 * 64));
 		pipe.addLast(new ChunkedWriteHandler());
 		pipe.addLast(new HttpContentCompressor());
-		pipe.addLast(protocolSafeHandler);
+		pipe.addLast("httpSafe", httpSafeHandler);
+		// pipe.addLast(protocolSafeHandler);
 		pipe.addLast(new WebSocketServerProtocolHandler("/", null, false));
 
 		pipe.addLast(new WebSocketServerCompressionHandler());
