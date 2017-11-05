@@ -9,6 +9,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -105,10 +106,11 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 			return;
 		}
 
-		ctx.pipeline().replace("httpSafe", "protocolSafe", protocolSafeHandler);
 		ctx.pipeline().replace(this, "unReg", unRegChannelHandler);
+		ctx.pipeline().replace("httpSafe", "protocolSafe", protocolSafeHandler);
 
 		ChannelInfo ci = new ChannelInfo();
+		ci.setLoginTime(new Date());
 		ci.setChannel(channel);
 
 		ChannelUtil.getDefault().putChannel(channel_id, ci);
