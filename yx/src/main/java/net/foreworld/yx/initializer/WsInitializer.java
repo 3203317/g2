@@ -1,5 +1,12 @@
 package net.foreworld.yx.initializer;
 
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -10,22 +17,15 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-
 import net.foreworld.yx.codec.BinaryCodec;
 import net.foreworld.yx.handler.BlacklistHandler;
 import net.foreworld.yx.handler.ExceptionHandler;
 import net.foreworld.yx.handler.HeartbeatHandler;
 import net.foreworld.yx.handler.HttpSafeHandler;
 import net.foreworld.yx.handler.LoginHandler;
+import net.foreworld.yx.handler.LoginTimeoutHandler;
 import net.foreworld.yx.handler.TimeHandler;
 import net.foreworld.yx.handler.TimeoutHandler;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  *
@@ -71,6 +71,9 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "httpSafeHandler")
 	private HttpSafeHandler httpSafeHandler;
 
+	@Resource(name = "loginTimeoutHandler")
+	private LoginTimeoutHandler loginTimeoutHandler;
+
 	@Override
 	protected void initChannel(NioSocketChannel ch) throws Exception {
 		ChannelPipeline pipe = ch.pipeline();
@@ -80,8 +83,9 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 		pipe.addLast(exceptionHandler);
 		pipe.addLast(blacklistHandler);
 
-		pipe.addLast(new IdleStateHandler(readerIdleTime, writerIdleTime,
-				allIdleTime, TimeUnit.SECONDS));
+		pipe.addLast("loginTimeout", loginTimeoutHandler);
+
+		pipe.addLast("defaIdleState", new IdleStateHandler(3, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
 		pipe.addLast(timeoutHandler);
 
 		pipe.addLast(new HttpServerCodec());

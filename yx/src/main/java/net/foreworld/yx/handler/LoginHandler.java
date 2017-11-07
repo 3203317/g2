@@ -1,25 +1,12 @@
 package net.foreworld.yx.handler;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
-
-import net.foreworld.util.RedisUtil;
-import net.foreworld.util.StringUtil;
-import net.foreworld.yx.model.ChannelInfo;
-import net.foreworld.yx.model.ProtocolModel;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +15,25 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import redis.clients.jedis.Jedis;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleStateHandler;
+import net.foreworld.util.RedisUtil;
+import net.foreworld.util.StringUtil;
+import net.foreworld.yx.model.ChannelInfo;
+import net.foreworld.yx.model.ProtocolModel;
+import net.foreworld.yx.util.ChannelUtil;
+import net.foreworld.yx.util.Constants;
+import redis.clients.jedis.Jedis;
 
 /**
  *
@@ -71,12 +72,16 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Resource(name = "protocolSafeHandler")
 	private ProtocolSafeHandler protocolSafeHandler;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(LoginHandler.class);
+	@Value("${server.idle.writerIdleTime:7}")
+	private int writerIdleTime;
+
+	@Value("${server.idle.allIdleTime:10}")
+	private int allIdleTime;
+
+	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx,
-			final ProtocolModel msg) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, final ProtocolModel msg) throws Exception {
 		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
 		JsonObject _jo = null;
@@ -106,8 +111,14 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 			return;
 		}
 
-		ctx.pipeline().replace(this, "unReg", unRegChannelHandler);
-		ctx.pipeline().replace("httpSafe", "protocolSafe", protocolSafeHandler);
+		ChannelPipeline pipe = ctx.pipeline();
+
+		pipe.remove("loginTimeout");
+
+		pipe.replace("defaIdleState", "newIdleState",
+				new IdleStateHandler(9, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
+		pipe.replace(this, "unReg", unRegChannelHandler);
+		pipe.replace("httpSafe", "protocolSafe", protocolSafeHandler);
 
 		ChannelInfo ci = new ChannelInfo();
 		ci.setLoginTime(new Date());
@@ -115,8 +126,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		ChannelUtil.getDefault().putChannel(channel_id, ci);
 
-		jmsMessagingTemplate.convertAndSend(queue_channel_open, server_id
-				+ "::" + channel_id);
+		jmsMessagingTemplate.convertAndSend(queue_channel_open, server_id + "::" + channel_id);
 		logger.info("channel open: {}:{}", server_id, channel_id);
 
 		ctx.flush();
@@ -132,8 +142,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		future.addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
+			public void operationComplete(ChannelFuture future) throws Exception {
 				SocketAddress addr = ctx.channel().remoteAddress();
 
 				if (future.isSuccess()) {
@@ -189,8 +198,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		String[] text = str.split("::");
 
-		jmsMessagingTemplate.convertAndSend(queue_channel_close_force + "."
-				+ text[0], text[1]);
+		jmsMessagingTemplate.convertAndSend(queue_channel_close_force + "." + text[0], text[1]);
 
 		return true;
 	}
