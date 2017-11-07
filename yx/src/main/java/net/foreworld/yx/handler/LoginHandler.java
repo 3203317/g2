@@ -72,6 +72,9 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Resource(name = "protocolSafeHandler")
 	private ProtocolSafeHandler protocolSafeHandler;
 
+	@Value("${server.idle.readerIdleTime:3}")
+	private int readerIdleTime;
+
 	@Value("${server.idle.writerIdleTime:7}")
 	private int writerIdleTime;
 
@@ -116,7 +119,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		pipe.remove("loginTimeout");
 
 		pipe.replace("defaIdleState", "newIdleState",
-				new IdleStateHandler(9, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
+				new IdleStateHandler(readerIdleTime, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
 		pipe.replace(this, "unReg", unRegChannelHandler);
 		pipe.replace("httpSafe", "protocolSafe", protocolSafeHandler);
 
