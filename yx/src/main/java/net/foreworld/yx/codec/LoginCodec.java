@@ -34,7 +34,7 @@ public class LoginCodec extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 
 		int _len = _bf.capacity();
 
-		if (1 > _len || 64 < _len) {
+		if (32 != _len) {
 			logout(ctx);
 			return;
 		}
