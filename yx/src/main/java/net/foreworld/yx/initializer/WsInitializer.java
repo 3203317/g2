@@ -17,7 +17,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import net.foreworld.yx.codec.BinaryCodec;
+import net.foreworld.yx.codec.LoginCodec;
 import net.foreworld.yx.handler.BlacklistHandler;
 import net.foreworld.yx.handler.ExceptionHandler;
 import net.foreworld.yx.handler.HeartbeatHandler;
@@ -44,8 +44,8 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Value("${server.idle.allIdleTime:10}")
 	private int allIdleTime;
 
-	@Resource(name = "binaryCodec")
-	private BinaryCodec binaryCodec;
+	@Resource(name = "loginCodec")
+	private LoginCodec loginCodec;
 
 	@Resource(name = "timeoutHandler")
 	private TimeoutHandler timeoutHandler;
@@ -98,7 +98,7 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 
 		pipe.addLast(new WebSocketServerCompressionHandler());
 
-		pipe.addLast(binaryCodec);
+		pipe.addLast("loginCodec", loginCodec);
 
 		pipe.addLast(loginHandler);
 		pipe.addLast(heartbeatHandler);

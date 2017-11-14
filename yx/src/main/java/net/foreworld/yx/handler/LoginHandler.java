@@ -29,6 +29,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import net.foreworld.util.RedisUtil;
 import net.foreworld.util.StringUtil;
+import net.foreworld.yx.codec.BinaryCodec;
 import net.foreworld.yx.model.ChannelInfo;
 import net.foreworld.yx.model.ProtocolModel;
 import net.foreworld.yx.util.ChannelUtil;
@@ -81,6 +82,9 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Value("${server.idle.allIdleTime:10}")
 	private int allIdleTime;
 
+	@Resource(name = "binaryCodec")
+	private BinaryCodec binaryCodec;
+
 	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 
 	@Override
@@ -117,6 +121,8 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		ChannelPipeline pipe = ctx.pipeline();
 
 		pipe.remove("loginTimeout");
+
+		pipe.replace("loginCodec", "binaryCodec", binaryCodec);
 
 		pipe.replace("defaIdleState", "newIdleState",
 				new IdleStateHandler(readerIdleTime, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
