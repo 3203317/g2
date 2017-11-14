@@ -15,7 +15,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -31,7 +30,6 @@ import net.foreworld.util.RedisUtil;
 import net.foreworld.util.StringUtil;
 import net.foreworld.yx.codec.BinaryCodec;
 import net.foreworld.yx.model.ChannelInfo;
-import net.foreworld.yx.model.ProtocolModel;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
 import redis.clients.jedis.Jedis;
@@ -44,7 +42,7 @@ import redis.clients.jedis.Jedis;
 @PropertySource("classpath:redis.properties")
 @Component
 @Sharable
-public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
+public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 	@Value("${sha.token}")
 	private String sha_token;
@@ -88,32 +86,32 @@ public class LoginHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, final ProtocolModel msg) throws Exception {
-		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
-
-		JsonObject _jo = null;
-
-		try {
-			_jo = new JsonParser().parse(msg.getData()).getAsJsonObject();
-		} catch (Exception ex) {
-			logout(ctx);
-			return;
-		}
-
-		JsonElement _joo = _jo.get("code");
-
-		if (null == _joo) {
-			logout(ctx);
-			return;
-		}
-
-		String code = _joo.getAsString();
+	protected void channelRead0(ChannelHandlerContext ctx, final String token) throws Exception {
+		// logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
+		//
+		// JsonObject _jo = null;
+		//
+		// try {
+		// _jo = new JsonParser().parse(msg.getData()).getAsJsonObject();
+		// } catch (Exception ex) {
+		// logout(ctx);
+		// return;
+		// }
+		//
+		// JsonElement _joo = _jo.get("code");
+		//
+		// if (null == _joo) {
+		// logout(ctx);
+		// return;
+		// }
+		//
+		// String code = _joo.getAsString();
 
 		final Channel channel = ctx.channel();
 
 		final String channel_id = channel.id().asLongText();
 
-		if (!verify(code, channel_id)) {
+		if (!verify(token, channel_id)) {
 			logout(ctx);
 			return;
 		}
