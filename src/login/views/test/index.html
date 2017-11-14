@@ -160,7 +160,7 @@ $(function(){
         }),
       ];
 
-      stringToArrayBuffer(JSON.stringify(p), 'UTF-8', function(abc){
+      stringToArrayBuffer((location.search.match(/code=([\w\-]+)/) ? RegExp.$1 : ''), 'UTF-8', function(abc){
         socket.send(abc);
       });
     };
