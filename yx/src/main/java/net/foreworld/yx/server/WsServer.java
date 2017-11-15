@@ -1,8 +1,5 @@
 package net.foreworld.yx.server;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -18,13 +15,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import net.foreworld.util.RedisUtil;
 import net.foreworld.util.Server;
 import net.foreworld.yx.client.ZkClient;
 import net.foreworld.yx.initializer.WsInitializer;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.Constants;
-import redis.clients.jedis.Jedis;
 
 /**
  *
@@ -104,7 +97,6 @@ public class WsServer extends Server {
 			f = b.bind().sync();
 			if (f.isSuccess()) {
 				logger.info("ws start {}", port);
-				afterStart();
 			}
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage(), e);
@@ -133,47 +125,50 @@ public class WsServer extends Server {
 	}
 
 	private void beforeShut() {
-		ChannelUtil.getDefault().close();
-
-		List<String> s = new ArrayList<String>();
-		s.add(db_redis_database);
-		s.add(server_id);
-
-		List<String> b = new ArrayList<String>();
-
-		Jedis j = RedisUtil.getDefault().getJedis();
-
-		if (null == j)
-			return;
-
-		j.evalsha(sha_server_close, s, b);
-		j.close();
-
 		zkClient.shutdown();
 	}
 
-	private void afterStart() {
-		zkClient.start();
-	}
+	// private void beforeShut() {
+	// ChannelUtil.getDefault().close();
+	//
+	// List<String> s = new ArrayList<String>();
+	// s.add(db_redis_database);
+	// s.add(server_id);
+	//
+	// List<String> b = new ArrayList<String>();
+	//
+	// Jedis j = RedisUtil.getDefault().getJedis();
+	//
+	// if (null == j)
+	// return;
+	//
+	// j.evalsha(sha_server_close, s, b);
+	// j.close();
+	// }
 
 	private boolean beforeStart() {
-		List<String> s = new ArrayList<String>();
-		s.add(db_redis_database);
-		s.add(server_id);
-
-		List<String> b = new ArrayList<String>();
-		b.add(String.valueOf(System.currentTimeMillis()));
-		b.add(server_host);
-
-		Jedis j = RedisUtil.getDefault().getJedis();
-
-		if (null == j)
-			return false;
-
-		Object o = j.evalsha(sha_server_open, s, b);
-		j.close();
-
-		return Constants.OK.equals(o.toString());
+		zkClient.start();
+		return true;
 	}
+
+	// private boolean beforeStart() {
+	// List<String> s = new ArrayList<String>();
+	// s.add(db_redis_database);
+	// s.add(server_id);
+	//
+	// List<String> b = new ArrayList<String>();
+	// b.add(String.valueOf(System.currentTimeMillis()));
+	// b.add(server_host);
+	//
+	// Jedis j = RedisUtil.getDefault().getJedis();
+	//
+	// if (null == j)
+	// return false;
+	//
+	// Object o = j.evalsha(sha_server_open, s, b);
+	// j.close();
+	//
+	// return Constants.OK.equals(o.toString());
+	// }
 
 }
