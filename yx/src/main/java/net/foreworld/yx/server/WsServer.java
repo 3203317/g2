@@ -20,6 +20,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import net.foreworld.util.RedisUtil;
 import net.foreworld.util.Server;
+import net.foreworld.yx.client.ZkClient;
 import net.foreworld.yx.initializer.WsInitializer;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
@@ -65,6 +66,9 @@ public class WsServer extends Server {
 	@Resource(name = "wsInitializer")
 	private WsInitializer wsInitializer;
 
+	@Resource(name = "zkClient")
+	private ZkClient zkClient;
+
 	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
 
 	private ChannelFuture f;
@@ -100,6 +104,7 @@ public class WsServer extends Server {
 			f = b.bind().sync();
 			if (f.isSuccess()) {
 				logger.info("ws start {}", port);
+				afterStart();
 			}
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage(), e);
@@ -143,6 +148,12 @@ public class WsServer extends Server {
 
 		j.evalsha(sha_server_close, s, b);
 		j.close();
+
+		zkClient.shutdown();
+	}
+
+	private void afterStart() {
+		zkClient.start();
 	}
 
 	private boolean beforeStart() {
