@@ -13,6 +13,8 @@ import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import net.foreworld.util.Client;
@@ -22,8 +24,15 @@ import net.foreworld.util.Client;
  * @author huangxin <3203317@qq.com>
  *
  */
+@PropertySource("classpath:zk.properties")
 @Component
 public class ZkClient extends Client implements Watcher {
+
+	@Value("${zk.host}")
+	private String zk_host;
+
+	@Value("${zk.sessionTimeout}")
+	private int zk_sessionTimeout;
 
 	private CountDownLatch countDownLatch;
 
@@ -39,13 +48,6 @@ public class ZkClient extends Client implements Watcher {
 			} catch (InterruptedException e) {
 				logger.error("", e);
 			}
-	}
-
-	public void connect(String host, int sessionTimeout) throws IOException, InterruptedException {
-		if (null == zk) {
-			zk = new ZooKeeper(host, sessionTimeout, this);
-			countDownLatch.await();
-		}
 	}
 
 	/**
@@ -64,7 +66,7 @@ public class ZkClient extends Client implements Watcher {
 
 	@Override
 	public void process(WatchedEvent event) {
-		logger.info("", event.getState());
+		logger.info("{}", event.getState());
 
 		if (event.getState() == KeeperState.SyncConnected) {
 			countDownLatch.countDown();
@@ -73,8 +75,18 @@ public class ZkClient extends Client implements Watcher {
 
 	@Override
 	public void start() {
+		if (null != zk)
+			return;
+
 		if (null == countDownLatch)
 			countDownLatch = new CountDownLatch(1);
+
+		try {
+			zk = new ZooKeeper(zk_host, zk_sessionTimeout, this);
+			countDownLatch.await();
+		} catch (IOException | InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

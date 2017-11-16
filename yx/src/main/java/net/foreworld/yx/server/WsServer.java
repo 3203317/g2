@@ -1,7 +1,5 @@
 package net.foreworld.yx.server;
 
-import java.io.IOException;
-
 import javax.annotation.Resource;
 
 import org.apache.zookeeper.CreateMode;
@@ -29,7 +27,6 @@ import net.foreworld.yx.initializer.WsInitializer;
  * @author huangxin <3203317@qq.com>
  *
  */
-@PropertySource("classpath:zk.properties")
 @PropertySource("classpath:activemq.properties")
 @PropertySource("classpath:redis.properties")
 @Component
@@ -67,12 +64,6 @@ public class WsServer extends Server {
 
 	@Resource(name = "zkClient")
 	private ZkClient zkClient;
-
-	@Value("${zk.host}")
-	private String zk_host;
-
-	@Value("${zk.sessionTimeout}")
-	private int zk_sessionTimeout;
 
 	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
 
@@ -162,14 +153,7 @@ public class WsServer extends Server {
 
 	private boolean beforeStart() {
 		zkClient.start();
-
-		try {
-			zkClient.connect(zk_host, zk_sessionTimeout);
-			return true;
-		} catch (IOException | InterruptedException e) {
-			logger.error("", e);
-			return false;
-		}
+		return true;
 	}
 
 	private void beforeShut() {
