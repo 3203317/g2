@@ -1,7 +1,12 @@
 package net.foreworld.yx.server;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.ZooDefs.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +29,7 @@ import net.foreworld.yx.initializer.WsInitializer;
  * @author huangxin <3203317@qq.com>
  *
  */
+@PropertySource("classpath:zk.properties")
 @PropertySource("classpath:activemq.properties")
 @PropertySource("classpath:redis.properties")
 @Component
@@ -62,6 +68,12 @@ public class WsServer extends Server {
 	@Resource(name = "zkClient")
 	private ZkClient zkClient;
 
+	@Value("${zk.host}")
+	private String zk_host;
+
+	@Value("${zk.sessionTimeout}")
+	private int zk_sessionTimeout;
+
 	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
 
 	private ChannelFuture f;
@@ -69,7 +81,6 @@ public class WsServer extends Server {
 
 	@Override
 	public void start() {
-
 		if (!beforeStart())
 			return;
 
@@ -97,9 +108,12 @@ public class WsServer extends Server {
 			f = b.bind().sync();
 			if (f.isSuccess()) {
 				logger.info("ws start {}", port);
+				afterStart();
 			}
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage(), e);
+		} catch (KeeperException e) {
+			logger.error("", e);
 		} finally {
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
@@ -124,10 +138,6 @@ public class WsServer extends Server {
 		}
 	}
 
-	private void beforeShut() {
-		zkClient.shutdown();
-	}
-
 	// private void beforeShut() {
 	// ChannelUtil.getDefault().close();
 	//
@@ -146,9 +156,25 @@ public class WsServer extends Server {
 	// j.close();
 	// }
 
+	private void afterStart() throws KeeperException, InterruptedException {
+		zkClient.create("/front/" + server_id, server_host.getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+	}
+
 	private boolean beforeStart() {
 		zkClient.start();
-		return true;
+
+		try {
+			zkClient.connect(zk_host, zk_sessionTimeout);
+			return true;
+		} catch (IOException | InterruptedException e) {
+			logger.error("", e);
+			return false;
+		}
+	}
+
+	private void beforeShut() {
+		if (null != zkClient)
+			zkClient.shutdown();
 	}
 
 	// private boolean beforeStart() {
