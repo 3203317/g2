@@ -1,6 +1,18 @@
 package net.foreworld.yx.server;
 
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+
 import javax.annotation.Resource;
+
+import net.foreworld.util.Server;
+import net.foreworld.yx.client.ZkClient;
+import net.foreworld.yx.initializer.WsInitializer;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -10,17 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import net.foreworld.util.Server;
-import net.foreworld.yx.client.ZkClient;
-import net.foreworld.yx.initializer.WsInitializer;
 
 /**
  *
@@ -53,6 +54,9 @@ public class WsServer extends Server {
 	@Value("${server.so.backlog:1024}")
 	private int so_backlog;
 
+	@Value("${server.name}")
+	private String server_name;
+
 	@Value("${server.id}")
 	private String server_id;
 
@@ -65,7 +69,8 @@ public class WsServer extends Server {
 	@Resource(name = "zkClient")
 	private ZkClient zkClient;
 
-	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(WsServer.class);
 
 	private ChannelFuture f;
 	private EventLoopGroup bossGroup, workerGroup;
@@ -150,7 +155,8 @@ public class WsServer extends Server {
 	// }
 
 	private void afterStart() throws KeeperException, InterruptedException {
-		zkClient.getZk().create("/front/" + server_id, server_host.getBytes(), Ids.OPEN_ACL_UNSAFE,
+		zkClient.getZk().create("/" + server_name + "/front/" + server_id,
+				server_host.getBytes(), Ids.OPEN_ACL_UNSAFE,
 				CreateMode.EPHEMERAL);
 	}
 
