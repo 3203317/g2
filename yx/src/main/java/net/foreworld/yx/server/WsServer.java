@@ -77,8 +77,7 @@ public class WsServer extends Server {
 
 	@Override
 	public void start() {
-		if (!beforeStart())
-			return;
+		beforeStart();
 
 		bossGroup = new NioEventLoopGroup(bossThread);
 		workerGroup = new NioEventLoopGroup(workerThread);
@@ -160,9 +159,8 @@ public class WsServer extends Server {
 				CreateMode.EPHEMERAL);
 	}
 
-	private boolean beforeStart() {
+	private void beforeStart() {
 		zkClient.start();
-		return true;
 	}
 
 	private void beforeShut() {

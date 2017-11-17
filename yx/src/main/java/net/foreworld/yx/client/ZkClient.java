@@ -3,6 +3,8 @@ package net.foreworld.yx.client;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
+import net.foreworld.util.Client;
+
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
@@ -13,10 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
-import net.foreworld.util.Client;
-
 /**
- * 
+ *
  * @author huangxin <3203317@qq.com>
  *
  */
@@ -38,7 +38,8 @@ public class ZkClient extends Client implements Watcher {
 		return zk;
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger(ZkClient.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ZkClient.class);
 
 	@Override
 	public void shutdown() {
