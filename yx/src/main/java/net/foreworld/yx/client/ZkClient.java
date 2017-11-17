@@ -1,16 +1,12 @@
 package net.foreworld.yx.client;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooKeeper;
-import org.apache.zookeeper.data.ACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +34,10 @@ public class ZkClient extends Client implements Watcher {
 
 	private ZooKeeper zk;
 
+	public ZooKeeper getZk() {
+		return zk;
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(ZkClient.class);
 
 	@Override
@@ -48,20 +48,6 @@ public class ZkClient extends Client implements Watcher {
 			} catch (InterruptedException e) {
 				logger.error("", e);
 			}
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @param data
-	 * @param acl
-	 * @param createMode
-	 * @throws KeeperException
-	 * @throws InterruptedException
-	 */
-	public void create(String path, byte data[], List<ACL> acl, CreateMode createMode)
-			throws KeeperException, InterruptedException {
-		zk.create(path, data, acl, createMode);
 	}
 
 	@Override

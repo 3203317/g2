@@ -150,7 +150,8 @@ public class WsServer extends Server {
 	// }
 
 	private void afterStart() throws KeeperException, InterruptedException {
-		zkClient.create("/front/" + server_id, server_host.getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+		zkClient.getZk().create("/front/" + server_id, server_host.getBytes(), Ids.OPEN_ACL_UNSAFE,
+				CreateMode.EPHEMERAL);
 	}
 
 	private boolean beforeStart() {
