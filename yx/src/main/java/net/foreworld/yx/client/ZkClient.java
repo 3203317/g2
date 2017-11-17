@@ -5,9 +5,12 @@ import java.util.concurrent.CountDownLatch;
 
 import net.foreworld.util.Client;
 
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
+import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +37,14 @@ public class ZkClient extends Client implements Watcher {
 
 	private ZooKeeper zk;
 
-	public ZooKeeper getZk() {
-		return zk;
-	}
+	@Value("${zk.rootPath}")
+	private String zk_rootPath;
+
+	@Value("${server.id}")
+	private String server_id;
+
+	@Value("${server.host}")
+	private String server_host;
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(ZkClient.class);
@@ -58,6 +66,11 @@ public class ZkClient extends Client implements Watcher {
 		if (event.getState() == KeeperState.SyncConnected) {
 			countDownLatch.countDown();
 		}
+	}
+
+	public void register() throws KeeperException, InterruptedException {
+		zk.create(zk_rootPath + "/front/" + server_id, server_host.getBytes(),
+				Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 	}
 
 	@Override

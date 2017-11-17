@@ -14,9 +14,7 @@ import net.foreworld.util.Server;
 import net.foreworld.yx.client.ZkClient;
 import net.foreworld.yx.initializer.WsInitializer;
 
-import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.ZooDefs.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,9 +51,6 @@ public class WsServer extends Server {
 
 	@Value("${server.so.backlog:1024}")
 	private int so_backlog;
-
-	@Value("${server.name}")
-	private String server_name;
 
 	@Value("${server.id}")
 	private String server_id;
@@ -154,9 +149,7 @@ public class WsServer extends Server {
 	// }
 
 	private void afterStart() throws KeeperException, InterruptedException {
-		zkClient.getZk().create("/" + server_name + "/front/" + server_id,
-				server_host.getBytes(), Ids.OPEN_ACL_UNSAFE,
-				CreateMode.EPHEMERAL);
+		zkClient.register();
 	}
 
 	private void beforeStart() {
