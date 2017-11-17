@@ -29,13 +29,9 @@ public class RunWsServer implements CommandLineRunner {
 		SpringApplication.run(RunWsServer.class, args);
 	}
 
-	public void run(String... strings) throws Exception {
-		try {
-			wsServer.start();
-			Thread.currentThread().join();
-		} catch (Exception e) {
-			logger.error("", e);
-		}
+	public void run(String... strings) throws InterruptedException {
+		wsServer.start();
+		Thread.currentThread().join();
 	}
 
 }

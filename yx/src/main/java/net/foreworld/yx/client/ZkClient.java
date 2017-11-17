@@ -58,14 +58,9 @@ public class ZkClient extends Client implements Watcher {
 	 * @param createMode
 	 * @throws KeeperException
 	 * @throws InterruptedException
-	 * @throws NullPointerException
 	 */
 	public void create(String path, byte data[], List<ACL> acl, CreateMode createMode)
-			throws KeeperException, InterruptedException, NullPointerException {
-
-		if (null == zk)
-			throw new NullPointerException();
-
+			throws KeeperException, InterruptedException {
 		zk.create(path, data, acl, createMode);
 	}
 

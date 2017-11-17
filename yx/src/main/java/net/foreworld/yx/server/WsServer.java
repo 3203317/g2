@@ -103,8 +103,10 @@ public class WsServer extends Server {
 			}
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage(), e);
+			System.exit(1);
 		} catch (KeeperException e) {
 			logger.error("", e);
+			System.exit(1);
 		} finally {
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
@@ -147,7 +149,7 @@ public class WsServer extends Server {
 	// j.close();
 	// }
 
-	private void afterStart() throws NullPointerException, KeeperException, InterruptedException {
+	private void afterStart() throws KeeperException, InterruptedException {
 		zkClient.create("/front/" + server_id, server_host.getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 	}
 
