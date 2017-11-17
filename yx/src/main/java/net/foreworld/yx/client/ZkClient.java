@@ -1,6 +1,7 @@
 package net.foreworld.yx.client;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import net.foreworld.util.Client;
@@ -12,6 +13,7 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,12 +35,12 @@ public class ZkClient extends Client implements Watcher {
 	@Value("${zk.sessionTimeout}")
 	private int zk_sessionTimeout;
 
+	@Value("${zk.rootPath}")
+	private String zk_rootPath;
+
 	private CountDownLatch countDownLatch;
 
 	private ZooKeeper zk;
-
-	@Value("${zk.rootPath}")
-	private String zk_rootPath;
 
 	@Value("${server.id}")
 	private String server_id;
@@ -68,9 +70,41 @@ public class ZkClient extends Client implements Watcher {
 		}
 	}
 
+	/**
+	 * 向front下注册节点
+	 *
+	 * @throws KeeperException
+	 * @throws InterruptedException
+	 */
 	public void register() throws KeeperException, InterruptedException {
+		registerServer();
+		listenerService();
+	}
+
+	private void registerServer() throws KeeperException, InterruptedException {
 		zk.create(zk_rootPath + "/front/" + server_id, server_host.getBytes(),
 				Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+	}
+
+	private Watcher watcher;
+
+	private Stat stat;
+
+	/**
+	 * 监听服务注入
+	 *
+	 * @throws KeeperException
+	 * @throws InterruptedException
+	 */
+	private void listenerService() throws KeeperException, InterruptedException {
+		List<String> list = zk.getChildren(zk_rootPath + "/service", watcher,
+				stat);
+
+		System.err.println(stat.getNumChildren());
+
+		for (int i = 0; i < list.size(); i++) {
+			System.err.println(list.get(i));
+		}
 	}
 
 	@Override
@@ -86,6 +120,21 @@ public class ZkClient extends Client implements Watcher {
 			countDownLatch.await();
 		} catch (IOException | InterruptedException e) {
 			throw new RuntimeException(e);
+		} finally {
+			if (null == stat)
+				stat = new Stat();
+
+			if (null == watcher)
+				watcher = new Watcher() {
+					@Override
+					public void process(WatchedEvent event) {
+						try {
+							listenerService();
+						} catch (KeeperException | InterruptedException e) {
+							logger.error("", e);
+						}
+					}
+				};
 		}
 	}
 
