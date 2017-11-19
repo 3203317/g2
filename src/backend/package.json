@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "speedt-utils": "*",
     "log4js": "2.3.3",
     "iconv-lite": "0.4.13",
     "bufferhelper": "0.2.1",

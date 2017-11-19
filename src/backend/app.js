@@ -9,6 +9,10 @@ const fs = require('fs'),
       path = require('path'),
       cwd = process.cwd();
 
+const utils = require('speedt-utils').utils;
+
+const conf = require('./settings');
+
 const log4js = require('log4js');
 
 log4js.configure({
@@ -32,6 +36,8 @@ log4js.configure({
 });
 
 const logger = log4js.getLogger('app');
+
+logger.info('server %s start', conf.app.id);
 
 process.on('uncaughtException', err => {
   logger.error('uncaughtException:', err);
