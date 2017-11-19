@@ -109,5 +109,5 @@ process.on('uncaughtException', err => {
 
 function exit(){ process.exit(0); }
 
-process.on('SIGINT', exit);
+process.on('SIGINT',  exit);
 process.on('SIGTERM', exit);
