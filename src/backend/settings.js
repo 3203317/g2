@@ -13,22 +13,22 @@ module.exports = {
     host: process.env.ZOOKEEPER_HOST || '127.0.0.1',
     port: process.env.ZOOKEEPER_PORT || 12181,
     options: {
-      sessionTimeout: 1000 * 30,
-      spinDelay: 1000 * 1,
-      retries: 0
+      sessionTimeout: process.env.ZOOKEEPER_SESSIONTIMEOUT || (1000 * 30),
+      spinDelay: process.env.ZOOKEEPER_SPINDELAY || (1000 * 1),
+      retries: process.env.ZOOKEEPER_RETRIES || 0,
     }
   },
   activemq: {
     host: process.env.ACTIVEMQ_HOST || '127.0.0.1',
     port: process.env.ACTIVEMQ_PORT || 12613,
-    user: 'admin',
+    user: process.env.ACTIVEMQ_USER || 'admin',
     password: process.env.ACTIVEMQ_PASS || 'admin',
   },
   mysql: {
-    database: 'emag3',
+    database: process.env.MYSQL_DB || 'emag3',
     host: process.env.MYSQL_HOST || '127.0.0.1',
     port: process.env.MYSQL_PORT || 12306,
-    user: 'root',
+    user: process.env.MYSQL_USER || 'root',
     password: process.env.MYSQL_PASS || 'password',
     connectionLimit: 50
   },
