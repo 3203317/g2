@@ -37,13 +37,40 @@ log4js.configure({
 
 const logger = log4js.getLogger('app');
 
-logger.info('server %s start', conf.app.id);
+logger.info('server started: %j', conf.app.id);
 
 process.on('uncaughtException', err => {
   logger.error('uncaughtException:', err);
 });
 
-function exit(){ process.exit(0); }
+function exit(){
+  zkCli.close();
+  process.exit(0);
+}
 
 process.on('SIGINT',  exit);
 process.on('SIGTERM', exit);
+
+const zookeeper = require('node-zookeeper-client'),
+      zkCli = zookeeper.createClient(conf.zookeeper.host +':'+ conf.zookeeper.port, {
+        sessionTimeout: 30000,
+        spinDelay: 1000,
+        retries: 0
+      });
+
+zkCli.once('connected', () => {
+  zkCli.create(
+    '/fishjoy/backend/'+ conf.app.id,
+    new Buffer(JSON.stringify(conf)),
+    zookeeper.CreateMode.EPHEMERAL,
+    (err, path) => {
+      if(err){
+        logger.error(err);
+        return exit();
+      }
+
+      logger.info('zkNode created: %j', path);
+    });
+});
+
+zkCli.connect();

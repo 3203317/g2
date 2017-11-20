@@ -9,6 +9,10 @@ module.exports = {
   app: {
     id: process.env.SERVER_ID || '1',
   },
+  zookeeper: {
+    host: process.env.ZOOKEEPER_HOST || '127.0.0.1',
+    port: process.env.ZOOKEEPER_PORT || 12181,
+  },
   activemq: {
     host: process.env.ACTIVEMQ_HOST || '127.0.0.1',
     port: process.env.ACTIVEMQ_PORT || 12613,
