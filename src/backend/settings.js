@@ -10,8 +10,7 @@ module.exports = {
     id: process.env.SERVER_ID || '1',
   },
   zookeeper: {
-    host: process.env.ZOOKEEPER_HOST || '127.0.0.1',
-    port: process.env.ZOOKEEPER_PORT || 12181,
+    host: process.env.ZOOKEEPER_HOST || '127.0.0.1:12181',
     options: {
       sessionTimeout: process.env.ZOOKEEPER_SESSIONTIMEOUT || (1000 * 30),
       spinDelay: process.env.ZOOKEEPER_SPINDELAY || (1000 * 1),
