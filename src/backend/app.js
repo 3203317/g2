@@ -52,11 +52,7 @@ process.on('SIGINT',  exit);
 process.on('SIGTERM', exit);
 
 const zookeeper = require('node-zookeeper-client'),
-      zkCli = zookeeper.createClient(conf.zookeeper.host +':'+ conf.zookeeper.port, {
-        sessionTimeout: 30000,
-        spinDelay: 1000,
-        retries: 0
-      });
+      zkCli = zookeeper.createClient(conf.zookeeper.host +':'+ conf.zookeeper.port, conf.zookeeper.options);
 
 zkCli.once('connected', () => {
   zkCli.create(
