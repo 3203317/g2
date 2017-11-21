@@ -71,10 +71,11 @@ zkCli.once('connected', () => {
 
 zkCli.connect();
 
+const biz = require('g2.biz');
 
-const WebSocket = require('ws');
-const ws = new WebSocket('ws://127.0.0.1:12988');
+// const WebSocket = require('ws');
+// const ws = new WebSocket('ws://127.0.0.1:12988');
 
-ws.on('open', function open(){
-  ws.send(Buffer.from('123', 'utf8'));
-});
+// ws.on('open', function open(){
+//   ws.send(Buffer.from('', 'utf8'));
+// });

@@ -5,6 +5,8 @@
  */
 'use strict';
 
+const fs = require('fs');
+
 const path = require('path');
 const cwd  = process.cwd();
 const conf = require(path.join(cwd, 'settings'));
@@ -23,35 +25,38 @@ _.str    = require('underscore.string');
 _.mixin(_.str.exports());
 
 (() => {
-  /**
-   * 后置机登陆
-   *
-   * @return
-   */
-  exports = module.exports = function(logInfo /* 后置机信息 */){
-    return authorize(logInfo);
-  };
+  redis.script('load', fs.readFileSync(path.join(cwd, '..', '..', 'assets', 'redis', 'authorize.lua'), 'utf-8'), (err, sha1) => {
+    if(err) return process.exit(1);
 
-  var sha1    = 'cdb7efbcf82f489dddec1d38a8f59a22a6e151a5';
-  var numkeys = 4;
-  var seconds = 5;
+    /**
+     * 后置机登陆
+     *
+     * @return
+     */
+    exports = module.exports = function(logInfo /* 后置机信息 */){
+      return authorize(logInfo);
+    };
 
-  function authorize(user){
-    return new Promise((resolve, reject) => {
-      redis.evalsha(
-        sha1,
-        numkeys,
-        conf.redis.database,                   /* */
-        conf.app.id,                           /* */
-        user.id,                               /* */
-        utils.replaceAll(uuid.v4(), '-', ''),  /* */
-        seconds,
-        user.front_id,
-        user.type,
-        (err, code) => {
-          if(err) return reject(err);
-          resolve(code);
-        });
-    });
-  }
+    function authorize(logInfo){
+      return new Promise((resolve, reject) => {
+        redis.evalsha(
+          sha1,
+          numkeys,
+          conf.redis.database,                   /* */
+          conf.app.id,                           /* */
+          logInfo.user_id,                       /* */
+          utils.replaceAll(uuid.v4(), '-', ''),  /* */
+          seconds,
+          logInfo.front_id,
+          logInfo.user_type,
+          (err, code) => {
+            if(err) return reject(err);
+            resolve(code);
+          });
+      });
+    }
+
+    var numkeys = 4;
+    var seconds = 5;
+  });
 })();
