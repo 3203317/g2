@@ -6,8 +6,9 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "ws": "3.3.1",
     "node-zookeeper-client": "0.2.2",
-    "speedt-utils": "*",
+    "speedt-utils": "0.1.74",
     "log4js": "2.3.3",
     "iconv-lite": "0.4.13",
     "bufferhelper": "0.2.1",

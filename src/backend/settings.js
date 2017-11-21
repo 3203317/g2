@@ -7,7 +7,7 @@
 
 module.exports = {
   app: {
-    id: process.env.SERVER_ID || '1',
+    id: process.env.APP_ID || '1',
   },
   zookeeper: {
     host: process.env.ZOOKEEPER_HOST || '127.0.0.1:12181',

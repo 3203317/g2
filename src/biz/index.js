@@ -7,3 +7,4 @@
 
 exports.user     = require('./user/');
 exports.frontend = require('./frontend/');
+exports.backend  = require('./backend/');

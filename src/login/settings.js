@@ -6,10 +6,10 @@
 'use strict';
 
 module.exports = {
+  port: 8888,
   app: {
     name: process.env.APP_NAME,
-    id: process.env.CLIENT_ID || '1',
-    port: 8888,
+    id: process.env.APP_ID || '1',
   },
   anysdk: {
     private_key:  process.env.ANYSDK_PRIVATE_KEY  || 'E2D5511AFC845DDF8CE220ACE2A0A1C9',
