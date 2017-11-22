@@ -17,7 +17,6 @@ const log4js = require('log4js');
 
 process.on('exit', code => {
   logger.info('exit code: %j', code);
-  if(zkCli) zkCli.close();
 });
 
 log4js.configure({
@@ -54,26 +53,33 @@ process.on('uncaughtException', err => {
   process.on('SIGTERM', exit);
 })();
 
-const zookeeper = require('node-zookeeper-client'),
-      zkCli = zookeeper.createClient(conf.zookeeper.host, conf.zookeeper.options);
+(() => {
+  process.on('exit', code => {
+    if(zkCli) zkCli.close();
+  });
 
-zkCli.once('connected', () => {
-  zkCli.create(
-    '/fishjoy/backend/'+ conf.app.id,
-    // new Buffer(JSON.stringify(conf)),
-    Buffer.from(JSON.stringify(conf)),
-    zookeeper.CreateMode.EPHEMERAL,
-    (err, path) => {
-      if(err){
-        logger.error(err);
-        return process.exit(1);
-      }
+  const zookeeper = require('node-zookeeper-client'),
+        zkCli = zookeeper.createClient(conf.zookeeper.host, conf.zookeeper.options);
 
-      logger.info('zkNode created: %j', path);
-    });
-});
+  zkCli.once('connected', () => {
+    logger.info('zk connected: %j', conf.zookeeper.host);
 
-zkCli.connect();
+    zkCli.create(
+      '/fishjoy/backend/'+ conf.app.id,
+      Buffer.from(JSON.stringify(conf)),
+      zookeeper.CreateMode.EPHEMERAL,
+      (err, path) => {
+        if(err){
+          logger.error(err);
+          return process.exit(1);
+        }
+
+        logger.info('zknode created: %j', path);
+      });
+  });
+
+  zkCli.connect();
+})();
 
 const biz = require('g2.biz');
 
