@@ -72,7 +72,7 @@ logger.info('server started: %j', conf.app.id);
           return process.exit(1);
         }
 
-        logger.info('zknode created: %j', path);
+        logger.info('zk node created: %j', path);
       });
   });
 
