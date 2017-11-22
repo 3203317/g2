@@ -15,6 +15,11 @@ const conf = require('./settings');
 
 const log4js = require('log4js');
 
+process.on('exit', code => {
+  logger.info('exit code: %j', code);
+  if(zkCli) zkCli.close();
+});
+
 log4js.configure({
   appenders: {
     app: {
@@ -44,8 +49,7 @@ process.on('uncaughtException', err => {
 });
 
 function exit(){
-  zkCli.close();
-  process.exit(0);
+  process.exit();
 }
 
 process.on('SIGINT',  exit);
@@ -57,7 +61,8 @@ const zookeeper = require('node-zookeeper-client'),
 zkCli.once('connected', () => {
   zkCli.create(
     '/fishjoy/backend/'+ conf.app.id,
-    new Buffer(JSON.stringify(conf)),
+    // new Buffer(JSON.stringify(conf)),
+    Buffer.from(JSON.stringify(conf)),
     zookeeper.CreateMode.EPHEMERAL,
     (err, path) => {
       if(err){

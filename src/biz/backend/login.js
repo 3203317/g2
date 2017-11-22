@@ -24,9 +24,12 @@ const _  = require('underscore');
 _.str    = require('underscore.string');
 _.mixin(_.str.exports());
 
+const logger = require('log4js').getLogger('biz');
+
 (() => {
   redis.script('load', fs.readFileSync(path.join(cwd, '..', '..', 'assets', 'redis', 'authorize.lua'), 'utf-8'), (err, sha1) => {
     if(err) return process.exit(1);
+    logger.info('authorize sha1: %j', sha1);
 
     /**
      * 后置机登陆
@@ -34,10 +37,6 @@ _.mixin(_.str.exports());
      * @return
      */
     exports = module.exports = function(logInfo /* 后置机信息 */){
-      return authorize(logInfo);
-    };
-
-    function authorize(logInfo){
       return new Promise((resolve, reject) => {
         redis.evalsha(
           sha1,
@@ -54,7 +53,7 @@ _.mixin(_.str.exports());
             resolve(code);
           });
       });
-    }
+    };
 
     var numkeys = 4;
     var seconds = 5;
