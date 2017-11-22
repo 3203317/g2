@@ -48,12 +48,11 @@ process.on('uncaughtException', err => {
   logger.error('uncaughtException:', err);
 });
 
-function exit(){
-  process.exit();
-}
-
-process.on('SIGINT',  exit);
-process.on('SIGTERM', exit);
+(() => {
+  function exit(){ process.exit() }
+  process.on('SIGINT',  exit);
+  process.on('SIGTERM', exit);
+})();
 
 const zookeeper = require('node-zookeeper-client'),
       zkCli = zookeeper.createClient(conf.zookeeper.host, conf.zookeeper.options);
@@ -67,7 +66,7 @@ zkCli.once('connected', () => {
     (err, path) => {
       if(err){
         logger.error(err);
-        return exit();
+        return process.exit(1);
       }
 
       logger.info('zkNode created: %j', path);
