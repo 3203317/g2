@@ -29,7 +29,7 @@ const logger = require('log4js').getLogger('biz');
 (() => {
   redis.script('load', fs.readFileSync(path.join(cwd, '..', '..', 'assets', 'redis', 'authorize.lua'), 'utf-8'), (err, sha1) => {
     if(err) return process.exit(1);
-    logger.info('authorize sha1: %j', sha1);
+    logger.info('sha1 authorize: %j', sha1);
 
     /**
      * 后置机登陆

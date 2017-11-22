@@ -15,10 +15,6 @@ const conf = require('./settings');
 
 const log4js = require('log4js');
 
-process.on('exit', code => {
-  logger.info('exit code: %j', code);
-});
-
 log4js.configure({
   appenders: {
     app: {
@@ -40,6 +36,7 @@ log4js.configure({
 });
 
 const logger = log4js.getLogger('app');
+process.on('exit', code => { logger.info('exit code: %j', code) });
 
 logger.info('server started: %j', conf.app.id);
 
