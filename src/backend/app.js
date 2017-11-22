@@ -36,19 +36,20 @@ log4js.configure({
 });
 
 const logger = log4js.getLogger('app');
-process.on('exit', code => { logger.info('exit code: %j', code) });
-
-logger.info('server started: %j', conf.app.id);
 
 process.on('uncaughtException', err => {
   logger.error('uncaughtException:', err);
 });
+
+process.on('exit', code => { logger.info('exit code: %j', code) });
 
 (() => {
   function exit(){ process.exit() }
   process.on('SIGINT',  exit);
   process.on('SIGTERM', exit);
 })();
+
+logger.info('server started: %j', conf.app.id);
 
 (() => {
   process.on('exit', code => {

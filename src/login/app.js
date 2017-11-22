@@ -40,7 +40,18 @@ log4js.configure({
 });
 
 const logger = log4js.getLogger('app');
+
+process.on('uncaughtException', err => {
+  logger.error('uncaughtException:', err);
+});
+
 process.on('exit', code => { logger.info('exit code: %j', code) });
+
+(() => {
+  function exit(){ process.exit() }
+  process.on('SIGINT',  exit);
+  process.on('SIGTERM', exit);
+})();
 
 const app = express();
 
@@ -100,16 +111,6 @@ app.use(function (err, req, res, next){
 var server = http.createServer(app);
 /* server.setTimeout(5000); */
 server.listen(app.get('port'), () => {
-  logger.info('login server listening on port %s', app.get('port'));
+  logger.info('server listening on port: %s', app.get('port'));
   require('./routes')(app);
 });
-
-process.on('uncaughtException', err => {
-  logger.error('uncaughtException:', err);
-});
-
-(() => {
-  function exit(){ process.exit() }
-  process.on('SIGINT',  exit);
-  process.on('SIGTERM', exit);
-})();
