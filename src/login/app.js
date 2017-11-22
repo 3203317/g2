@@ -40,11 +40,12 @@ log4js.configure({
 });
 
 const logger = log4js.getLogger('app');
+process.on('exit', code => { logger.info('exit code: %j', code) });
 
 const app = express();
 
 /* all environments */
-app.set('port', process.env.PORT || conf.app.port)
+app.set('port', process.env.PORT || conf.port)
    .set('views', path.join(__dirname, 'views'))
    .set('view engine', 'html')
    /* use */
@@ -107,7 +108,8 @@ process.on('uncaughtException', err => {
   logger.error('uncaughtException:', err);
 });
 
-function exit(){ process.exit(0); }
-
-process.on('SIGINT',  exit);
-process.on('SIGTERM', exit);
+(() => {
+  function exit(){ process.exit() }
+  process.on('SIGINT',  exit);
+  process.on('SIGTERM', exit);
+})();
