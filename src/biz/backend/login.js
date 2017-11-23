@@ -26,36 +26,67 @@ _.mixin(_.str.exports());
 
 const logger = require('log4js').getLogger('biz');
 
+// (() => {
+//   redis.script('load', fs.readFileSync(path.join(cwd, '..', '..', 'assets', 'redis', 'authorize.lua'), 'utf-8'), (err, sha1) => {
+//     if(err) return process.exit(1);
+//     logger.info('sha1 authorize: %j', sha1);
+
+//     /**
+//      * 后置机登陆
+//      *
+//      * @return
+//      */
+//     exports = module.exports = function(logInfo /* 后置机信息 */){
+//       return new Promise((resolve, reject) => {
+//         redis.evalsha(
+//           sha1,
+//           numkeys,
+//           conf.redis.database,                   /* */
+//           conf.app.id,                           /* */
+//           logInfo.user_id,                       /* */
+//           utils.replaceAll(uuid.v4(), '-', ''),  /* */
+//           seconds,
+//           logInfo.front_id,
+//           logInfo.user_type,
+//           (err, code) => {
+//             if(err) return reject(err);
+//             resolve(code);
+//           });
+//       });
+//     };
+
+//     var numkeys = 4;
+//     var seconds = 5;
+//   });
+// })();
+
 (() => {
-  redis.script('load', fs.readFileSync(path.join(cwd, '..', '..', 'assets', 'redis', 'authorize.lua'), 'utf-8'), (err, sha1) => {
-    if(err) return process.exit(1);
-    logger.info('sha1 authorize: %j', sha1);
+  /**
+   * 后置机登陆
+   *
+   * @return
+   */
+  exports = module.exports = function(front_id /* 前置机id */, user_id /* 后置机id */){
+    return new Promise((resolve, reject) => {
+      redis.evalsha(
+        sha1,
+        numkeys,
+        conf.redis.database,                   /* */
+        conf.app.id,                           /* */
+        user_id,                               /* */
+        utils.replaceAll(uuid.v4(), '-', ''),  /* */
+        seconds,
+        front_id,
+        user_type,
+        (err, code) => {
+          if(err) return reject(err);
+          resolve(code);
+        });
+    });
+  };
 
-    /**
-     * 后置机登陆
-     *
-     * @return
-     */
-    exports = module.exports = function(logInfo /* 后置机信息 */){
-      return new Promise((resolve, reject) => {
-        redis.evalsha(
-          sha1,
-          numkeys,
-          conf.redis.database,                   /* */
-          conf.app.id,                           /* */
-          logInfo.user_id,                       /* */
-          utils.replaceAll(uuid.v4(), '-', ''),  /* */
-          seconds,
-          logInfo.front_id,
-          logInfo.user_type,
-          (err, code) => {
-            if(err) return reject(err);
-            resolve(code);
-          });
-      });
-    };
-
-    var numkeys = 4;
-    var seconds = 5;
-  });
+  var sha1      = process.env.BIZ_BACKEND_LOGIN_SHA1 || '';
+  var numkeys   = 4;
+  var seconds   = 5;
+  var user_type = 'backend';
 })();
