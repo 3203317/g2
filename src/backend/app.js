@@ -88,7 +88,7 @@ const biz = require('g2.biz');
 //   ws.send(Buffer.from('', 'utf8'));
 // });
 
-biz.backend.login(conf.frontend.id, conf.id)
+biz.backend.login(conf.frontend.host, conf.id, 'backend')
 .then(code => {
   console.log(code);
 })

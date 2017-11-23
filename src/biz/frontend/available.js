@@ -24,8 +24,8 @@ _.mixin(_.str.exports());
  *
  * @return
  */
-exports = module.exports = function(id){
+exports = module.exports = function(host /* 前置机host */){
   return new Promise((resolve, reject) => {
-    resolve(['68', '127.0.0.1']);
+    resolve('127.0.0.1:12988');
   });
 };

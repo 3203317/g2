@@ -31,32 +31,6 @@ const logger = require('log4js').getLogger('biz');
 //     if(err) return process.exit(1);
 //     logger.info('sha1 authorize: %j', sha1);
 
-//     /**
-//      * 后置机登陆
-//      *
-//      * @return
-//      */
-//     exports = module.exports = function(logInfo /* 后置机信息 */){
-//       return new Promise((resolve, reject) => {
-//         redis.evalsha(
-//           sha1,
-//           numkeys,
-//           conf.redis.database,                   /* */
-//           conf.app.id,                           /* */
-//           logInfo.user_id,                       /* */
-//           utils.replaceAll(uuid.v4(), '-', ''),  /* */
-//           seconds,
-//           logInfo.front_id,
-//           logInfo.channel_type,
-//           (err, code) => {
-//             if(err) return reject(err);
-//             resolve(code);
-//           });
-//       });
-//     };
-
-//     var numkeys = 4;
-//     var seconds = 5;
 //   });
 // })();
 
@@ -66,18 +40,18 @@ const logger = require('log4js').getLogger('biz');
    *
    * @return
    */
-  exports = module.exports = function(front_id /* 前置机id */, user_id /* 后置机id */){
+  exports = module.exports = function(frontend_host /* 前置机host */, backend_id /* 后置机id */, channel_type){
     return new Promise((resolve, reject) => {
       redis.evalsha(
         sha1,
         numkeys,
         conf.redis.database,                   /* */
         conf.app.id,                           /* */
-        user_id,                               /* */
+        backend_id,                            /* */
         utils.replaceAll(uuid.v4(), '-', ''),  /* */
         seconds,
-        front_id,
-        channel_type,
+        frontend_host,
+        channel_type || 'backend',
         (err, code) => {
           if(err) return reject(err);
           resolve(code);
@@ -85,8 +59,7 @@ const logger = require('log4js').getLogger('biz');
     });
   };
 
-  var sha1         = process.env.BIZ_BACKEND_LOGIN_SHA1 || 'badeb66734ed587e377bc53b1b8c2b74b864b654';
-  var numkeys      = 4;
-  var seconds      = 5;
-  var channel_type = 'backend';
+  var sha1    = process.env.BIZ_BACKEND_LOGIN_SHA1 || '325f92cdee1da4ca4eb8ed8e92f0b1914541bb54';
+  var numkeys = 4;
+  var seconds = 5;
 })();

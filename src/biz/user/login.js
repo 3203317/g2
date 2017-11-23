@@ -32,7 +32,7 @@ _.mixin(_.str.exports());
     return new Promise((resolve, reject) => {
       biz.user.getByName(logInfo.user_name)
       .then(p1.bind(null, logInfo))
-      .then(loginToken.bind(null, logInfo.server_id))
+      .then(loginToken.bind(null, logInfo.host))
       .then(token => resolve(token))
       .catch(reject);
     });
@@ -48,34 +48,20 @@ _.mixin(_.str.exports());
     return Promise.resolve(user);
   }
 
-  function loginToken(server_id, user){
+  function loginToken(host, user){
     return new Promise((resolve, reject) => {
-      biz.frontend.available(server_id)
-      .then(authorize.bind(null, user))
+      biz.frontend.available(host)
+      .then(p2.bind(null, user))
       .then(token => resolve(token))
       .catch(reject);
     });
   };
 
-  var sha1    = 'cdb7efbcf82f489dddec1d38a8f59a22a6e151a5';
-  var numkeys = 4;
-  var seconds = 5;
-
-  function authorize(user, front_info){
+  function p2(user, host){
     return new Promise((resolve, reject) => {
-      redis.evalsha(
-        sha1,
-        numkeys,
-        conf.redis.database,                   /* */
-        conf.app.id,                           /* */
-        user.id,                               /* */
-        utils.replaceAll(uuid.v4(), '-', ''),  /* */
-        seconds,
-        front_info[0],
-        (err, code) => {
-          if(err) return reject(err);
-          resolve([code, front_info]);
-        });
+      biz.backend.login(host, user.id, 'user')
+      .then(code => resolve([code, host]))
+      .catch(reject);
     });
   }
 })();

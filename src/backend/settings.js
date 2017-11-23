@@ -11,7 +11,7 @@ module.exports = {
     id: process.env.APP_ID || '1',
   },
   frontend: {
-    id: process.env.FRONTEND_ID || '68',
+    host: process.env.FRONTEND_HOST || '127.0.0.1:12988',
   },
   zookeeper: {
     host: process.env.ZOOKEEPER_HOST || '127.0.0.1:12181',
