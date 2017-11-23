@@ -15,8 +15,8 @@ if   (_code) then return _code; end;
 
 -- 
 
-local code     = KEYS[4];
-local seconds  = ARGV[1];
+local code    = KEYS[4];
+local seconds = ARGV[1];
 
 redis.call('SET',    _key, code);
 redis.call('EXPIRE', _key, seconds);
