@@ -47,7 +47,7 @@ const logger = require('log4js').getLogger('biz');
 //           utils.replaceAll(uuid.v4(), '-', ''),  /* */
 //           seconds,
 //           logInfo.front_id,
-//           logInfo.user_type,
+//           logInfo.channel_type,
 //           (err, code) => {
 //             if(err) return reject(err);
 //             resolve(code);
@@ -77,7 +77,7 @@ const logger = require('log4js').getLogger('biz');
         utils.replaceAll(uuid.v4(), '-', ''),  /* */
         seconds,
         front_id,
-        user_type,
+        channel_type,
         (err, code) => {
           if(err) return reject(err);
           resolve(code);
@@ -85,8 +85,8 @@ const logger = require('log4js').getLogger('biz');
     });
   };
 
-  var sha1      = process.env.BIZ_BACKEND_LOGIN_SHA1 || '';
-  var numkeys   = 4;
-  var seconds   = 5;
-  var user_type = 'backend';
+  var sha1         = process.env.BIZ_BACKEND_LOGIN_SHA1 || 'badeb66734ed587e377bc53b1b8c2b74b864b654';
+  var numkeys      = 4;
+  var seconds      = 5;
+  var channel_type = 'backend';
 })();

@@ -87,3 +87,12 @@ const biz = require('g2.biz');
 // ws.on('open', function open(){
 //   ws.send(Buffer.from('', 'utf8'));
 // });
+
+biz.backend.login(conf.frontend.id, conf.id)
+.then(code => {
+  console.log(code);
+})
+.catch(err => {
+  logger.error(err);
+  process.exit(1);
+});
