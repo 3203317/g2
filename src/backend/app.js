@@ -49,11 +49,11 @@ process.on('exit', code => { logger.info('exit code: %j', code) });
   process.on('SIGTERM', exit);
 })();
 
-logger.info('server started: %j', conf.app.id);
+logger.info('server started: %j', conf.id);
 
 (() => {
   process.on('exit', code => {
-    if(zkCli) zkCli.close();
+    if(zkCli && zkCli.close) zkCli.close();
   });
 
   const zookeeper = require('node-zookeeper-client'),
@@ -63,7 +63,7 @@ logger.info('server started: %j', conf.app.id);
     logger.info('zk connected: %j', conf.zookeeper.host);
 
     zkCli.create(
-      '/fishjoy/backend/'+ conf.app.id,
+      '/fishjoy/backend/'+ conf.id,
       Buffer.from(JSON.stringify(conf)),
       zookeeper.CreateMode.EPHEMERAL,
       (err, path) => {
@@ -91,6 +91,10 @@ biz.backend.login(conf.frontend.id, conf.id, 'backend')
 function conn(code){
   const WebSocket = require('ws'),
         ws = new WebSocket('ws://'+ conf.frontend.host);
+
+  process.on('exit', code => {
+    if(ws && ws.close) ws.close();
+  });
 
   ws.on('open', function open(){
     ws.send(Buffer.from(code, 'utf8'));
