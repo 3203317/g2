@@ -81,18 +81,32 @@ logger.info('server started: %j', conf.app.id);
 
 const biz = require('g2.biz');
 
-// const WebSocket = require('ws');
-// const ws = new WebSocket('ws://127.0.0.1:12988');
-
-// ws.on('open', function open(){
-//   ws.send(Buffer.from('', 'utf8'));
-// });
-
 biz.backend.login(conf.frontend.id, conf.id, 'backend')
-.then(code => {
-  logger.info(code);
-})
+.then(conn)
 .catch(err => {
   logger.error(err);
   process.exit(1);
 });
+
+function conn(code){
+  const WebSocket = require('ws'),
+        ws = new WebSocket('ws://'+ conf.frontend.host);
+
+  ws.on('open', function open(){
+    ws.send(Buffer.from(code, 'utf8'));
+  });
+
+  ws.on('error', err => {
+    logger.error(err);
+    process.exit(1);
+  });
+
+  ws.on('close', function close(){
+    logger.info('ws closed');
+    process.exit();
+  });
+
+  ws.on('message', function incoming(data){
+    logger.debug(data);
+  });
+}
