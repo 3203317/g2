@@ -86,7 +86,7 @@ function push(){
         return;
       }
       var _data = data.data;
-      location.href = '$!{conf.html.virtualPath}?code='+ _data[0] +'&h='+ _data[1][1] +'&s='+ _data[1][0];
+      location.href = '$!{conf.html.virtualPath}?code='+ _data[0] +'&h='+ _data[1];
     },
     error: function(){
       alert(arguments[2]);

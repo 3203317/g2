@@ -30,7 +30,6 @@ const logger = require('log4js').getLogger('biz');
 //   redis.script('load', fs.readFileSync(path.join(cwd, '..', '..', 'assets', 'redis', 'authorize.lua'), 'utf-8'), (err, sha1) => {
 //     if(err) return process.exit(1);
 //     logger.info('sha1 authorize: %j', sha1);
-
 //   });
 // })();
 
@@ -40,18 +39,18 @@ const logger = require('log4js').getLogger('biz');
    *
    * @return
    */
-  exports = module.exports = function(frontend_host /* 前置机host */, backend_id /* 后置机id */, channel_type){
+  exports = module.exports = function(front_id /* 前置机id */, user_id /* 后置机id */, user_type){
     return new Promise((resolve, reject) => {
       redis.evalsha(
         sha1,
         numkeys,
         conf.redis.database,                   /* */
         conf.app.id,                           /* */
-        backend_id,                            /* */
+        user_id,                               /* */
         utils.replaceAll(uuid.v4(), '-', ''),  /* */
         seconds,
-        frontend_host,
-        channel_type || 'backend',
+        front_id,
+        user_type || 'user',
         (err, code) => {
           if(err) return reject(err);
           resolve(code);

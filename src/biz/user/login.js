@@ -31,36 +31,36 @@ _.mixin(_.str.exports());
   exports = module.exports = function(logInfo /* 用户名及密码 */){
     return new Promise((resolve, reject) => {
       biz.user.getByName(logInfo.user_name)
-      .then(p1.bind(null, logInfo))
-      .then(loginToken.bind(null, logInfo.host))
+      .then(p1.bind(null, logInfo.user_pass))
+      .then(loginToken.bind(null, logInfo.front_id))
       .then(token => resolve(token))
       .catch(reject);
     });
   };
 
-  function p1(logInfo, user){
+  function p1(user_pass, user){
     if(!user)             return Promise.reject('用户不存在');
     if(1 !== user.status) return Promise.reject('禁用状态');
 
-    if(md5.hex(user.salt + logInfo.user_pass) !== user.user_pass)
+    if(md5.hex(user.salt + user_pass) !== user.user_pass)
       return Promise.reject('用户名或密码输入错误');
 
-    return Promise.resolve(user);
+    return Promise.resolve(user.id);
   }
 
-  function loginToken(host, user){
+  function loginToken(front_id, user_id){
     return new Promise((resolve, reject) => {
-      biz.frontend.available(host)
-      .then(p2.bind(null, user))
+      biz.frontend.available(front_id, user_id)
+      .then(p2.bind(null, user_id))
       .then(token => resolve(token))
       .catch(reject);
     });
   };
 
-  function p2(user, host){
+  function p2(user_id, front_info){
     return new Promise((resolve, reject) => {
-      biz.backend.login(host, user.id, 'user')
-      .then(code => resolve([code, host]))
+      biz.backend.login(front_info[0], user_id)
+      .then(code => resolve([code, front_info[1]]))
       .catch(reject);
     });
   }
