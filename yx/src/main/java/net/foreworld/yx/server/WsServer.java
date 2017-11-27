@@ -87,7 +87,7 @@ public class WsServer extends Server {
 		try {
 			f = b.bind().sync();
 			if (f.isSuccess()) {
-				logger.info("ws start {}", port);
+				logger.info("ws start: {}", port);
 				afterStart();
 			}
 		} catch (Exception e) {
