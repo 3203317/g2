@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import net.foreworld.util.Client;
-
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -19,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+
+import net.foreworld.util.Client;
 
 /**
  *
@@ -48,8 +48,7 @@ public class ZkClient extends Client implements Watcher {
 	@Value("${server.host}")
 	private String server_host;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(ZkClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(ZkClient.class);
 
 	@Override
 	public void shutdown() {
@@ -82,8 +81,8 @@ public class ZkClient extends Client implements Watcher {
 	}
 
 	private void registerServer() throws KeeperException, InterruptedException {
-		zk.create(zk_rootPath + "/front/" + server_id, server_host.getBytes(),
-				Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+		zk.create(zk_rootPath + "/front/" + server_id, server_host.getBytes(), Ids.OPEN_ACL_UNSAFE,
+				CreateMode.EPHEMERAL);
 	}
 
 	private Watcher watcher;
@@ -97,13 +96,12 @@ public class ZkClient extends Client implements Watcher {
 	 * @throws InterruptedException
 	 */
 	private void listenerService() throws KeeperException, InterruptedException {
-		List<String> list = zk.getChildren(zk_rootPath + "/service", watcher,
-				stat);
+		List<String> list = zk.getChildren(zk_rootPath + "/service", watcher, stat);
 
-		System.err.println(stat.getNumChildren());
+		logger.info("service count: {}", stat.getNumChildren());
 
 		for (int i = 0; i < list.size(); i++) {
-			System.err.println(list.get(i));
+			logger.info("service name: {}", list.get(i));
 		}
 	}
 

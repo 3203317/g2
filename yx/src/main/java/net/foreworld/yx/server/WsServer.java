@@ -64,8 +64,6 @@ public class WsServer extends Server {
 
 	@Override
 	public void start() {
-		beforeStart();
-
 		bossGroup = new NioEventLoopGroup(bossThread);
 		workerGroup = new NioEventLoopGroup(workerThread);
 
@@ -92,10 +90,7 @@ public class WsServer extends Server {
 				logger.info("ws start {}", port);
 				afterStart();
 			}
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage(), e);
-			System.exit(1);
-		} catch (KeeperException e) {
+		} catch (Exception e) {
 			logger.error("", e);
 			System.exit(1);
 		} finally {
@@ -123,11 +118,8 @@ public class WsServer extends Server {
 	}
 
 	private void afterStart() throws KeeperException, InterruptedException {
-		zkClient.register();
-	}
-
-	private void beforeStart() {
 		zkClient.start();
+		zkClient.register();
 	}
 
 	private void beforeShut() {
