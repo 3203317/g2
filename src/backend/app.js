@@ -63,7 +63,7 @@ logger.info('server started: %j', conf.id);
     logger.info('zk connected: %j', conf.zookeeper.host);
 
     zkCli.create(
-      '/fishjoy/backend/'+ conf.id,
+      '/fishjoy/back/'+ conf.id,
       Buffer.from(JSON.stringify(conf)),
       zookeeper.CreateMode.EPHEMERAL,
       (err, path) => {
@@ -81,36 +81,36 @@ logger.info('server started: %j', conf.id);
 
 const biz = require('g2.biz');
 
-biz.backend.login(conf.frontend.id, conf.id, 'backend')
-.then(conn)
-.catch(err => {
-  logger.error(err);
-  process.exit(1);
-});
+// biz.backend.login(conf.frontend.id, conf.id, 'backend')
+// .then(conn)
+// .catch(err => {
+//   logger.error(err);
+//   process.exit(1);
+// });
 
-function conn(code){
-  const WebSocket = require('ws'),
-        ws = new WebSocket('ws://'+ conf.frontend.host);
+// function conn(code){
+//   const WebSocket = require('ws'),
+//         ws = new WebSocket('ws://'+ conf.frontend.host);
 
-  process.on('exit', code => {
-    if(ws && ws.close) ws.close();
-  });
+//   process.on('exit', code => {
+//     if(ws && ws.close) ws.close();
+//   });
 
-  ws.on('open', function open(){
-    ws.send(Buffer.from(code, 'utf8'));
-  });
+//   ws.on('open', function open(){
+//     ws.send(Buffer.from(code, 'utf8'));
+//   });
 
-  ws.on('error', err => {
-    logger.error(err);
-    process.exit(1);
-  });
+//   ws.on('error', err => {
+//     logger.error(err);
+//     process.exit(1);
+//   });
 
-  ws.on('close', function close(){
-    logger.info('ws closed');
-    process.exit();
-  });
+//   ws.on('close', function close(){
+//     logger.info('ws closed');
+//     process.exit();
+//   });
 
-  ws.on('message', function incoming(data){
-    logger.debug(data);
-  });
-}
+//   ws.on('message', function incoming(data){
+//     logger.debug(data);
+//   });
+// }
