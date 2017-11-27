@@ -1,18 +1,6 @@
 package net.foreworld.yx.server;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-
 import javax.annotation.Resource;
-
-import net.foreworld.util.Server;
-import net.foreworld.yx.client.ZkClient;
-import net.foreworld.yx.initializer.WsInitializer;
 
 import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
@@ -20,6 +8,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import net.foreworld.util.Server;
+import net.foreworld.yx.client.ZkClient;
+import net.foreworld.yx.initializer.WsInitializer;
 
 /**
  *
@@ -30,12 +29,6 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:redis.properties")
 @Component
 public class WsServer extends Server {
-
-	@Value("${sha.server.open}")
-	private String sha_server_open;
-
-	@Value("${sha.server.close}")
-	private String sha_server_close;
 
 	@Value("${db.redis.database:1}")
 	private String db_redis_database;
@@ -64,8 +57,7 @@ public class WsServer extends Server {
 	@Resource(name = "zkClient")
 	private ZkClient zkClient;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(WsServer.class);
+	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
 
 	private ChannelFuture f;
 	private EventLoopGroup bossGroup, workerGroup;
@@ -130,24 +122,6 @@ public class WsServer extends Server {
 		}
 	}
 
-	// private void beforeShut() {
-	// ChannelUtil.getDefault().close();
-	//
-	// List<String> s = new ArrayList<String>();
-	// s.add(db_redis_database);
-	// s.add(server_id);
-	//
-	// List<String> b = new ArrayList<String>();
-	//
-	// Jedis j = RedisUtil.getDefault().getJedis();
-	//
-	// if (null == j)
-	// return;
-	//
-	// j.evalsha(sha_server_close, s, b);
-	// j.close();
-	// }
-
 	private void afterStart() throws KeeperException, InterruptedException {
 		zkClient.register();
 	}
@@ -160,25 +134,5 @@ public class WsServer extends Server {
 		if (null != zkClient)
 			zkClient.shutdown();
 	}
-
-	// private boolean beforeStart() {
-	// List<String> s = new ArrayList<String>();
-	// s.add(db_redis_database);
-	// s.add(server_id);
-	//
-	// List<String> b = new ArrayList<String>();
-	// b.add(String.valueOf(System.currentTimeMillis()));
-	// b.add(server_host);
-	//
-	// Jedis j = RedisUtil.getDefault().getJedis();
-	//
-	// if (null == j)
-	// return false;
-	//
-	// Object o = j.evalsha(sha_server_open, s, b);
-	// j.close();
-	//
-	// return Constants.OK.equals(o.toString());
-	// }
 
 }

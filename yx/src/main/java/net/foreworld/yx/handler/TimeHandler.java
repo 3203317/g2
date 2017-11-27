@@ -1,18 +1,8 @@
 package net.foreworld.yx.handler;
 
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-
 import java.net.SocketAddress;
 
 import javax.annotation.Resource;
-
-import net.foreworld.util.StringUtil;
-import net.foreworld.yx.model.ProtocolModel;
-import net.foreworld.yx.util.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +12,15 @@ import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
+
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import net.foreworld.util.StringUtil;
+import net.foreworld.yx.model.ProtocolModel;
+import net.foreworld.yx.util.Constants;
 
 /**
  *
@@ -39,18 +38,16 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Value("${server.id}")
 	private String server_id;
 
-	@Value("${allow.queue}")
+	@Value("${allow.queue:}")
 	private String allow_queue;
 
 	@Resource(name = "gson")
 	private Gson gson;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(TimeHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(TimeHandler.class);
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg)
-			throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
 		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
 		String destName = msg.getMethod().toString();
@@ -69,8 +66,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		msg.setServerId(server_id);
 		msg.setChannelId(ctx.channel().id().asLongText());
 
-		jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + destName,
-				gson.toJson(msg));
+		jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + destName, gson.toJson(msg));
 		ctx.flush();
 	}
 
@@ -84,8 +80,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		future.addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
+			public void operationComplete(ChannelFuture future) throws Exception {
 				SocketAddress addr = ctx.channel().remoteAddress();
 
 				if (future.isSuccess()) {
