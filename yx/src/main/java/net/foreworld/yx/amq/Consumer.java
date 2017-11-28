@@ -1,18 +1,10 @@
 package net.foreworld.yx.amq;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-
 import java.net.SocketAddress;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-
-import net.foreworld.yx.model.ChannelInfo;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.Constants;
 
 import org.apache.commons.codec.Charsets;
 import org.slf4j.Logger;
@@ -24,6 +16,13 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import net.foreworld.yx.model.ChannelInfo;
+import net.foreworld.yx.util.ChannelUtil;
+import net.foreworld.yx.util.Constants;
+
 /**
  *
  * @author huangxin <3203317@qq.com>
@@ -33,12 +32,10 @@ import com.google.gson.JsonParser;
 @Component
 public class Consumer {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(Consumer.class);
+	private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
 
 	@JmsListener(destination = "${queue.back.send}.${server.id}")
 	public void back_send(BytesMessage msg) {
-
 		try {
 			byte[] data = new byte[(int) msg.getBodyLength()];
 			msg.readBytes(data);
@@ -54,7 +51,11 @@ public class Consumer {
 			// 开始发送
 
 			if (Constants.ALL.equals(_receiver)) {
-				ChannelUtil.getDefault().broadcast(_data);
+				ChannelUtil.getDefault().broadcast(_data).addListener(f -> {
+					if (!f.isSuccess()) {
+						logger.error("data: {}", _data);
+					}
+				});
 				return;
 			}
 
@@ -72,41 +73,50 @@ public class Consumer {
 					continue;
 
 				if (!c.isWritable()) {
-					c.writeAndFlush(_data).sync();
+					c.writeAndFlush(_data).sync().addListener(f -> {
+						if (!f.isSuccess()) {
+							logger.error("data: {}", _data);
+						}
+					});
+
 					continue;
 				}
 
 				c.writeAndFlush(_data).addListener(f -> {
 					if (!f.isSuccess()) {
+						logger.error("data: {}", _data);
 					}
 				});
 			}
 
-		} catch (InterruptedException e) {
-			logger.error("", e);
-		} catch (JMSException e) {
+		} catch (InterruptedException | JMSException e) {
 			logger.error("", e);
 		}
 	}
 
 	@JmsListener(destination = "${queue.channel.close.force}.${server.id}")
 	public void channel_close_force(TextMessage msg) {
+
+		String id = null;
+
 		try {
-			ChannelInfo ci = ChannelUtil.getDefault().getChannel(msg.getText());
-
-			if (null == ci)
-				return;
-
-			Channel c = ci.getChannel();
-
-			if (null == c)
-				return;
-
-			logout(c);
-
+			id = msg.getText();
 		} catch (JMSException e) {
 			logger.error("", e);
+			return;
 		}
+
+		ChannelInfo ci = ChannelUtil.getDefault().getChannel(id);
+
+		if (null == ci)
+			return;
+
+		Channel c = ci.getChannel();
+
+		if (null == c)
+			return;
+
+		logout(c);
 	}
 
 	/**
@@ -119,8 +129,7 @@ public class Consumer {
 		future.addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
+			public void operationComplete(ChannelFuture future) throws Exception {
 				SocketAddress addr = channel.remoteAddress();
 
 				if (future.isSuccess()) {
