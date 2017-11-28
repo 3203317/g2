@@ -14,8 +14,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleStateEvent;
 
 /**
- *
- * @author huangxin
+ * 
+ * @author huangxin <3203317@qq.com>
  *
  */
 @Component
@@ -27,9 +27,8 @@ public class TimeoutHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
 
-		if (!(evt instanceof IdleStateEvent)) {
+		if (!(evt instanceof IdleStateEvent))
 			return;
-		}
 
 		IdleStateEvent event = (IdleStateEvent) evt;
 
