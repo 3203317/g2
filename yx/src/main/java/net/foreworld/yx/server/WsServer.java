@@ -48,9 +48,6 @@ public class WsServer extends Server {
 	@Value("${server.id}")
 	private String server_id;
 
-	@Value("${server.host}")
-	private String server_host;
-
 	@Resource(name = "wsInitializer")
 	private WsInitializer wsInitializer;
 

@@ -33,7 +33,7 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 	@Value("${db.redis.database:1}")
 	private String db_redis_database;
 
-	@Value("${sha.blacklist}")
+	@Value("${sha.blacklist:}")
 	private String sha_blacklist;
 
 	private static final Logger logger = LoggerFactory.getLogger(BlacklistHandler.class);

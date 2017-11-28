@@ -45,9 +45,6 @@ public class ZkClient extends Client implements Watcher {
 	@Value("${server.id}")
 	private String server_id;
 
-	@Value("${server.host}")
-	private String server_host;
-
 	private static final Logger logger = LoggerFactory.getLogger(ZkClient.class);
 
 	@Override
@@ -81,8 +78,7 @@ public class ZkClient extends Client implements Watcher {
 	}
 
 	private void registerServer() throws KeeperException, InterruptedException {
-		zk.create(zk_rootPath + "/front/" + server_id, server_host.getBytes(), Ids.OPEN_ACL_UNSAFE,
-				CreateMode.EPHEMERAL);
+		zk.create(zk_rootPath + "/front/" + server_id, "".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 	}
 
 	private Watcher watcher;
