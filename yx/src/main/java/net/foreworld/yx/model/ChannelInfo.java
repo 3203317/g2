@@ -1,9 +1,9 @@
 package net.foreworld.yx.model;
 
+import io.netty.channel.Channel;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import io.netty.channel.Channel;
 
 /**
  *
@@ -17,8 +17,6 @@ public class ChannelInfo implements Serializable {
 	private Channel channel;
 
 	private Date loginTime;
-
-	private Type type;
 
 	public Date getLoginTime() {
 		return loginTime;
@@ -36,25 +34,4 @@ public class ChannelInfo implements Serializable {
 		this.channel = channel;
 	}
 
-	public Type getType() {
-		return type;
-	}
-
-	public void setType(Type type) {
-		this.type = type;
-	}
-
-	public enum Type {
-		BACK("back"), USER("user");
-
-		private String value = "user";
-
-		private Type(String value) {
-			this.value = value;
-		}
-
-		public String value() {
-			return this.value;
-		}
-	}
 }
