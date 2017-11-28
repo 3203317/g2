@@ -21,7 +21,7 @@ public class ProtocolModel implements Serializable {
 	private String serverId;
 	private String channelId;
 
-	private String backendId;
+	private String backId;
 
 	public Long getTimestamp() {
 		return timestamp;
@@ -31,12 +31,12 @@ public class ProtocolModel implements Serializable {
 		this.timestamp = timestamp;
 	}
 
-	public String getBackendId() {
-		return backendId;
+	public String getBackId() {
+		return backId;
 	}
 
-	public void setBackendId(String backendId) {
-		this.backendId = backendId;
+	public void setBackId(String backId) {
+		this.backId = backId;
 	}
 
 	public String getSignature() {

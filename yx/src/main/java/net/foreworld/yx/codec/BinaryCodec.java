@@ -102,7 +102,7 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 				JsonElement _je_5 = _ja.get(5);
 
 				if (!_je_5.isJsonNull()) {
-					model.setBackendId(_je_5.getAsString());
+					model.setBackId(_je_5.getAsString());
 				}
 			}
 

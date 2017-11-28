@@ -27,7 +27,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import net.foreworld.util.RedisUtil;
-import net.foreworld.util.StringUtil;
 import net.foreworld.yx.codec.BinaryCodec;
 import net.foreworld.yx.model.ChannelInfo;
 import net.foreworld.yx.util.ChannelUtil;
@@ -170,11 +169,6 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 	 * @return
 	 */
 	private boolean verify(String code, String channel_id) {
-		code = StringUtil.isEmpty(code);
-
-		if (null == code) {
-			return false;
-		}
 
 		List<String> s = new ArrayList<String>();
 		s.add(db_redis_database);

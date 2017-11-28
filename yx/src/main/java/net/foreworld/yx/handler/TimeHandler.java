@@ -52,7 +52,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		String destName = msg.getMethod().toString();
 
-		String sb = StringUtil.isEmpty(msg.getBackendId());
+		String sb = StringUtil.isEmpty(msg.getBackId());
 
 		if (null != sb) {
 			destName += '.' + sb;

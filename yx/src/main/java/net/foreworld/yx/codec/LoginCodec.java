@@ -46,7 +46,7 @@ public class LoginCodec extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 		String _text = new String(_bytes, CharEncoding.UTF_8);
 		_text = StringUtil.isEmpty(_text);
 
-		if (null == _text) {
+		if (null == _text || 32 != _text.length()) {
 			logout(ctx);
 			return;
 		}
