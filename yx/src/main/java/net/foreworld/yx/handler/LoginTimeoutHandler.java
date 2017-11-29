@@ -29,6 +29,6 @@ public class LoginTimeoutHandler extends ChannelInboundHandlerAdapter {
 	}
 
 	private void removeChannel(String ip) {
-		logger.info("channel close: {}", ip);
+		logger.info("login timeout: {}", ip);
 	}
 }

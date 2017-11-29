@@ -56,9 +56,6 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "exceptionHandler")
 	private ExceptionHandler exceptionHandler;
 
-	// @Resource(name = "protocolSafeHandler")
-	// private ProtocolSafeHandler protocolSafeHandler;
-
 	@Resource(name = "heartbeatHandler")
 	private HeartbeatHandler heartbeatHandler;
 
