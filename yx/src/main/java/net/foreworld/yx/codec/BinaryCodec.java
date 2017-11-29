@@ -49,7 +49,7 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 
 		int _len = _bf.capacity();
 
-		if (msg_body_max < _len) {
+		if (msg_body_max < _len || 1 > _len) {
 			logout(ctx);
 			return;
 		}
@@ -114,10 +114,13 @@ public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Str
 		out.add(model);
 	}
 
+	/**
+	 * 
+	 * @param ctx
+	 */
 	private void logout(ChannelHandlerContext ctx) {
-		ChannelFuture future = ctx.close();
 
-		future.addListener(new ChannelFutureListener() {
+		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override
 			public void operationComplete(ChannelFuture future) throws Exception {

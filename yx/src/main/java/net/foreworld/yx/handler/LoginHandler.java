@@ -143,15 +143,15 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 	/**
 	 *
 	 * @param code
-	 * @param channel_id
+	 * @param chan_id
 	 * @return
 	 */
-	private boolean verify(String code, String channel_id) {
+	private boolean verify(String code, String chan_id) {
 
 		List<String> s = new ArrayList<String>();
 		s.add(db_redis_database);
 		s.add(server_id);
-		s.add(channel_id);
+		s.add(chan_id);
 		s.add(code);
 
 		List<String> b = new ArrayList<String>();
