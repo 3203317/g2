@@ -41,10 +41,10 @@ public class UnRegChannelHandler extends ChannelInboundHandlerAdapter {
 		super.channelUnregistered(ctx);
 	}
 
-	private void removeChannel(String channel_id) {
-		ChannelUtil.getDefault().removeChannel(channel_id);
+	private void removeChannel(String chan_id) {
+		ChannelUtil.getDefault().removeChannel(chan_id);
 
-		jmsMessagingTemplate.convertAndSend(queue_channel_close, server_id + "::" + channel_id);
-		logger.info("channel close: {}:{}", server_id, channel_id);
+		jmsMessagingTemplate.convertAndSend(queue_channel_close, server_id + "::" + chan_id);
+		logger.info("channel close: {}:{}", server_id, chan_id);
 	}
 }

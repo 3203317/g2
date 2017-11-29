@@ -1,15 +1,11 @@
 package net.foreworld.yx.model;
 
-import java.io.Serializable;
-
 /**
  * 
  * @author huangxin <3203317@qq.com>
  *
  */
-public class ProtocolModel implements Serializable {
-
-	private static final long serialVersionUID = -7476803059012167127L;
+public class ProtocolModel {
 
 	private Integer method;
 	private Integer seqId;
