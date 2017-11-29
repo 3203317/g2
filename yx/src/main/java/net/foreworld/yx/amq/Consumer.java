@@ -120,13 +120,11 @@ public class Consumer {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param channel
 	 */
 	private void logout(Channel channel) {
-		ChannelFuture future = channel.close();
-
-		future.addListener(new ChannelFutureListener() {
+		channel.close().addListener(new ChannelFutureListener() {
 
 			@Override
 			public void operationComplete(ChannelFuture future) throws Exception {

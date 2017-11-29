@@ -142,30 +142,6 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 	/**
 	 *
-	 * @param ctx
-	 */
-	private void logout(ChannelHandlerContext ctx) {
-		ChannelFuture future = ctx.close();
-
-		future.addListener(new ChannelFutureListener() {
-
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				SocketAddress addr = ctx.channel().remoteAddress();
-
-				if (future.isSuccess()) {
-					logger.info("ctx close: {}", addr);
-					return;
-				}
-
-				logger.info("ctx close failure: {}", addr);
-				ctx.close();
-			}
-		});
-	}
-
-	/**
-	 *
 	 * @param code
 	 * @param channel_id
 	 * @return
@@ -204,6 +180,29 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		jmsMessagingTemplate.convertAndSend(queue_channel_close_force + "." + text[0], text[1]);
 
 		return true;
+	}
+
+	/**
+	 * 
+	 * @param ctx
+	 */
+	private void logout(ChannelHandlerContext ctx) {
+
+		ctx.close().addListener(new ChannelFutureListener() {
+
+			@Override
+			public void operationComplete(ChannelFuture future) throws Exception {
+				SocketAddress addr = ctx.channel().remoteAddress();
+
+				if (future.isSuccess()) {
+					logger.info("ctx close: {}", addr);
+					return;
+				}
+
+				logger.info("ctx close failure: {}", addr);
+				ctx.close();
+			}
+		});
 	}
 
 	public static void main(String[] args) {
