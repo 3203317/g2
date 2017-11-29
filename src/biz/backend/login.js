@@ -39,7 +39,7 @@ const logger = require('log4js').getLogger('biz');
    *
    * @return
    */
-  exports = module.exports = function(front_id /* 前置机id */, user_id /* 后置机id */, user_type){
+  exports = module.exports = function(front_id /* 前置机id */, user_id /* 后置机id */){
     return new Promise((resolve, reject) => {
       redis.evalsha(
         sha1,
@@ -50,7 +50,6 @@ const logger = require('log4js').getLogger('biz');
         utils.replaceAll(uuid.v4(), '-', ''),  /* */
         seconds,
         front_id,
-        user_type || 'user',
         (err, code) => {
           if(err) return reject(err);
           resolve(code);
