@@ -81,7 +81,7 @@ logger.info('server started: %j', conf.id);
 
 const biz = require('g2.biz');
 
-// biz.backend.login(conf.frontend.id, conf.id, 'backend')
+// biz.backend.login(conf.frontend.id, conf.id, 'back')
 // .then(conn)
 // .catch(err => {
 //   logger.error(err);

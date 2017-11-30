@@ -24,16 +24,17 @@ redis.call('EXPIRE', _key, seconds);
 --[[
 {
   code: {
-    client_id:    '',
-    id:           '',
-    front_id:     '',
-    chan_type: 'backend|user',
+    client_id: '',
+    id:        '',
+    front_id:  '',
+    chan_type: 'back|user',
   }
 }
 --]]
 redis.call('HMSET', code, 'client_id', client_id,
                           'id',        user_id,
-                          'front_id',  ARGV[2]);
+                          'front_id',  ARGV[2],
+                          'chan_type', ARGV[3]);
 
 redis.call('EXPIRE', code, seconds);
 
