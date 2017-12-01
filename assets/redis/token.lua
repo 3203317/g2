@@ -29,8 +29,8 @@ local s = redis.call('HGET', 'prop::user::'.. _user_id, 'front_id');
 
 if (s) then
   local b = redis.call('HGET', 'prop::user::'.. _user_id, 'chan_id');
-  result = result ..':'.. s ..':'.. b;
   redis.call('DEL', s ..'::'.. b);
+  result = result ..':'.. s ..':'.. b;
 end;
 
 -- 重命名

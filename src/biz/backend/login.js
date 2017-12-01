@@ -50,7 +50,7 @@ const logger = require('log4js').getLogger('biz');
         utils.replaceAll(uuid.v4(), '-', ''),  /* */
         seconds,
         front_id,
-        chan_type || 'USER',
+        chan_type || CHAN_TYPE,
         (err, code) => {
           if(err) return reject(err);
           resolve(code);
@@ -58,7 +58,8 @@ const logger = require('log4js').getLogger('biz');
     });
   };
 
-  var sha1    = process.env.BIZ_BACKEND_LOGIN_SHA1 || 'f4e4f49554a6781f0e45f1e404bbc2f2c0129005';
-  var numkeys = 4;
-  var seconds = 5;
+  var sha1      = process.env.BIZ_BACKEND_LOGIN_SHA1 || 'f4e4f49554a6781f0e45f1e404bbc2f2c0129005';
+  var numkeys   = 4;
+  var seconds   = 5;
+  var CHAN_TYPE = 'USER';
 })();
