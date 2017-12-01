@@ -87,6 +87,12 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 	@Resource(name = "backCodec")
 	private BackCodec backCodec;
 
+	@Resource(name = "timeHandler")
+	private TimeHandler timeHandler;
+
+	@Resource(name = "backTimeHandler")
+	private BackTimeHandler backTimeHandler;
+
 	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 
 	@Override
@@ -128,12 +134,14 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 		pipe.replace("loginTimeout", "unReg", unRegChannelHandler);
 
-		pipe.replace("loginCodec", "binaryCodec", chan_type == Type.USER ? binaryCodec : backCodec);
+		pipe.replace("loginCodec", "binaryCodec", Type.USER == chan_type ? binaryCodec : backCodec);
 
-		pipe.replace("defaIdleState", "newIdleState",
-				new IdleStateHandler(readerIdleTime, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
+		pipe.replace("defaIdleState", "newIdleState", new IdleStateHandler(Type.USER == chan_type ? readerIdleTime : 60,
+				writerIdleTime, allIdleTime, TimeUnit.SECONDS));
 
 		pipe.replace("httpSafe", "protocolSafe", protocolSafeHandler);
+
+		pipe.addLast(Type.USER == chan_type ? timeHandler : backTimeHandler);
 
 		ChannelInfo ci = new ChannelInfo();
 		ci.setLoginTime(new Date());

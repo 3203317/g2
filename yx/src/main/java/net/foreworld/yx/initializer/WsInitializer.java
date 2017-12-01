@@ -24,7 +24,6 @@ import net.foreworld.yx.handler.HeartbeatHandler;
 import net.foreworld.yx.handler.HttpSafeHandler;
 import net.foreworld.yx.handler.LoginHandler;
 import net.foreworld.yx.handler.LoginTimeoutHandler;
-import net.foreworld.yx.handler.TimeHandler;
 import net.foreworld.yx.handler.TimeoutHandler;
 
 /**
@@ -62,9 +61,6 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "loginHandler")
 	private LoginHandler loginHandler;
 
-	@Resource(name = "timeHandler")
-	private TimeHandler timeHandler;
-
 	@Resource(name = "httpSafeHandler")
 	private HttpSafeHandler httpSafeHandler;
 
@@ -100,7 +96,6 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 		pipe.addLast(loginHandler);
 		pipe.addLast(heartbeatHandler);
 
-		pipe.addLast(timeHandler);
 	}
 
 }
