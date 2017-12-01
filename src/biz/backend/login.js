@@ -50,7 +50,7 @@ const logger = require('log4js').getLogger('biz');
         utils.replaceAll(uuid.v4(), '-', ''),  /* */
         seconds,
         front_id,
-        chan_type || 'user',
+        chan_type || 'USER',
         (err, code) => {
           if(err) return reject(err);
           resolve(code);
