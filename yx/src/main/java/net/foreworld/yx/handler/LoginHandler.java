@@ -93,6 +93,12 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 	@Resource(name = "backTimeHandler")
 	private BackTimeHandler backTimeHandler;
 
+	@Resource(name = "heartbeatHandler")
+	private HeartbeatHandler heartbeatHandler;
+
+	@Resource(name = "backHeartbeatHandler")
+	private BackHeartbeatHandler backHeartbeatHandler;
+
 	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 
 	@Override
@@ -140,6 +146,8 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 				writerIdleTime, allIdleTime, TimeUnit.SECONDS));
 
 		pipe.replace("httpSafe", "protocolSafe", protocolSafeHandler);
+
+		pipe.addLast(Type.USER == chan_type ? heartbeatHandler : backHeartbeatHandler);
 
 		pipe.addLast(Type.USER == chan_type ? timeHandler : backTimeHandler);
 

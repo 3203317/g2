@@ -21,7 +21,7 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import net.foreworld.yx.model.ProtocolModel;
+import net.foreworld.yx.model.BackModel;
 
 /**
  *
@@ -59,7 +59,7 @@ public class BackCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Strin
 
 		int _size = _ja.size();
 
-		ProtocolModel model = new ProtocolModel();
+		BackModel model = new BackModel();
 
 		model.setMethod(_ja.get(0).getAsInt());
 

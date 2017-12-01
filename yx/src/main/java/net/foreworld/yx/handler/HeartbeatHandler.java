@@ -24,10 +24,6 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<ProtocolModel>
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
 
 		switch (msg.getMethod()) {
-		case 2: {
-			sendSelfChan(ctx);
-			return;
-		}
 		case 6: {
 			logger.info("method: {}", msg.getMethod());
 			ctx.flush();
@@ -36,21 +32,6 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<ProtocolModel>
 		}
 
 		ctx.fireChannelRead(msg);
-	}
-
-	/**
-	 *
-	 * 获取当前的通道号
-	 *
-	 * @param ctx
-	 */
-	private void sendSelfChan(ChannelHandlerContext ctx) {
-		String chan_id = ctx.channel().id().asLongText();
-
-		ctx.writeAndFlush(chan_id).addListener(f -> {
-			if (!f.isSuccess()) {
-			}
-		});
 	}
 
 }
