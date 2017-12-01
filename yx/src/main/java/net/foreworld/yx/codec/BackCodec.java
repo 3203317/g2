@@ -57,45 +57,33 @@ public class BackCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Strin
 			return;
 		}
 
-		if (null == _ja) {
-			logout(ctx);
-			return;
-		}
-
 		int _size = _ja.size();
 
 		ProtocolModel model = new ProtocolModel();
 
-		try {
-			model.setMethod(_ja.get(1).getAsInt());
-			model.setTimestamp(_ja.get(2).getAsLong());
+		model.setMethod(_ja.get(0).getAsInt());
 
-			if (3 < _size) {
-				JsonElement _je_3 = _ja.get(3);
+		if (1 < _size) {
+			JsonElement _je_1 = _ja.get(1);
 
-				if (!_je_3.isJsonNull()) {
-					model.setData(_je_3.getAsString().trim());
-				}
+			if (!_je_1.isJsonNull()) {
+				model.setReceiver(_je_1.getAsString());
 			}
+		}
 
-			if (4 < _size) {
-				JsonElement _je_4 = _ja.get(4);
+		if (2 < _size) {
+			JsonElement _je_2 = _ja.get(2);
 
-				if (!_je_4.isJsonNull()) {
-					model.setSeqId(_je_4.getAsInt());
-				}
+			if (!_je_2.isJsonNull()) {
+				model.setData(_je_2.getAsString());
 			}
-
-		} catch (Exception ex) {
-			logout(ctx);
-			return;
 		}
 
 		out.add(model);
 	}
 
 	/**
-	 *
+	 * 
 	 * @param ctx
 	 */
 	private void logout(ChannelHandlerContext ctx) {

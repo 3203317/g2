@@ -19,6 +19,16 @@ public class ProtocolModel {
 
 	private String backId;
 
+	private String receiver;
+
+	public String getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
+	}
+
 	public Long getTimestamp() {
 		return timestamp;
 	}
