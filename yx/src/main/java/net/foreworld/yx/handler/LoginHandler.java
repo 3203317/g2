@@ -27,8 +27,10 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import net.foreworld.util.RedisUtil;
+import net.foreworld.yx.codec.BackCodec;
 import net.foreworld.yx.codec.BinaryCodec;
 import net.foreworld.yx.model.ChannelInfo;
+import net.foreworld.yx.model.ChannelInfo.Type;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
 import redis.clients.jedis.Jedis;
@@ -82,6 +84,9 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 	@Resource(name = "binaryCodec")
 	private BinaryCodec binaryCodec;
 
+	@Resource(name = "backCodec")
+	private BackCodec backCodec;
+
 	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
 
 	@Override
@@ -110,7 +115,9 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 		final String chan_id = channel.id().asLongText();
 
-		if (!verify(token, chan_id)) {
+		Type chan_type = verify(token, chan_id);
+
+		if (null == chan_type) {
 			logout(ctx);
 			return;
 		}
@@ -121,7 +128,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 		pipe.replace("loginTimeout", "unReg", unRegChannelHandler);
 
-		pipe.replace("loginCodec", "binaryCodec", binaryCodec);
+		pipe.replace("loginCodec", "binaryCodec", chan_type == Type.USER ? binaryCodec : backCodec);
 
 		pipe.replace("defaIdleState", "newIdleState",
 				new IdleStateHandler(readerIdleTime, writerIdleTime, allIdleTime, TimeUnit.SECONDS));
@@ -131,6 +138,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		ChannelInfo ci = new ChannelInfo();
 		ci.setLoginTime(new Date());
 		ci.setChannel(channel);
+		ci.setType(chan_type);
 
 		ChannelUtil.getDefault().putChannel(chan_id, ci);
 
@@ -146,7 +154,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 	 * @param chan_id
 	 * @return
 	 */
-	private boolean verify(String code, String chan_id) {
+	private Type verify(String code, String chan_id) {
 
 		List<String> s = new ArrayList<String>();
 		s.add(db_redis_database);
@@ -161,25 +169,24 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		Jedis j = RedisUtil.getDefault().getJedis();
 
 		if (null == j)
-			return false;
+			return null;
 
 		Object o = j.evalsha(sha_token, s, b);
 		j.close();
 
 		String str = o.toString();
 
-		switch (str) {
-		case Constants.INVALID_CODE:
-			return false;
-		case Constants.OK:
-			return true;
-		}
+		if (Constants.INVALID_CODE.equals(str))
+			return null;
 
-		String[] text = str.split("::");
+		String[] text = str.split(":");
 
-		jmsMessagingTemplate.convertAndSend(queue_channel_close_force + "." + text[0], text[1]);
+		if (1 == text.length)
+			return Type.valueOf(str);
 
-		return true;
+		jmsMessagingTemplate.convertAndSend(queue_channel_close_force + "." + text[1], text[2]);
+
+		return Type.valueOf(text[0]);
 	}
 
 	/**
@@ -212,5 +219,11 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 		System.err.println(jo);
 		System.err.println(jo.get("code").getAsString());
+
+		String s = "a:b:c";
+
+		System.err.println(s.split(":").length);
+
+		System.err.println(Type.valueOf("BACK"));
 	}
 }

@@ -31,24 +31,20 @@ import net.foreworld.yx.model.ProtocolModel;
  */
 @Component
 @Sharable
-public class BinaryCodec extends
-		MessageToMessageCodec<BinaryWebSocketFrame, String> {
+public class BackCodec extends MessageToMessageCodec<BinaryWebSocketFrame, String> {
 
 	@Value("${msg.body.max:512}")
 	private int msg_body_max;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(BinaryCodec.class);
+	private static final Logger logger = LoggerFactory.getLogger(BackCodec.class);
 
 	@Override
-	protected void encode(ChannelHandlerContext ctx, String msg,
-			List<Object> out) throws Exception {
+	protected void encode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
 		out.add(new BinaryWebSocketFrame(wrappedBuffer(msg.getBytes())));
 	}
 
 	@Override
-	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg,
-			List<Object> out) throws Exception {
+	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {
 		ByteBuf _bf = msg.content();
 
 		int _len = _bf.capacity();
@@ -127,8 +123,7 @@ public class BinaryCodec extends
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
+			public void operationComplete(ChannelFuture future) throws Exception {
 				SocketAddress addr = ctx.channel().remoteAddress();
 
 				if (future.isSuccess()) {

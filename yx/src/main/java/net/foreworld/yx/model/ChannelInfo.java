@@ -15,6 +15,16 @@ public class ChannelInfo {
 
 	private Date loginTime;
 
+	private Type type;
+
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
 	public Date getLoginTime() {
 		return loginTime;
 	}
@@ -29,6 +39,10 @@ public class ChannelInfo {
 
 	public void setChannel(Channel channel) {
 		this.channel = channel;
+	}
+
+	public enum Type {
+		BACK, USER
 	}
 
 }
