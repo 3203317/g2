@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.commons.codec.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonArray;
@@ -33,9 +32,6 @@ import net.foreworld.yx.model.ProtocolModel;
 @Sharable
 public class BackCodec extends MessageToMessageCodec<BinaryWebSocketFrame, String> {
 
-	@Value("${msg.body.max:512}")
-	private int msg_body_max;
-
 	private static final Logger logger = LoggerFactory.getLogger(BackCodec.class);
 
 	@Override
@@ -47,14 +43,7 @@ public class BackCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Strin
 	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {
 		ByteBuf _bf = msg.content();
 
-		int _len = _bf.capacity();
-
-		if (msg_body_max < _len || 1 > _len) {
-			logout(ctx);
-			return;
-		}
-
-		byte[] _bytes = new byte[_len];
+		byte[] _bytes = new byte[_bf.capacity()];
 		_bf.readBytes(_bytes);
 
 		String _text = new String(_bytes, CharEncoding.UTF_8);
@@ -68,17 +57,16 @@ public class BackCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Strin
 			return;
 		}
 
-		int _size = _ja.size();
-
-		if (null == _ja || 3 > _size || 6 < _size) {
+		if (null == _ja) {
 			logout(ctx);
 			return;
 		}
 
+		int _size = _ja.size();
+
 		ProtocolModel model = new ProtocolModel();
 
 		try {
-			model.setSignature(_ja.get(0).getAsString().trim());
 			model.setMethod(_ja.get(1).getAsInt());
 			model.setTimestamp(_ja.get(2).getAsLong());
 
@@ -95,14 +83,6 @@ public class BackCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Strin
 
 				if (!_je_4.isJsonNull()) {
 					model.setSeqId(_je_4.getAsInt());
-				}
-			}
-
-			if (5 < _size) {
-				JsonElement _je_5 = _ja.get(5);
-
-				if (!_je_5.isJsonNull()) {
-					model.setBackId(_je_5.getAsString().trim());
 				}
 			}
 
@@ -127,34 +107,14 @@ public class BackCodec extends MessageToMessageCodec<BinaryWebSocketFrame, Strin
 				SocketAddress addr = ctx.channel().remoteAddress();
 
 				if (future.isSuccess()) {
-					logger.info("ctx close: {}", addr);
+					logger.info("back close: {}", addr);
 					return;
 				}
 
-				logger.info("ctx close failure: {}", addr);
+				logger.info("back close failure: {}", addr);
 				ctx.close();
 			}
 		});
-	}
-
-	public static void main(String[] args) {
-		String arrStr = "['a', 'b', 3, , ]";
-
-		System.err.println(arrStr);
-
-		JsonArray jo = new JsonParser().parse(arrStr).getAsJsonArray();
-
-		System.err.println(jo);
-
-		System.err.println(jo.size());
-
-		System.err.println(jo.get(0).getAsString());
-
-		System.err.println(jo.get(2).getAsString());
-
-		System.err.println(jo.get(3).isJsonNull());
-
-		System.err.println(jo.get(4).isJsonNull());
 	}
 
 }

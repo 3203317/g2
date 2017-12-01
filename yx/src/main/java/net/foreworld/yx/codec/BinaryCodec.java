@@ -31,24 +31,20 @@ import net.foreworld.yx.model.ProtocolModel;
  */
 @Component
 @Sharable
-public class BinaryCodec extends
-		MessageToMessageCodec<BinaryWebSocketFrame, String> {
+public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, String> {
 
 	@Value("${msg.body.max:512}")
 	private int msg_body_max;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(BinaryCodec.class);
+	private static final Logger logger = LoggerFactory.getLogger(BinaryCodec.class);
 
 	@Override
-	protected void encode(ChannelHandlerContext ctx, String msg,
-			List<Object> out) throws Exception {
+	protected void encode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
 		out.add(new BinaryWebSocketFrame(wrappedBuffer(msg.getBytes())));
 	}
 
 	@Override
-	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg,
-			List<Object> out) throws Exception {
+	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {
 		ByteBuf _bf = msg.content();
 
 		int _len = _bf.capacity();
@@ -72,9 +68,14 @@ public class BinaryCodec extends
 			return;
 		}
 
+		if (null == _ja) {
+			logout(ctx);
+			return;
+		}
+
 		int _size = _ja.size();
 
-		if (null == _ja || 3 > _size || 6 < _size) {
+		if (3 > _size || 6 < _size) {
 			logout(ctx);
 			return;
 		}
@@ -127,8 +128,7 @@ public class BinaryCodec extends
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
+			public void operationComplete(ChannelFuture future) throws Exception {
 				SocketAddress addr = ctx.channel().remoteAddress();
 
 				if (future.isSuccess()) {
