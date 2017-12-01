@@ -21,7 +21,7 @@ redis.call('DEL', redis.call('HGET', code, 'client_id') ..'::'.. _user_id);
 
 -- 
 
-local result = '';
+local result = redis.call('HGET', code, 'chan_type'));
 
 -- 
 
@@ -29,8 +29,8 @@ local s = redis.call('HGET', 'prop::user::'.. _user_id, 'front_id');
 
 if (s) then
   local b = redis.call('HGET', 'prop::user::'.. _user_id, 'chan_id');
-  result = s ..'::'.. b;
-  redis.call('DEL', result);
+  result = result ..':'.. s ..':'.. b;
+  redis.call('DEL', s ..'::'.. b);
 end;
 
 -- 重命名
@@ -53,7 +53,5 @@ redis.call('EXPIRE', front_id ..'::'.. chan_id, seconds);
 
 -- 属性::前置机::在线人数+1
 -- redis.call('HINCRBY', 'prop::front::'.. front_id, 'online_count', 1);
-
-result = result ..'::'.. redis.call('HGET', 'prop::user::'.. _user_id, 'chan_type'));
 
 return result;
