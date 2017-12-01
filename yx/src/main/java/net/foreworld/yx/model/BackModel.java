@@ -8,7 +8,6 @@ package net.foreworld.yx.model;
 public class BackModel {
 
 	private Integer method;
-	private Long timestamp;
 	private String data;
 
 	private String receiver;
@@ -19,14 +18,6 @@ public class BackModel {
 
 	public void setReceiver(String receiver) {
 		this.receiver = receiver;
-	}
-
-	public Long getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Long timestamp) {
-		this.timestamp = timestamp;
 	}
 
 	public Integer getMethod() {
