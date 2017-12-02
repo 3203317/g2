@@ -26,7 +26,6 @@ public class TimeoutHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-
 		if (!(evt instanceof IdleStateEvent))
 			return;
 
@@ -37,14 +36,12 @@ public class TimeoutHandler extends ChannelInboundHandlerAdapter {
 			logout(ctx);
 			break;
 		case WRITER_IDLE:
-			break;
 		case ALL_IDLE:
 			break;
 		}
 	}
 
 	private void logout(ChannelHandlerContext ctx) {
-
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override

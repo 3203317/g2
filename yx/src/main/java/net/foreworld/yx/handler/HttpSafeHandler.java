@@ -36,7 +36,6 @@ public class HttpSafeHandler extends ChannelInboundHandlerAdapter {
 	}
 
 	private void logout(ChannelHandlerContext ctx) {
-
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override

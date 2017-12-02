@@ -48,6 +48,8 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
+		logger.info("client ip: {}", incoming);
+
 		ctx.pipeline().remove(this);
 	}
 

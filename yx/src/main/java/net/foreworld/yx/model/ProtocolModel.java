@@ -19,14 +19,14 @@ public class ProtocolModel {
 
 	private String backId;
 
-	private String receiver;
+	private String userId;
 
-	public String getReceiver() {
-		return receiver;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setReceiver(String receiver) {
-		this.receiver = receiver;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public Long getTimestamp() {

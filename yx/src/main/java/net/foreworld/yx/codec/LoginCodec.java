@@ -55,7 +55,6 @@ public class LoginCodec extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 	}
 
 	private void logout(ChannelHandlerContext ctx) {
-
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override
