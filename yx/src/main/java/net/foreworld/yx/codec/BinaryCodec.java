@@ -1,7 +1,5 @@
 package net.foreworld.yx.codec;
 
-import static io.netty.buffer.Unpooled.wrappedBuffer;
-
 import java.net.SocketAddress;
 import java.util.List;
 
@@ -20,7 +18,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import net.foreworld.yx.model.ProtocolModel;
 
@@ -31,17 +29,12 @@ import net.foreworld.yx.model.ProtocolModel;
  */
 @Component
 @Sharable
-public class BinaryCodec extends MessageToMessageCodec<BinaryWebSocketFrame, String> {
+public class BinaryCodec extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 
 	@Value("${msg.body.max:512}")
 	private int msg_body_max;
 
 	private static final Logger logger = LoggerFactory.getLogger(BinaryCodec.class);
-
-	@Override
-	protected void encode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
-		out.add(new BinaryWebSocketFrame(wrappedBuffer(msg.getBytes())));
-	}
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {

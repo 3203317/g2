@@ -18,6 +18,7 @@ import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketSe
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import net.foreworld.yx.codec.LoginCodec;
+import net.foreworld.yx.codec.OutDecoder;
 import net.foreworld.yx.handler.BlacklistHandler;
 import net.foreworld.yx.handler.ExceptionHandler;
 import net.foreworld.yx.handler.HttpSafeHandler;
@@ -63,6 +64,9 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "loginTimeoutHandler")
 	private LoginTimeoutHandler loginTimeoutHandler;
 
+	@Resource(name = "outDecoder")
+	private OutDecoder outDecoder;
+
 	@Override
 	protected void initChannel(NioSocketChannel ch) throws Exception {
 		ChannelPipeline pipe = ch.pipeline();
@@ -87,6 +91,7 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 
 		pipe.addLast(new WebSocketServerCompressionHandler());
 
+		pipe.addLast(outDecoder);
 		pipe.addLast("loginCodec", loginCodec);
 
 		pipe.addLast(loginHandler);

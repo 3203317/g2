@@ -49,6 +49,7 @@ public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel>
 
 		ctx.writeAndFlush(chan_id).addListener(f -> {
 			if (!f.isSuccess()) {
+				logger.error("data: {}", chan_id);
 			}
 		});
 	}

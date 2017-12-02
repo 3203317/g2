@@ -23,12 +23,10 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<ProtocolModel>
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
 
-		switch (msg.getMethod()) {
-		case 6: {
+		if (6 == msg.getMethod()) {
 			logger.info("method: {}", msg.getMethod());
 			ctx.flush();
 			return;
-		}
 		}
 
 		ctx.fireChannelRead(msg);
