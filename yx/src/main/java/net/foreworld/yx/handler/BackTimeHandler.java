@@ -25,7 +25,7 @@ public class BackTimeHandler extends SimpleChannelInboundHandler<BackModel> {
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, BackModel msg)
 			throws Exception {
-		logger.info("{}", msg.getReceiver());
+		logger.info("{}:{}", msg.getMethod(), msg.getReceiver());
 
 		SendUtil.backSend(msg.getReceiver(), msg.getData());
 		ctx.flush();
