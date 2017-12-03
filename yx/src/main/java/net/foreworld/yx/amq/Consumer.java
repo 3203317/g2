@@ -1,10 +1,18 @@
 package net.foreworld.yx.amq;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+
 import java.net.SocketAddress;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+
+import net.foreworld.yx.model.ChannelInfo;
+import net.foreworld.yx.util.ChannelUtil;
+import net.foreworld.yx.util.SendUtil;
 
 import org.apache.commons.codec.Charsets;
 import org.slf4j.Logger;
@@ -16,13 +24,6 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import net.foreworld.yx.model.ChannelInfo;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.Constants;
-
 /**
  *
  * @author huangxin <3203317@qq.com>
@@ -32,7 +33,8 @@ import net.foreworld.yx.util.Constants;
 @Component
 public class Consumer {
 
-	private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(Consumer.class);
 
 	@JmsListener(destination = "${queue.back.send}.${server.id}")
 	public void back_send(BytesMessage msg) {
@@ -50,44 +52,7 @@ public class Consumer {
 
 			// 开始发送
 
-			if (Constants.ALL.equals(_receiver)) {
-				ChannelUtil.getDefault().broadcast(_data).addListener(f -> {
-					if (!f.isSuccess()) {
-						logger.error("data: {}", _data);
-					}
-				});
-				return;
-			}
-
-			String[] recs = _receiver.split(",");
-
-			for (int i = 0; i < recs.length; i++) {
-				ChannelInfo ci = ChannelUtil.getDefault().getChannel(recs[i]);
-
-				if (null == ci)
-					continue;
-
-				Channel c = ci.getChannel();
-
-				if (null == c)
-					continue;
-
-				if (!c.isWritable()) {
-					c.writeAndFlush(_data).sync().addListener(f -> {
-						if (!f.isSuccess()) {
-							logger.error("data: {}", _data);
-						}
-					});
-
-					continue;
-				}
-
-				c.writeAndFlush(_data).addListener(f -> {
-					if (!f.isSuccess()) {
-						logger.error("data: {}", _data);
-					}
-				});
-			}
+			SendUtil.backSend(_receiver, _data);
 
 		} catch (InterruptedException | JMSException e) {
 			logger.error("", e);
@@ -120,14 +85,15 @@ public class Consumer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param channel
 	 */
 	private void logout(Channel channel) {
 		channel.close().addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
+			public void operationComplete(ChannelFuture future)
+					throws Exception {
 				SocketAddress addr = channel.remoteAddress();
 
 				if (future.isSuccess()) {
