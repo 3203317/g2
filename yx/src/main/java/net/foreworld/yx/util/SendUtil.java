@@ -2,6 +2,7 @@ package net.foreworld.yx.util;
 
 import io.netty.channel.Channel;
 import net.foreworld.yx.model.ChannelInfo;
+import net.foreworld.yx.model.ProtocolModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,10 @@ public class SendUtil {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(SendUtil.class);
+
+	public static void frontSend(ProtocolModel msg) {
+
+	}
 
 	public static void backSend(String receiver, String data)
 			throws InterruptedException {
@@ -58,4 +63,5 @@ public class SendUtil {
 			});
 		}
 	}
+
 }

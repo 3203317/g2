@@ -7,9 +7,18 @@ package net.foreworld.yx.model;
  */
 public class BackModel {
 
+	private Integer method;
 	private String data;
 
 	private String receiver;
+
+	public Integer getMethod() {
+		return method;
+	}
+
+	public void setMethod(Integer method) {
+		this.method = method;
+	}
 
 	public String getReceiver() {
 		return receiver;
