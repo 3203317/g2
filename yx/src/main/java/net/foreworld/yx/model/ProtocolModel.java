@@ -1,16 +1,14 @@
 package net.foreworld.yx.model;
 
 /**
- * 
+ *
  * @author huangxin <3203317@qq.com>
  *
  */
-public class ProtocolModel {
+public class ProtocolModel extends BaseModel {
 
-	private Integer method;
 	private Integer seqId;
 	private Long timestamp;
-	private String data;
 
 	private String signature;
 
@@ -53,28 +51,12 @@ public class ProtocolModel {
 		this.signature = signature;
 	}
 
-	public Integer getMethod() {
-		return method;
-	}
-
-	public void setMethod(Integer method) {
-		this.method = method;
-	}
-
 	public Integer getSeqId() {
 		return seqId;
 	}
 
 	public void setSeqId(Integer seqId) {
 		this.seqId = seqId;
-	}
-
-	public String getData() {
-		return data;
-	}
-
-	public void setData(String data) {
-		this.data = data;
 	}
 
 	public String getServerId() {

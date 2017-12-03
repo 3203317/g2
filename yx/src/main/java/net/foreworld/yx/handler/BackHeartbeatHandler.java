@@ -1,13 +1,13 @@
 package net.foreworld.yx.handler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.foreworld.yx.model.BackModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  *
@@ -16,21 +16,19 @@ import net.foreworld.yx.model.BackModel;
  */
 @Component
 @Sharable
-public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel> {
+public class BackHeartbeatHandler extends
+		SimpleChannelInboundHandler<BackModel> {
 
-	private static final Logger logger = LoggerFactory.getLogger(BackHeartbeatHandler.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(BackHeartbeatHandler.class);
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, BackModel msg) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, BackModel msg)
+			throws Exception {
 
 		switch (msg.getMethod()) {
 		case 2: {
 			sendSelfChan(ctx);
-			return;
-		}
-		case 6: {
-			logger.info("method: {}", msg.getMethod());
-			ctx.flush();
 			return;
 		}
 		}
