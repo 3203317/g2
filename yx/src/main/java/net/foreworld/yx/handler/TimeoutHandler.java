@@ -37,7 +37,6 @@ public class TimeoutHandler extends ChannelInboundHandlerAdapter {
 			break;
 		case WRITER_IDLE:
 		case ALL_IDLE:
-			break;
 		}
 	}
 
