@@ -21,7 +21,7 @@ redis.call('DEL', redis.call('HGET', code, 'client_id') ..'::'.. _user_id);
 
 -- 
 
-local result = redis.call('HGET', code, 'chan_type')) ..':'.. _user_id;
+local result = redis.call('HGET', code, 'chan_type')) ..','.. _user_id;
 
 -- 
 
