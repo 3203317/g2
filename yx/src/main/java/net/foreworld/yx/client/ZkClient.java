@@ -68,15 +68,22 @@ public class ZkClient extends Client implements Watcher {
 
 	/**
 	 * 向front下注册节点
-	 *
+	 */
+	private void register() {
+		try {
+			registerServer();
+			listenerService();
+		} catch (KeeperException | InterruptedException e) {
+			logger.error("", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * 
 	 * @throws KeeperException
 	 * @throws InterruptedException
 	 */
-	public void register() throws KeeperException, InterruptedException {
-		registerServer();
-		listenerService();
-	}
-
 	private void registerServer() throws KeeperException, InterruptedException {
 		zk.create(zk_rootPath + "/front/" + server_id, "".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 	}
@@ -87,7 +94,7 @@ public class ZkClient extends Client implements Watcher {
 
 	/**
 	 * 监听服务注入
-	 *
+	 * 
 	 * @throws KeeperException
 	 * @throws InterruptedException
 	 */
@@ -101,8 +108,7 @@ public class ZkClient extends Client implements Watcher {
 		}
 	}
 
-	@Override
-	public void start() {
+	private void init() {
 		if (null != zk)
 			return;
 
@@ -130,6 +136,13 @@ public class ZkClient extends Client implements Watcher {
 					}
 				};
 		}
+
+	}
+
+	@Override
+	public void start() {
+		init();
+		register();
 	}
 
 }

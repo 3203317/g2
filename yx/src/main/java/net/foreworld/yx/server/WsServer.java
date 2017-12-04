@@ -2,11 +2,9 @@ package net.foreworld.yx.server;
 
 import javax.annotation.Resource;
 
-import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -25,13 +23,8 @@ import net.foreworld.yx.initializer.WsInitializer;
  * @author huangxin <3203317@qq.com>
  *
  */
-@PropertySource("classpath:activemq.properties")
-@PropertySource("classpath:redis.properties")
 @Component
 public class WsServer extends Server {
-
-	@Value("${db.redis.database:1}")
-	private String db_redis_database;
 
 	@Value("${server.port:1234}")
 	private int port;
@@ -114,9 +107,8 @@ public class WsServer extends Server {
 		}
 	}
 
-	private void afterStart() throws KeeperException, InterruptedException {
+	private void afterStart() {
 		zkClient.start();
-		zkClient.register();
 	}
 
 	private void beforeShut() {
