@@ -132,7 +132,6 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		String[] text = str.split(",");
 
 		Type chan_type = Type.valueOf(text[0]);
-		String userId = text[1];
 
 		ChannelPipeline pipe = ctx.pipeline();
 
@@ -158,7 +157,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		ci.setLoginTime(new Date());
 		ci.setChannel(channel);
 		ci.setType(chan_type);
-		ci.setUserId(userId);
+		ci.setUserId(text[1]);
 
 		ChannelUtil.getDefault().putChannel(chan_id, ci);
 
@@ -172,7 +171,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 	 * 
 	 * @param code
 	 * @param chan_id
-	 * @return 'chan_type:userId'
+	 * @return
 	 */
 	private String verify(String code, String chan_id) {
 		List<String> s = new ArrayList<String>();
@@ -192,6 +191,9 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 		Object o = j.evalsha(sha_token, s, b);
 		j.close();
+
+		if (null == o)
+			return null;
 
 		String str = o.toString();
 

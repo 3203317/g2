@@ -1,18 +1,10 @@
 package net.foreworld.yx.amq;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-
 import java.net.SocketAddress;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-
-import net.foreworld.yx.model.ChannelInfo;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.SendUtil;
 
 import org.apache.commons.codec.Charsets;
 import org.slf4j.Logger;
@@ -24,6 +16,13 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import net.foreworld.yx.model.ChannelInfo;
+import net.foreworld.yx.util.ChannelUtil;
+import net.foreworld.yx.util.SendUtil;
+
 /**
  *
  * @author huangxin <3203317@qq.com>
@@ -33,8 +32,7 @@ import com.google.gson.JsonParser;
 @Component
 public class Consumer {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(Consumer.class);
+	private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
 
 	@JmsListener(destination = "${queue.back.send}.${server.id}")
 	public void back_send(BytesMessage msg) {
@@ -92,8 +90,7 @@ public class Consumer {
 		channel.close().addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
+			public void operationComplete(ChannelFuture future) throws Exception {
 				SocketAddress addr = channel.remoteAddress();
 
 				if (future.isSuccess()) {

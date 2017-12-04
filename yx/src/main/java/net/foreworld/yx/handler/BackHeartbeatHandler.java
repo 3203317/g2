@@ -1,13 +1,14 @@
 package net.foreworld.yx.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.foreworld.yx.model.BackModel;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  *
@@ -16,16 +17,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Sharable
-public class BackHeartbeatHandler extends
-		SimpleChannelInboundHandler<BackModel> {
+public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel> {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(BackHeartbeatHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(BackHeartbeatHandler.class);
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, BackModel msg)
-			throws Exception {
-
+	protected void channelRead0(ChannelHandlerContext ctx, BackModel msg) throws Exception {
 		switch (msg.getMethod()) {
 		case 2: {
 			sendSelfChan(ctx);
@@ -41,15 +38,29 @@ public class BackHeartbeatHandler extends
 	 * 获取当前的通道号
 	 *
 	 * @param ctx
+	 * @throws InterruptedException
 	 */
-	private void sendSelfChan(ChannelHandlerContext ctx) {
-		String chan_id = ctx.channel().id().asLongText();
+	private void sendSelfChan(ChannelHandlerContext ctx) throws InterruptedException {
+		Channel c = ctx.channel();
 
-		ctx.writeAndFlush(chan_id).addListener(f -> {
+		String chan_id = c.id().asLongText();
+
+		if (!c.isWritable()) {
+			c.writeAndFlush(chan_id).sync().addListener(f -> {
+				if (!f.isSuccess()) {
+					logger.error("data: {}", chan_id);
+				}
+			});
+
+			return;
+		}
+
+		c.writeAndFlush(chan_id).addListener(f -> {
 			if (!f.isSuccess()) {
 				logger.error("data: {}", chan_id);
 			}
 		});
+
 	}
 
 }

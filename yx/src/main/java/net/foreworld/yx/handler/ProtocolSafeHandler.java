@@ -38,13 +38,10 @@ public class ProtocolSafeHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
-		// logger.error("protocol error: {}", msg);
-
 		logout(ctx);
 	}
 
 	private void logout(ChannelHandlerContext ctx) {
-
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override

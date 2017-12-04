@@ -49,6 +49,7 @@ public class BinaryCodec extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 
 		byte[] _bytes = new byte[_len];
 		_bf.readBytes(_bytes);
+		_bf.clear();
 
 		String _text = new String(_bytes, CharEncoding.UTF_8);
 
@@ -112,7 +113,6 @@ public class BinaryCodec extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 	 * @param ctx
 	 */
 	private void logout(ChannelHandlerContext ctx) {
-
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override

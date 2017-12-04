@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import io.netty.buffer.ByteBuf;
@@ -38,6 +37,7 @@ public class BackCodec extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 
 		byte[] _bytes = new byte[_bf.capacity()];
 		_bf.readBytes(_bytes);
+		_bf.clear();
 
 		String _text = new String(_bytes, CharEncoding.UTF_8);
 
@@ -50,27 +50,11 @@ public class BackCodec extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 			return;
 		}
 
-		int _size = _ja.size();
-
 		BackModel model = new BackModel();
 
-		model.setMethod(_ja.get(0).getAsInt());
-
-		if (1 < _size) {
-			JsonElement _je_1 = _ja.get(1);
-
-			if (!_je_1.isJsonNull()) {
-				model.setReceiver(_je_1.getAsString());
-			}
-		}
-
-		if (2 < _size) {
-			JsonElement _je_2 = _ja.get(2);
-
-			if (!_je_2.isJsonNull()) {
-				model.setData(_je_2.getAsString());
-			}
-		}
+		model.setReceiver(_ja.get(0).getAsString().trim());
+		model.setMethod(_ja.get(1).getAsInt());
+		model.setData(_ja.get(2).getAsString().trim());
 
 		out.add(model);
 	}
@@ -80,7 +64,6 @@ public class BackCodec extends MessageToMessageDecoder<BinaryWebSocketFrame> {
 	 * @param ctx
 	 */
 	private void logout(ChannelHandlerContext ctx) {
-
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override
