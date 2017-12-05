@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import net.foreworld.util.Client;
+
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -17,8 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-
-import net.foreworld.util.Client;
 
 /**
  *
@@ -45,7 +45,8 @@ public class ZkClient extends Client implements Watcher {
 	@Value("${server.id}")
 	private String server_id;
 
-	private static final Logger logger = LoggerFactory.getLogger(ZkClient.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ZkClient.class);
 
 	@Override
 	public void shutdown() {
@@ -68,24 +69,23 @@ public class ZkClient extends Client implements Watcher {
 
 	/**
 	 * 向front下注册节点
+	 *
+	 * @throws InterruptedException
+	 * @throws KeeperException
 	 */
-	private void register() {
-		try {
-			registerServer();
-			listenerService();
-		} catch (KeeperException | InterruptedException e) {
-			logger.error("", e);
-			throw new RuntimeException(e);
-		}
+	private void register() throws KeeperException, InterruptedException {
+		registerServer();
+		listenerService();
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws KeeperException
 	 * @throws InterruptedException
 	 */
 	private void registerServer() throws KeeperException, InterruptedException {
-		zk.create(zk_rootPath + "/front/" + server_id, "".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+		zk.create(zk_rootPath + "/front/" + server_id, "".getBytes(),
+				Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 	}
 
 	private Watcher watcher;
@@ -94,12 +94,13 @@ public class ZkClient extends Client implements Watcher {
 
 	/**
 	 * 监听服务注入
-	 * 
+	 *
 	 * @throws KeeperException
 	 * @throws InterruptedException
 	 */
 	private void listenerService() throws KeeperException, InterruptedException {
-		List<String> list = zk.getChildren(zk_rootPath + "/service", watcher, stat);
+		List<String> list = zk.getChildren(zk_rootPath + "/service", watcher,
+				stat);
 
 		logger.info("service count: {}", stat.getNumChildren());
 
@@ -108,39 +109,36 @@ public class ZkClient extends Client implements Watcher {
 		}
 	}
 
-	private void init() {
+	private void init() throws IOException, InterruptedException {
 		if (null != zk)
 			return;
 
 		if (null == countDownLatch)
 			countDownLatch = new CountDownLatch(1);
 
-		try {
-			zk = new ZooKeeper(zk_host, zk_sessionTimeout, this);
-			countDownLatch.await();
-		} catch (IOException | InterruptedException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (null == stat)
-				stat = new Stat();
+		zk = new ZooKeeper(zk_host, zk_sessionTimeout, this);
+		countDownLatch.await();
 
-			if (null == watcher)
-				watcher = new Watcher() {
-					@Override
-					public void process(WatchedEvent event) {
-						try {
-							listenerService();
-						} catch (KeeperException | InterruptedException e) {
-							logger.error("", e);
-						}
+		if (null == stat)
+			stat = new Stat();
+
+		if (null == watcher)
+			watcher = new Watcher() {
+				@Override
+				public void process(WatchedEvent event) {
+					try {
+						listenerService();
+					} catch (KeeperException | InterruptedException e) {
+						logger.error("", e);
 					}
-				};
-		}
+				}
+			};
 
 	}
 
 	@Override
-	public void start() {
+	public void start() throws IOException, InterruptedException,
+			KeeperException {
 		init();
 		register();
 	}
