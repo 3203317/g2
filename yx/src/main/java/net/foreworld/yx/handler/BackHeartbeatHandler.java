@@ -45,22 +45,20 @@ public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel>
 
 		String chan_id = c.id().asLongText();
 
-		if (!c.isWritable()) {
-			c.writeAndFlush(chan_id).sync().addListener(f -> {
+		if (c.isWritable()) {
+			c.writeAndFlush(chan_id).addListener(f -> {
 				if (!f.isSuccess()) {
 					logger.error("data: {}", chan_id);
 				}
 			});
-
 			return;
 		}
 
-		c.writeAndFlush(chan_id).addListener(f -> {
+		c.writeAndFlush(chan_id).sync().addListener(f -> {
 			if (!f.isSuccess()) {
 				logger.error("data: {}", chan_id);
 			}
 		});
-
 	}
 
 }

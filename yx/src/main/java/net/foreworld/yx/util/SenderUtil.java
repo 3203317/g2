@@ -22,7 +22,6 @@ public final class SenderUtil {
 	 * @throws InterruptedException
 	 */
 	public static void backSend(String receiver, String data) throws InterruptedException {
-
 		if (Constants.ALL.equals(receiver)) {
 			ChannelUtil.getDefault().broadcast(data).addListener(f -> {
 				if (!f.isSuccess()) {
@@ -45,8 +44,8 @@ public final class SenderUtil {
 			if (null == c)
 				continue;
 
-			if (!c.isWritable()) {
-				c.writeAndFlush(data).sync().addListener(f -> {
+			if (c.isWritable()) {
+				c.writeAndFlush(data).addListener(f -> {
 					if (!f.isSuccess()) {
 						logger.error("data: {}", data);
 					}
@@ -55,11 +54,12 @@ public final class SenderUtil {
 				continue;
 			}
 
-			c.writeAndFlush(data).addListener(f -> {
+			c.writeAndFlush(data).sync().addListener(f -> {
 				if (!f.isSuccess()) {
 					logger.error("data: {}", data);
 				}
 			});
+
 		}
 	}
 
