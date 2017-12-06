@@ -8,7 +8,7 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.foreworld.yx.model.BackModel;
-import net.foreworld.yx.util.SendUtil;
+import net.foreworld.yx.util.SenderUtil;
 
 /**
  * 
@@ -25,7 +25,7 @@ public class BackTimeHandler extends SimpleChannelInboundHandler<BackModel> {
 	protected void channelRead0(ChannelHandlerContext ctx, BackModel msg) throws Exception {
 		logger.info("{}:{}", msg.getReceiver(), msg.getMethod());
 
-		SendUtil.backSend(msg.getReceiver(), msg.getData());
+		SenderUtil.backSend(msg.getReceiver(), msg.getData());
 		ctx.flush();
 	}
 

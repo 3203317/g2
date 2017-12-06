@@ -21,7 +21,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import net.foreworld.yx.model.ChannelInfo;
 import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.SendUtil;
+import net.foreworld.yx.util.SenderUtil;
 
 /**
  *
@@ -50,7 +50,7 @@ public class Consumer {
 
 			// 开始发送
 
-			SendUtil.backSend(_receiver, _data);
+			SenderUtil.backSend(_receiver, _data);
 
 		} catch (InterruptedException | JMSException e) {
 			logger.error("", e);

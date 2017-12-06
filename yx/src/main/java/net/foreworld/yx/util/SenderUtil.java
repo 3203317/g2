@@ -11,9 +11,9 @@ import net.foreworld.yx.model.ChannelInfo;
  * @author huangxin <3203317@qq.com>
  *
  */
-public final class SendUtil {
+public final class SenderUtil {
 
-	private static final Logger logger = LoggerFactory.getLogger(SendUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(SenderUtil.class);
 
 	/**
 	 * 
