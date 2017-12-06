@@ -26,6 +26,7 @@ public class BackTimeHandler extends SimpleChannelInboundHandler<BackModel> {
 		logger.info("{}:{}", msg.getReceiver(), msg.getMethod());
 
 		SendUtil.backSend(msg.getReceiver(), msg.getData());
+		ctx.flush();
 	}
 
 }

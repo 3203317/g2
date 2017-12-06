@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import io.netty.channel.Channel;
 import net.foreworld.yx.model.ChannelInfo;
-import net.foreworld.yx.model.ProtocolModel;
 
 /**
  * 
@@ -15,14 +14,6 @@ import net.foreworld.yx.model.ProtocolModel;
 public final class SendUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(SendUtil.class);
-
-	/**
-	 * 
-	 * @param msg
-	 */
-	public static void frontSend(ProtocolModel msg) {
-
-	}
 
 	/**
 	 * 
