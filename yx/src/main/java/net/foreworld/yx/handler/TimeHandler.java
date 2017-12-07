@@ -13,13 +13,18 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.foreworld.util.StringUtil;
+import net.foreworld.yx.model.BackMethod;
+import net.foreworld.yx.model.ChannelInfo;
 import net.foreworld.yx.model.ProtocolModel;
+import net.foreworld.yx.util.BackMethodUtil;
+import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
 
 /**
@@ -50,23 +55,60 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
 		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
-		String destName = msg.getMethod().toString();
+		String back_id = StringUtil.isEmpty(msg.getBackId());
 
-		String sb = StringUtil.isEmpty(msg.getBackId());
+		if (null == back_id) {
 
-		if (null != sb) {
-			destName += '.' + sb;
+		} else {
+			String destName = msg.getMethod() + ":" + back_id;
+
+			BackMethod method = BackMethodUtil.getDefault().get(destName);
+
+			if (null == method) {
+				logout(ctx);
+				return;
+			}
+
+			msg.setServerId(server_id);
+			msg.setChannelId(ctx.channel().id().asLongText());
+
+			String _data = gson.toJson(msg);
+
+			if (null == method.getChannelId()) {
+				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + destName, _data);
+			} else {
+
+				ChannelInfo ci = ChannelUtil.getDefault().getChannel(method.getChannelId());
+
+				if (null == ci) {
+					logout(ctx);
+					return;
+				}
+
+				Channel c = ci.getChannel();
+
+				if (null == c) {
+					logout(ctx);
+					return;
+				}
+
+				if (c.isWritable()) {
+					c.writeAndFlush(_data).addListener(f -> {
+						if (!f.isSuccess()) {
+							logger.error("data: {}", _data);
+						}
+					});
+
+				} else {
+					c.writeAndFlush(_data).sync().addListener(f -> {
+						if (!f.isSuccess()) {
+							logger.error("data: {}", _data);
+						}
+					});
+				}
+			}
 		}
 
-		if (0 > allow_queue.indexOf("," + destName + ",")) {
-			logout(ctx);
-			return;
-		}
-
-		msg.setServerId(server_id);
-		msg.setChannelId(ctx.channel().id().asLongText());
-
-		jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + destName, gson.toJson(msg));
 		ctx.flush();
 	}
 
