@@ -53,58 +53,70 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		String back_id = StringUtil.isEmpty(msg.getBackId());
 
+		String _method = msg.getMethod().toString();
+
 		if (null == back_id) {
+			_method += ":" + back_id;
+		}
 
+		String chan_id = BackMethodUtil.getDefault().get(_method);
+
+		if (null == chan_id) {
+			logout(ctx);
+			return;
+		}
+
+		msg.setServerId(server_id);
+		msg.setChannelId(ctx.channel().id().asLongText());
+		msg.setUserId(ChannelUtil.getDefault().getChannel(msg.getChannelId()).getUserId());
+
+		String _data = gson.toJson(msg);
+
+		String mq = chooseChannel(chan_id);
+
+		if ("MQ".equals(mq)) {
+			jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 		} else {
-			String _method = msg.getMethod() + ":" + back_id;
+			ChannelInfo ci = ChannelUtil.getDefault().getChannel(mq);
 
-			String chan_id = BackMethodUtil.getDefault().get(_method);
-
-			if (null == chan_id) {
+			if (null == ci) {
 				logout(ctx);
 				return;
 			}
 
-			msg.setServerId(server_id);
-			msg.setChannelId(ctx.channel().id().asLongText());
-			msg.setUserId(ChannelUtil.getDefault().getChannel(msg.getChannelId()).getUserId());
+			Channel c = ci.getChannel();
 
-			String _data = gson.toJson(msg);
+			if (null == c) {
+				logout(ctx);
+				return;
+			}
 
-			if ("".equals(chan_id)) {
-				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
+			if (c.isWritable()) {
+				c.writeAndFlush(_data).addListener(f -> {
+					if (!f.isSuccess()) {
+						logger.error("data: {}", _data);
+					}
+				});
 			} else {
-				ChannelInfo ci = ChannelUtil.getDefault().getChannel(chan_id);
-
-				if (null == ci) {
-					logout(ctx);
-					return;
-				}
-
-				Channel c = ci.getChannel();
-
-				if (null == c) {
-					logout(ctx);
-					return;
-				}
-
-				if (c.isWritable()) {
-					c.writeAndFlush(_data).addListener(f -> {
-						if (!f.isSuccess()) {
-							logger.error("data: {}", _data);
-						}
-					});
-				} else {
-					c.writeAndFlush(_data).sync().addListener(f -> {
-						if (!f.isSuccess()) {
-							logger.error("data: {}", _data);
-						}
-					});
-				}
+				c.writeAndFlush(_data).sync().addListener(f -> {
+					if (!f.isSuccess()) {
+						logger.error("data: {}", _data);
+					}
+				});
 			}
 		}
 
 		ctx.flush();
+	}
+
+	/**
+	 * 选择通道号
+	 * 
+	 * @param chan_id
+	 * @return
+	 */
+	private String chooseChannel(String chan_id) {
+		return "";
 	}
 
 	/**
@@ -131,7 +143,6 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 	public static void main(String[] args) {
 		System.err.println(",111,222,".indexOf(",333,"));
-
 		System.err.println(":a:bc".split(":").length);
 	}
 
