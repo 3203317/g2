@@ -20,7 +20,6 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.foreworld.util.StringUtil;
-import net.foreworld.yx.model.BackMethod;
 import net.foreworld.yx.model.ChannelInfo;
 import net.foreworld.yx.model.ProtocolModel;
 import net.foreworld.yx.util.BackMethodUtil;
@@ -43,9 +42,6 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Value("${server.id}")
 	private String server_id;
 
-	@Value("${allow.queue:}")
-	private String allow_queue;
-
 	@Resource(name = "gson")
 	private Gson gson;
 
@@ -60,25 +56,25 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		if (null == back_id) {
 
 		} else {
-			String destName = msg.getMethod() + ":" + back_id;
+			String _method = msg.getMethod() + ":" + back_id;
 
-			BackMethod method = BackMethodUtil.getDefault().get(destName);
+			String chan_id = BackMethodUtil.getDefault().get(_method);
 
-			if (null == method) {
+			if (null == chan_id) {
 				logout(ctx);
 				return;
 			}
 
 			msg.setServerId(server_id);
 			msg.setChannelId(ctx.channel().id().asLongText());
+			msg.setUserId(ChannelUtil.getDefault().getChannel(msg.getChannelId()).getUserId());
 
 			String _data = gson.toJson(msg);
 
-			if (null == method.getChannelId()) {
-				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + destName, _data);
+			if ("".equals(chan_id)) {
+				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 			} else {
-
-				ChannelInfo ci = ChannelUtil.getDefault().getChannel(method.getChannelId());
+				ChannelInfo ci = ChannelUtil.getDefault().getChannel(chan_id);
 
 				if (null == ci) {
 					logout(ctx);
@@ -98,7 +94,6 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 							logger.error("data: {}", _data);
 						}
 					});
-
 				} else {
 					c.writeAndFlush(_data).sync().addListener(f -> {
 						if (!f.isSuccess()) {

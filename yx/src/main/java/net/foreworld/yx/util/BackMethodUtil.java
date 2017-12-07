@@ -3,8 +3,6 @@ package net.foreworld.yx.util;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.foreworld.yx.model.BackMethod;
-
 /**
  * 
  * @author huangxin <3203317@qq.com>
@@ -21,10 +19,10 @@ public final class BackMethodUtil {
 	private static volatile BackMethodUtil instance;
 
 	private BackMethodUtil() {
-		map = new ConcurrentHashMap<String, BackMethod>();
+		map = new ConcurrentHashMap<String, String>();
 	}
 
-	private Map<String, BackMethod> map;
+	private Map<String, String> map;
 
 	/**
 	 * 定义一个共有的静态方法
@@ -57,18 +55,29 @@ public final class BackMethodUtil {
 	/**
 	 * 
 	 * @param id
-	 * @param method
+	 * @param chan_id
 	 */
-	public void put(String id, BackMethod method) {
-		map.put(id, method);
+	public void put(String id, String chan_id) {
+		map.put(id, chan_id);
 	}
 
 	public void remove(String id) {
 		map.remove(id);
 	}
 
-	public BackMethod get(String id) {
+	public String get(String id) {
 		return map.get(id);
 	}
 
+	public static void main(String[] args) {
+		BackMethodUtil.getDefault().put("b", "c");
+		BackMethodUtil.getDefault().put("a", "");
+
+		System.err.println(BackMethodUtil.getDefault().get("b"));
+		System.err.println(BackMethodUtil.getDefault().get("a"));
+		System.err.println(null == BackMethodUtil.getDefault().get("bb"));
+
+		BackMethodUtil.getDefault().put("a", "d");
+		System.err.println(BackMethodUtil.getDefault().get("a"));
+	}
 }
