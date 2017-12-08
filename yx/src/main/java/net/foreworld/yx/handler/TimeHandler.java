@@ -47,16 +47,27 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 	private static final Logger logger = LoggerFactory.getLogger(TimeHandler.class);
 
+	/**
+	 * 
+	 * 方法:后置机 MQ
+	 * 
+	 * :方法:后置机 MQ
+	 * 
+	 * 方法:后置机:前置机 通道号
+	 * 
+	 * :方法:后置机:前置机 通道号
+	 * 
+	 */
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
 		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
-		String back_id = StringUtil.isEmpty(msg.getBackId());
+		String backId = StringUtil.isEmpty(msg.getBackId());
 
 		String _method = msg.getMethod().toString();
 
-		if (null == back_id) {
-			_method += ":" + back_id;
+		if (null != backId) {
+			_method += ":" + backId;
 		}
 
 		String chan_id = BackMethodUtil.getDefault().get(_method);
@@ -74,7 +85,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		String mq = chooseChannel(chan_id);
 
-		if ("MQ".equals(mq)) {
+		if (Constants.MQ.equals(mq)) {
 			jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 		} else {
 			ChannelInfo ci = ChannelUtil.getDefault().getChannel(mq);

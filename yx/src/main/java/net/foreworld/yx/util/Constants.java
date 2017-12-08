@@ -7,6 +7,7 @@ package net.foreworld.yx.util;
  */
 public interface Constants {
 
+	static final String MQ = "MQ";
 	static final String OK = "OK";
 	static final String INVALID_CODE = "invalid_code";
 
