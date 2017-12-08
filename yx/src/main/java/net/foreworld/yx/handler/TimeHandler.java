@@ -22,9 +22,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import net.foreworld.util.StringUtil;
 import net.foreworld.yx.model.ChannelInfo;
 import net.foreworld.yx.model.ProtocolModel;
-import net.foreworld.yx.util.BackMethodUtil;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
+import net.foreworld.yx.util.MethodUtil;
 
 /**
  *
@@ -70,7 +70,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 			_method += ":" + backId;
 		}
 
-		String chan_id = BackMethodUtil.getDefault().get(_method);
+		String chan_id = MethodUtil.getDefault().get(_method);
 
 		if (null == chan_id) {
 			logout(ctx);
