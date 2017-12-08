@@ -1,6 +1,7 @@
 package net.foreworld.yx.handler;
 
 import java.net.SocketAddress;
+import java.util.Random;
 
 import javax.annotation.Resource;
 
@@ -27,8 +28,8 @@ import net.foreworld.yx.util.Constants;
 import net.foreworld.yx.util.MethodUtil;
 
 /**
- *
- * @author huangxin
+ * 
+ * @author huangxin <3203317@qq.com>
  *
  */
 @PropertySource("classpath:activemq.properties")
@@ -87,37 +88,53 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		if (Constants.MQ.equals(mq)) {
 			jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
-		} else {
-			ChannelInfo ci = ChannelUtil.getDefault().getChannel(mq);
-
-			if (null == ci) {
-				logout(ctx);
-				return;
-			}
-
-			Channel c = ci.getChannel();
-
-			if (null == c) {
-				logout(ctx);
-				return;
-			}
-
-			if (c.isWritable()) {
-				c.writeAndFlush(_data).addListener(f -> {
-					if (!f.isSuccess()) {
-						logger.error("data: {}", _data);
-					}
-				});
-			} else {
-				c.writeAndFlush(_data).sync().addListener(f -> {
-					if (!f.isSuccess()) {
-						logger.error("data: {}", _data);
-					}
-				});
-			}
+			ctx.flush();
+			return;
 		}
 
-		ctx.flush();
+		ChannelInfo ci = ChannelUtil.getDefault().getChannel(mq);
+
+		if (null == ci) {
+
+			if (allowMQ(chan_id)) {
+				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
+				ctx.flush();
+				return;
+			}
+
+			logout(ctx);
+			return;
+		}
+
+		Channel c = ci.getChannel();
+
+		if (null == c) {
+
+			if (allowMQ(chan_id)) {
+				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
+				ctx.flush();
+				return;
+			}
+
+			logout(ctx);
+			return;
+		}
+
+		if (c.isWritable()) {
+			c.writeAndFlush(_data).addListener(f -> {
+				if (!f.isSuccess()) {
+					logger.error("data: {}", _data);
+				}
+			});
+
+			return;
+		}
+
+		c.writeAndFlush(_data).sync().addListener(f -> {
+			if (!f.isSuccess()) {
+				logger.error("data: {}", _data);
+			}
+		});
 	}
 
 	/**
@@ -127,7 +144,20 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	 * @return
 	 */
 	private String chooseChannel(String chan_id) {
-		return "";
+		if (Constants.MQ.equals(chan_id))
+			return Constants.MQ;
+
+		return chan_id.split(",")[0];
+	}
+
+	/**
+	 * MQ可用否
+	 * 
+	 * @param chan_id
+	 * @return
+	 */
+	private boolean allowMQ(String chan_id) {
+		return -1 < chan_id.indexOf(Constants.MQ);
 	}
 
 	/**
@@ -155,6 +185,13 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	public static void main(String[] args) {
 		System.err.println(",111,222,".indexOf(",333,"));
 		System.err.println(":a:bc".split(":").length);
+		System.err.println(-1 < "MQ".indexOf("MQ"));
+
+		Random random = new Random();
+		int s = random.nextInt(3) + 1;
+		System.out.println(":" + s);
+
+		System.err.println("111,MQ".split(",")[0]);
 	}
 
 }
