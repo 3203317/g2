@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 
+ *
  * @author huangxin <3203317@qq.com>
  *
  */
@@ -59,7 +59,7 @@ public final class MethodUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @param chan_id
 	 */
@@ -73,15 +73,12 @@ public final class MethodUtil {
 			return;
 		}
 
-		if (l.contains(chan_id))
-			return;
-
-		l.add(chan_id);
+		if (!l.contains(chan_id))
+			l.add(chan_id);
 	}
 
 	public void remove(String id) {
-		if (map.containsKey(id))
-			map.remove(id);
+		map.remove(id);
 	}
 
 	public void remove(String id, String chan_id) {
@@ -111,7 +108,7 @@ public final class MethodUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param id
 	 * @param chan_id
 	 * @return
