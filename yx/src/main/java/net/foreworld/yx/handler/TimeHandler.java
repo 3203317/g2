@@ -84,19 +84,16 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		String _data = gson.toJson(msg);
 
-		String mq = chooseChannel(chan_id);
-
-		if (Constants.MQ.equals(mq)) {
+		if (Constants.MQ.equals(chan_id)) {
 			jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 			ctx.flush();
 			return;
 		}
 
-		ChannelInfo ci = ChannelUtil.getDefault().getChannel(mq);
+		ChannelInfo ci = ChannelUtil.getDefault().getChannel(chan_id);
 
 		if (null == ci) {
-
-			if (allowMQ(chan_id)) {
+			if (MethodUtil.getDefault().contains(_method, Constants.MQ)) {
 				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 				ctx.flush();
 				return;
@@ -109,8 +106,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		Channel c = ci.getChannel();
 
 		if (null == c) {
-
-			if (allowMQ(chan_id)) {
+			if (MethodUtil.getDefault().contains(_method, Constants.MQ)) {
 				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 				ctx.flush();
 				return;
@@ -135,29 +131,6 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 				logger.error("data: {}", _data);
 			}
 		});
-	}
-
-	/**
-	 * 选择通道号
-	 * 
-	 * @param chan_id
-	 * @return
-	 */
-	private String chooseChannel(String chan_id) {
-		if (Constants.MQ.equals(chan_id))
-			return Constants.MQ;
-
-		return chan_id.split(",")[0];
-	}
-
-	/**
-	 * MQ可用否
-	 * 
-	 * @param chan_id
-	 * @return
-	 */
-	private boolean allowMQ(String chan_id) {
-		return -1 < chan_id.indexOf(Constants.MQ);
 	}
 
 	/**

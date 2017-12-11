@@ -1,6 +1,9 @@
 package net.foreworld.yx.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -9,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public final class MethodUtil {
+
+	private Random random;
 
 	// 定义一个静态私有变量
 	// 不初始化
@@ -19,10 +24,11 @@ public final class MethodUtil {
 	private static volatile MethodUtil instance;
 
 	private MethodUtil() {
-		map = new ConcurrentHashMap<String, String>();
+		map = new ConcurrentHashMap<String, List<String>>();
+		random = new Random();
 	}
 
-	private Map<String, String> map;
+	private Map<String, List<String>> map;
 
 	/**
 	 * 定义一个共有的静态方法
@@ -58,26 +64,81 @@ public final class MethodUtil {
 	 * @param chan_id
 	 */
 	public void put(String id, String chan_id) {
-		map.put(id, chan_id);
+		List<String> l = map.get(id);
+
+		if (null == l) {
+			l = new ArrayList<String>();
+			l.add(chan_id);
+			map.put(id, l);
+			return;
+		}
+
+		if (l.contains(chan_id))
+			return;
+
+		l.add(chan_id);
 	}
 
 	public void remove(String id) {
-		map.remove(id);
+		if (map.containsKey(id))
+			map.remove(id);
+	}
+
+	public void remove(String id, String chan_id) {
+		List<String> l = map.get(id);
+
+		if (null == l)
+			return;
+
+		l.remove(chan_id);
 	}
 
 	public String get(String id) {
-		return map.get(id);
+		List<String> l = map.get(id);
+
+		if (null == l)
+			return null;
+
+		int _len = l.size();
+
+		if (1 > _len)
+			return null;
+
+		if (1 == _len)
+			return l.get(0);
+
+		return l.get(random.nextInt(_len));
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @param chan_id
+	 * @return
+	 */
+	public boolean contains(String id, String chan_id) {
+		List<String> l = map.get(id);
+
+		if (null == l)
+			return false;
+
+		return l.contains(chan_id);
 	}
 
 	public static void main(String[] args) {
-		MethodUtil.getDefault().put("b", "c");
-		MethodUtil.getDefault().put("a", "");
+		List<String> sl = new ArrayList<String>();
 
-		System.err.println(MethodUtil.getDefault().get("b"));
-		System.err.println(MethodUtil.getDefault().get("a"));
-		System.err.println(null == MethodUtil.getDefault().get("bb"));
+		sl.add("1");
+		sl.add("2");
+		sl.add("abc");
 
-		MethodUtil.getDefault().put("a", "d");
-		System.err.println(MethodUtil.getDefault().get("a"));
+		System.err.println(sl.contains("abc"));
+
+		sl.remove("1");
+
+		System.err.println(sl);
+
+		Random random = new Random();
+		System.err.println(random.nextInt(2));
 	}
 }
