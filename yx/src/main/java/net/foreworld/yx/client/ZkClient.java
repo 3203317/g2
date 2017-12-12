@@ -1,11 +1,9 @@
 package net.foreworld.yx.client;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.commons.codec.CharEncoding;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -72,12 +70,11 @@ public class ZkClient extends Client implements Watcher {
 
 	/**
 	 * 向front下注册节点
-	 *
-	 * @throws InterruptedException
+	 * 
 	 * @throws KeeperException
-	 * @throws UnsupportedEncodingException
+	 * @throws InterruptedException
 	 */
-	private void register() throws KeeperException, InterruptedException, UnsupportedEncodingException {
+	private void register() throws KeeperException, InterruptedException {
 		registerServer();
 		listenerService();
 	}
@@ -97,41 +94,76 @@ public class ZkClient extends Client implements Watcher {
 
 	/**
 	 * 监听服务注入
-	 *
+	 * 
 	 * @throws KeeperException
 	 * @throws InterruptedException
-	 * @throws UnsupportedEncodingException
 	 */
-	private void listenerService() throws KeeperException, InterruptedException, UnsupportedEncodingException {
+	private void listenerService() throws KeeperException, InterruptedException {
 		List<String> list = zk.getChildren(zk_rootPath + "/service", watcher, stat);
 
 		logger.info("service count: {}", stat.getNumChildren());
 
 		for (int i = 0; i < list.size(); i++) {
 			String serv_name = list.get(i);
-			String serv_val = new String(zk.getData(zk_rootPath + "/service/" + serv_name, false, null),
-					CharEncoding.UTF_8);
-			logger.info("service name: {}, value: {}", serv_name, serv_val);
 
 			String[] _keys = serv_name.split(":");
 
+			String _method = null, chan_id = null;
+
 			switch (_keys.length) {
 			case 2:
-				MethodUtil.getDefault().put(_keys[0], Constants.MQ);
+				_method = _keys[0];
+				chan_id = Constants.MQ;
 				break;
 			case 3:
-				MethodUtil.getDefault().put(_keys[1] + ":" + _keys[2], Constants.MQ);
+				_method = _keys[1] + ":" + _keys[2];
+				chan_id = Constants.MQ;
 				break;
 			case 4:
-				if (server_id.equals(_keys[3]))
-					MethodUtil.getDefault().put(_keys[1], serv_val);
+				if (!server_id.equals(_keys[2]))
+					continue;
+
+				_method = _keys[0];
+				chan_id = _keys[3];
 				break;
 			case 5:
-				if (server_id.equals(_keys[4]))
-					MethodUtil.getDefault().put(_keys[2] + ":" + _keys[3], serv_val);
+				if (!server_id.equals(_keys[3]))
+					continue;
+
+				_method = _keys[1] + ":" + _keys[2];
+				chan_id = _keys[4];
 				break;
+			default:
+				continue;
 			}
+
+			if (MethodUtil.getDefault().contains(_method, chan_id))
+				continue;
+
+			MethodUtil.getDefault().put(_method, chan_id);
+
+			listener(serv_name, _method, chan_id);
+
+			logger.info("method name: {}, value: {}", _method, chan_id);
 		}
+	}
+
+	/**
+	 * 
+	 * @param serv_name
+	 * @param method
+	 * @param chan_id
+	 * @throws KeeperException
+	 * @throws InterruptedException
+	 */
+	private void listener(final String serv_name, final String method, final String chan_id)
+			throws KeeperException, InterruptedException {
+		zk.exists(zk_rootPath + "/service/" + serv_name, new Watcher() {
+			@Override
+			public void process(WatchedEvent event) {
+				MethodUtil.getDefault().remove(method, chan_id);
+			}
+		});
 	}
 
 	private void init() throws IOException, InterruptedException {
@@ -153,7 +185,7 @@ public class ZkClient extends Client implements Watcher {
 				public void process(WatchedEvent event) {
 					try {
 						listenerService();
-					} catch (KeeperException | InterruptedException | UnsupportedEncodingException e) {
+					} catch (KeeperException | InterruptedException e) {
 						logger.error("", e);
 					}
 				}
@@ -169,8 +201,8 @@ public class ZkClient extends Client implements Watcher {
 	public static void main(String[] args) {
 		System.err.println("方法:后置机".split(":").length);
 		System.err.println(":方法:后置机".split(":").length);
-		System.err.println(":方法:后置机:前置机".split(":").length);
-		System.err.println("::方法:后置机:前置机".split(":").length);
+		System.err.println("方法:后置机:68:通道号".split(":").length);
+		System.err.println(":方法:后置机:68:通道号".split(":").length);
 	}
 
 }

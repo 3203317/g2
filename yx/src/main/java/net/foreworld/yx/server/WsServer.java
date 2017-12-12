@@ -1,5 +1,15 @@
 package net.foreworld.yx.server;
 
+import java.io.IOException;
+
+import javax.annotation.Resource;
+
+import org.apache.zookeeper.KeeperException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -7,20 +17,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-
-import java.io.IOException;
-
-import javax.annotation.Resource;
-
 import net.foreworld.util.Server;
 import net.foreworld.yx.client.ZkClient;
 import net.foreworld.yx.initializer.WsInitializer;
-
-import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  *
@@ -51,8 +50,7 @@ public class WsServer extends Server {
 	@Resource(name = "zkClient")
 	private ZkClient zkClient;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(WsServer.class);
+	private static final Logger logger = LoggerFactory.getLogger(WsServer.class);
 
 	private ChannelFuture f;
 	private EventLoopGroup bossGroup, workerGroup;
@@ -112,8 +110,7 @@ public class WsServer extends Server {
 		}
 	}
 
-	private void afterStart() throws IOException, InterruptedException,
-			KeeperException {
+	private void afterStart() throws IOException, InterruptedException, KeeperException {
 		zkClient.start();
 	}
 
