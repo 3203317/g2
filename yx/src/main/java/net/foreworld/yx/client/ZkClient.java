@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import net.foreworld.util.Client;
+import net.foreworld.yx.util.MethodUtil;
+
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -17,10 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-
-import net.foreworld.util.Client;
-import net.foreworld.yx.util.Constants;
-import net.foreworld.yx.util.MethodUtil;
 
 /**
  *
@@ -47,7 +46,8 @@ public class ZkClient extends Client implements Watcher {
 	@Value("${server.id}")
 	private String server_id;
 
-	private static final Logger logger = LoggerFactory.getLogger(ZkClient.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ZkClient.class);
 
 	@Override
 	public void shutdown() {
@@ -70,7 +70,7 @@ public class ZkClient extends Client implements Watcher {
 
 	/**
 	 * 向front下注册节点
-	 * 
+	 *
 	 * @throws KeeperException
 	 * @throws InterruptedException
 	 */
@@ -85,7 +85,8 @@ public class ZkClient extends Client implements Watcher {
 	 * @throws InterruptedException
 	 */
 	private void registerServer() throws KeeperException, InterruptedException {
-		zk.create(zk_rootPath + "/front/" + server_id, "".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+		zk.create(zk_rootPath + "/front/" + server_id, "".getBytes(),
+				Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 	}
 
 	private Watcher watcher;
@@ -94,12 +95,13 @@ public class ZkClient extends Client implements Watcher {
 
 	/**
 	 * 监听服务注入
-	 * 
+	 *
 	 * @throws KeeperException
 	 * @throws InterruptedException
 	 */
 	private void listenerService() throws KeeperException, InterruptedException {
-		List<String> list = zk.getChildren(zk_rootPath + "/service", watcher, stat);
+		List<String> list = zk.getChildren(zk_rootPath + "/service", watcher,
+				stat);
 
 		logger.info("service count: {}", stat.getNumChildren());
 
@@ -111,14 +113,6 @@ public class ZkClient extends Client implements Watcher {
 			String _method = null, chan_id = null;
 
 			switch (_keys.length) {
-			case 2:
-				_method = _keys[0];
-				chan_id = Constants.MQ;
-				break;
-			case 3:
-				_method = _keys[1] + ":" + _keys[2];
-				chan_id = Constants.MQ;
-				break;
 			case 4:
 				if (!server_id.equals(_keys[2]))
 					continue;
@@ -149,15 +143,15 @@ public class ZkClient extends Client implements Watcher {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param serv_name
 	 * @param method
 	 * @param chan_id
 	 * @throws KeeperException
 	 * @throws InterruptedException
 	 */
-	private void listener(final String serv_name, final String method, final String chan_id)
-			throws KeeperException, InterruptedException {
+	private void listener(final String serv_name, final String method,
+			final String chan_id) throws KeeperException, InterruptedException {
 		zk.exists(zk_rootPath + "/service/" + serv_name, new Watcher() {
 			@Override
 			public void process(WatchedEvent event) {
@@ -193,7 +187,8 @@ public class ZkClient extends Client implements Watcher {
 	}
 
 	@Override
-	public void start() throws IOException, InterruptedException, KeeperException {
+	public void start() throws IOException, InterruptedException,
+			KeeperException {
 		init();
 		register();
 	}

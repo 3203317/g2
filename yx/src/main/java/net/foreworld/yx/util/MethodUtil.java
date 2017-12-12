@@ -84,10 +84,8 @@ public final class MethodUtil {
 	public void remove(String id, String chan_id) {
 		List<String> l = map.get(id);
 
-		if (null == l)
-			return;
-
-		l.remove(chan_id);
+		if (null != l)
+			l.remove(chan_id);
 	}
 
 	public String get(String id) {
