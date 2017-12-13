@@ -77,10 +77,6 @@ public final class MethodUtil {
 			l.add(chan_id);
 	}
 
-	public void remove(String id) {
-		map.remove(id);
-	}
-
 	public void remove(String id, String chan_id) {
 		List<String> l = map.get(id);
 
@@ -88,6 +84,11 @@ public final class MethodUtil {
 			l.remove(chan_id);
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @return MQ:后置机 | 通道号
+	 */
 	public String get(String id) {
 		List<String> l = map.get(id);
 
@@ -99,14 +100,21 @@ public final class MethodUtil {
 		if (1 > _len)
 			return null;
 
-		if (1 == _len)
-			return l.get(0);
+		String chan_id;
 
-		return l.get(random.nextInt(_len));
+		if (1 == _len)
+			chan_id = l.get(0);
+		else
+			chan_id = l.get(random.nextInt(_len));
+
+		if (-1 < chan_id.indexOf(Constants.MQ))
+			return Constants.MQ;
+
+		return chan_id;
 	}
 
 	/**
-	 *
+	 * 
 	 * @param id
 	 * @param chan_id
 	 * @return
@@ -118,6 +126,25 @@ public final class MethodUtil {
 			return false;
 
 		return l.contains(chan_id);
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public boolean contains(String id) {
+		List<String> l = map.get(id);
+
+		if (null == l)
+			return false;
+
+		for (int i = 0, j = l.size(); i < j; i++) {
+			if (-1 < l.get(i).indexOf(Constants.MQ))
+				return true;
+		}
+
+		return false;
 	}
 
 	public static void main(String[] args) {
@@ -135,5 +162,7 @@ public final class MethodUtil {
 
 		Random random = new Random();
 		System.err.println(random.nextInt(2));
+
+		System.err.println(-1 < "MQ:123".indexOf(Constants.MQ));
 	}
 }

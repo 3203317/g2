@@ -93,7 +93,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		ChannelInfo ci = ChannelUtil.getDefault().getChannel(chan_id);
 
 		if (null == ci) {
-			if (MethodUtil.getDefault().contains(_method, Constants.MQ)) {
+			if (MethodUtil.getDefault().contains(_method)) {
 				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 				ctx.flush();
 				return;
@@ -106,7 +106,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		Channel c = ci.getChannel();
 
 		if (null == c) {
-			if (MethodUtil.getDefault().contains(_method, Constants.MQ)) {
+			if (MethodUtil.getDefault().contains(_method)) {
 				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 				ctx.flush();
 				return;
