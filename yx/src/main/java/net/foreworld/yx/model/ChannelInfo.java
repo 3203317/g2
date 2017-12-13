@@ -1,7 +1,5 @@
 package net.foreworld.yx.model;
 
-import java.util.Date;
-
 import io.netty.channel.Channel;
 
 /**
@@ -13,7 +11,7 @@ public class ChannelInfo {
 
 	private Channel channel;
 
-	private Date loginTime;
+	private Long loginTime;
 
 	private Type type;
 
@@ -35,11 +33,11 @@ public class ChannelInfo {
 		this.type = type;
 	}
 
-	public Date getLoginTime() {
+	public Long getLoginTime() {
 		return loginTime;
 	}
 
-	public void setLoginTime(Date loginTime) {
+	public void setLoginTime(Long loginTime) {
 		this.loginTime = loginTime;
 	}
 

@@ -70,22 +70,7 @@ public final class SenderUtil {
 			if (null == c)
 				continue;
 
-			if (c.isWritable()) {
-				c.writeAndFlush(data).addListener(f -> {
-					if (!f.isSuccess()) {
-						logger.error("data: {}", data);
-					}
-				});
-
-				continue;
-			}
-
-			c.writeAndFlush(data).sync().addListener(f -> {
-				if (!f.isSuccess()) {
-					logger.error("data: {}", data);
-				}
-			});
-
+			send(c, data);
 		}
 	}
 
