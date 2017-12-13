@@ -1,27 +1,53 @@
 package net.foreworld.yx.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.netty.channel.Channel;
 import net.foreworld.yx.model.ChannelInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * 
+ *
  * @author huangxin <3203317@qq.com>
  *
  */
 public final class SenderUtil {
 
-	private static final Logger logger = LoggerFactory.getLogger(SenderUtil.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(SenderUtil.class);
 
 	/**
-	 * 
+	 *
+	 * @param c
+	 * @param data
+	 * @throws InterruptedException
+	 */
+	public static void send(Channel c, Object data) throws InterruptedException {
+		if (c.isWritable()) {
+			c.writeAndFlush(data).addListener(f -> {
+				if (!f.isSuccess()) {
+					logger.error("data: {}", data);
+				}
+			});
+
+			return;
+		}
+
+		c.writeAndFlush(data).sync().addListener(f -> {
+			if (!f.isSuccess()) {
+				logger.error("data: {}", data);
+			}
+		});
+	}
+
+	/**
+	 *
 	 * @param receiver
 	 * @param data
 	 * @throws InterruptedException
 	 */
-	public static void backSend(String receiver, String data) throws InterruptedException {
+	public static void backSend(String receiver, String data)
+			throws InterruptedException {
 		if (Constants.ALL.equals(receiver)) {
 			ChannelUtil.getDefault().broadcast(data).addListener(f -> {
 				if (!f.isSuccess()) {
