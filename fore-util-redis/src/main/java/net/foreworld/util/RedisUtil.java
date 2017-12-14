@@ -1,7 +1,5 @@
 package net.foreworld.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -18,8 +16,6 @@ import redis.clients.jedis.JedisPoolConfig;
 @PropertySource("classpath:redis.properties")
 @Component
 public final class RedisUtil {
-
-	private static final Logger logger = LoggerFactory.getLogger(RedisUtil.class);
 
 	private static int MAXIDLE;
 
@@ -106,7 +102,7 @@ public final class RedisUtil {
 			// timeout 最大延迟时间
 			jedisPool = new JedisPool(config, HOST, PORT, TIMEOUT, PASS);
 		} catch (Exception e) {
-			logger.error("", e);
+			e.printStackTrace();
 		}
 	}
 
@@ -121,7 +117,7 @@ public final class RedisUtil {
 		try {
 			return null == jedisPool ? null : jedisPool.getResource();
 		} catch (Exception e) {
-			logger.error("", e);
+			e.printStackTrace();
 			return null;
 		}
 	}

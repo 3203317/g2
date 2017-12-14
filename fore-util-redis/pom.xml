@@ -51,11 +51,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.1.3</version>
-		</dependency>
 
 		<!--spring-oxm依赖 -->
 
@@ -100,9 +95,9 @@
 
 		<plugins>
 
-			
 
-			
+
+
 
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
