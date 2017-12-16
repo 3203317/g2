@@ -15,7 +15,7 @@ import net.foreworld.yx.server.WsServer;
  *
  */
 @SpringBootApplication
-@ComponentScan("net.foreworld.yx")
+@ComponentScan("net.foreworld")
 public class RunWsServer implements CommandLineRunner {
 
 	@Resource(name = "wsServer")

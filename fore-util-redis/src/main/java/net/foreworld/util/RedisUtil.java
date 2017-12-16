@@ -115,7 +115,7 @@ public final class RedisUtil {
 			initPool();
 		}
 		try {
-			return null == jedisPool ? null : jedisPool.getResource();
+			return jedisPool.getResource();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
