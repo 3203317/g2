@@ -24,7 +24,7 @@ public final class SenderUtil {
 	 */
 	public static void send(Channel c, Object data) throws InterruptedException {
 		if (c.isWritable()) {
-			c.writeAndFlush(data).addListener(f -> {
+			c.writeAndFlush(data.toString()).addListener(f -> {
 				if (!f.isSuccess()) {
 					logger.error("data: {}", data);
 				}
@@ -33,9 +33,9 @@ public final class SenderUtil {
 			return;
 		}
 
-		c.writeAndFlush(data).sync().addListener(f -> {
+		c.writeAndFlush(data.toString()).sync().addListener(f -> {
 			if (!f.isSuccess()) {
-				logger.error("data: {}", data);
+				logger.error("sync data: {}", data);
 			}
 		});
 	}

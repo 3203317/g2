@@ -100,7 +100,7 @@ function conn(code){
     ws.send(Buffer.from(code, 'utf8'));
 
     setTimeout(function(){
-      var p = ['', 6, ''];
+      var p = ['', 7, ''];
       ws.send(Buffer.from(JSON.stringify(p), 'utf8'));
     }, 1000);
   });
@@ -116,6 +116,6 @@ function conn(code){
   });
 
   ws.on('message', function incoming(data){
-    logger.debug(data);
+    logger.debug(data.toString());
   });
 }
