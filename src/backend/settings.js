@@ -10,9 +10,9 @@ module.exports = {
   app: {
     id: process.env.APP_ID || '1',
   },
-  frontend: {
-    host: process.env.FRONTEND_HOST || '127.0.0.1:12988',
-    id: process.env.FRONTEND_ID || '68',
+  front: {
+    host: process.env.FRONT_HOST || '127.0.0.1:12988',
+    id: process.env.FRONT_ID || '68',
   },
   zookeeper: {
     host: process.env.ZOOKEEPER_HOST || '127.0.0.1:12181',
