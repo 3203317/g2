@@ -98,6 +98,11 @@ function conn(code){
 
   ws.on('open', function open(){
     ws.send(Buffer.from(code, 'utf8'));
+
+    setTimeout(function(){
+      var p = ['', 6, ''];
+      ws.send(Buffer.from(JSON.stringify(p), 'utf8'));
+    }, 1000);
   });
 
   ws.on('error', err => {

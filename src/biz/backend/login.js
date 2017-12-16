@@ -58,7 +58,7 @@ const logger = require('log4js').getLogger('biz');
     });
   };
 
-  var sha1      = process.env.BIZ_BACKEND_LOGIN_SHA1 || 'f4e4f49554a6781f0e45f1e404bbc2f2c0129005';
+  var sha1      = process.env.BIZ_BACKEND_LOGIN_SHA1 || 'a0ad12f31d7de75a5153bdff954caf5bc15b9501';
   var numkeys   = 4;
   var seconds   = 5;
   var CHAN_TYPE = 'USER';
