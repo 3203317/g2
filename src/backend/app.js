@@ -100,8 +100,11 @@ function conn(code){
     ws.send(Buffer.from(code, 'utf8'));
 
     setTimeout(function(){
-      var p = ['', 7, ''];
-      ws.send(Buffer.from(JSON.stringify(p), 'utf8'));
+      var p7 = ['', 7, ''];
+      ws.send(Buffer.from(JSON.stringify(p7), 'utf8'));
+
+      var p2 = ['', 2, ''];
+      ws.send(Buffer.from(JSON.stringify(p2), 'utf8'));
     }, 1000);
   });
 
@@ -116,6 +119,7 @@ function conn(code){
   });
 
   ws.on('message', function incoming(data){
-    logger.debug(data.toString());
+    var arr = JSON.parse(data.toString());
+    logger.debug('method: %s, data: %s', arr[0], arr[1])
   });
 }
