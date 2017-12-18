@@ -23,7 +23,7 @@ public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel>
 		switch (msg.getMethod()) {
 		case 2: {
 			Channel c = ctx.channel();
-			SenderUtil.send(c, "[2,'" + c.id().asLongText() + "']");
+			SenderUtil.send(c, "[2,\"" + c.id().asLongText() + "\"]");
 			return;
 		}
 		}
