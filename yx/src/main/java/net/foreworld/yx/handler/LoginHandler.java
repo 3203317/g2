@@ -1,23 +1,5 @@
 package net.foreworld.yx.handler;
 
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.jms.core.JmsMessagingTemplate;
-import org.springframework.stereotype.Component;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -26,6 +8,15 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
 import net.foreworld.util.RedisUtil;
 import net.foreworld.yx.codec.BackCodec;
 import net.foreworld.yx.codec.BinaryCodec;
@@ -34,7 +25,18 @@ import net.foreworld.yx.model.ChannelInfo.Type;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.Constants;
 import net.foreworld.yx.util.SenderUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.jms.core.JmsMessagingTemplate;
+import org.springframework.stereotype.Component;
+
 import redis.clients.jedis.Jedis;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  *
@@ -100,12 +102,12 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 	@Resource(name = "backHeartbeatHandler")
 	private BackHeartbeatHandler backHeartbeatHandler;
 
-	private String first = "[1]";
-
-	private static final Logger logger = LoggerFactory.getLogger(LoginHandler.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(LoginHandler.class);
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, final String token) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, final String token)
+			throws Exception {
 		/*
 		 * logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 		 *
@@ -142,10 +144,12 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 		pipe.replace("loginTimeout", "unReg", unRegChannelHandler);
 
-		pipe.replace("loginCodec", "binaryCodec", Type.USER == chan_type ? binaryCodec : backCodec);
+		pipe.replace("loginCodec", "binaryCodec",
+				Type.USER == chan_type ? binaryCodec : backCodec);
 
-		pipe.replace("defaIdleState", "newIdleState", new IdleStateHandler(Type.USER == chan_type ? readerIdleTime : 60,
-				writerIdleTime, allIdleTime, TimeUnit.SECONDS));
+		pipe.replace("defaIdleState", "newIdleState", new IdleStateHandler(
+				Type.USER == chan_type ? readerIdleTime : 60, writerIdleTime,
+				allIdleTime, TimeUnit.SECONDS));
 
 		pipe.replace("httpSafe", "protocolSafe", protocolSafeHandler);
 
@@ -165,11 +169,12 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		ChannelUtil.getDefault().putChannel(chan_id, ci);
 
 		// 登陆成功，发送成功标记
-		SenderUtil.send(channel, first);
+		SenderUtil.send(channel, "[1," + ci.getLoginTime() + "]");
 
 		if (Type.USER == chan_type)
 			jmsMessagingTemplate.convertAndSend(queue_channel_open,
-					server_id + "::" + chan_id + "::" + ci.getUserId() + "::" + ci.getLoginTime());
+					server_id + "::" + chan_id + "::" + ci.getUserId() + "::"
+							+ ci.getLoginTime());
 
 		logger.info("channel open: {}:{}", server_id, chan_id);
 
@@ -212,7 +217,8 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		String[] text = str.split(":");
 
 		if (2 < text.length)
-			jmsMessagingTemplate.convertAndSend(queue_channel_close_force + "." + text[1], text[2]);
+			jmsMessagingTemplate.convertAndSend(queue_channel_close_force + "."
+					+ text[1], text[2]);
 
 		return text[0];
 	}
@@ -225,7 +231,8 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
+			public void operationComplete(ChannelFuture future)
+					throws Exception {
 				SocketAddress addr = ctx.channel().remoteAddress();
 
 				if (future.isSuccess()) {
