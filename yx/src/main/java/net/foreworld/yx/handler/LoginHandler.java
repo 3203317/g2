@@ -169,7 +169,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 		if (Type.USER == chan_type)
 			jmsMessagingTemplate.convertAndSend(queue_channel_open,
-					server_id + "::" + chan_id + "::" + ci.getLoginTime());
+					server_id + "::" + chan_id + "::" + ci.getUserId() + "::" + ci.getLoginTime());
 
 		logger.info("channel open: {}:{}", server_id, chan_id);
 
