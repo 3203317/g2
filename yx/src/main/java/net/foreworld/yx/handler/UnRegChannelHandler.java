@@ -1,5 +1,7 @@
 package net.foreworld.yx.handler;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -44,7 +46,8 @@ public class UnRegChannelHandler extends ChannelInboundHandlerAdapter {
 	private void removeChannel(String chan_id) {
 		ChannelUtil.getDefault().removeChannel(chan_id);
 
-		jmsMessagingTemplate.convertAndSend(queue_channel_close, server_id + "::" + chan_id);
+		jmsMessagingTemplate.convertAndSend(queue_channel_close,
+				server_id + "::" + chan_id + "::" + new Date().getTime());
 		logger.info("channel close: {}:{}", server_id, chan_id);
 	}
 }
