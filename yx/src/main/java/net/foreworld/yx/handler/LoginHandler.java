@@ -176,7 +176,8 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 					server_id + "::" + chan_id + "::" + ci.getUserId() + "::"
 							+ ci.getLoginTime());
 
-		logger.info("channel open: {}:{}", server_id, chan_id);
+		logger.info("channel open: {}:{}:{}", server_id, chan_id,
+				ci.getUserId());
 
 		ctx.flush();
 	}
