@@ -7,8 +7,8 @@ import io.netty.channel.group.ChannelMatcher;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import net.foreworld.yx.model.ChannelInfo;
 
@@ -32,7 +32,7 @@ public final class ChannelUtil {
 		all = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 	}
 
-	private Map<String, ChannelInfo> map;
+	private ConcurrentMap<String, ChannelInfo> map;
 
 	private ChannelGroup all;
 
@@ -92,7 +92,7 @@ public final class ChannelUtil {
 		return map.get(id);
 	}
 
-	public Map<String, ChannelInfo> getChannels() {
+	public ConcurrentMap<String, ChannelInfo> getChannels() {
 		return map;
 	}
 
@@ -115,5 +115,4 @@ public final class ChannelUtil {
 	public int size() {
 		return all.size();
 	}
-
 }
