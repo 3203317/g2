@@ -52,7 +52,7 @@ public class Consumer {
 
 			SenderUtil.backSend(_receiver, _data);
 
-		} catch (InterruptedException | JMSException e) {
+		} catch (JMSException e) {
 			logger.error("", e);
 		}
 	}
