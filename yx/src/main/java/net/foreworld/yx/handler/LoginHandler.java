@@ -247,6 +247,13 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		});
 	}
 
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+			throws Exception {
+		logger.error("", cause);
+		ctx.close();
+	}
+
 	public static void main(String[] args) {
 		String str = "{code:1234}";
 

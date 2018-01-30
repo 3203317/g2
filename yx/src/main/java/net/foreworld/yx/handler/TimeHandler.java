@@ -150,6 +150,13 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		});
 	}
 
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+			throws Exception {
+		logger.error("", cause);
+		ctx.close();
+	}
+
 	public static void main(String[] args) {
 		System.err.println(",111,222,".indexOf(",333,"));
 		System.err.println(":a:bc".split(":").length);
