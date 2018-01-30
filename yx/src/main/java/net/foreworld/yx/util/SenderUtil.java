@@ -32,11 +32,15 @@ public final class SenderUtil {
 			return;
 		}
 
-		c.writeAndFlush(data.toString()).syncUninterruptibly().addListener(f -> {
-			if (!f.isSuccess()) {
-				logger.error("sync data: {}", data);
-			}
-		});
+		try {
+			c.writeAndFlush(data.toString()).sync().addListener(f -> {
+				if (!f.isSuccess()) {
+					logger.error("sync data: {}", data);
+				}
+			});
+		} catch (InterruptedException e) {
+			logger.error("", e);
+		}
 	}
 
 	/**
