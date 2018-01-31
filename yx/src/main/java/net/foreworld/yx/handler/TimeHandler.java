@@ -1,24 +1,9 @@
 package net.foreworld.yx.handler;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-
 import java.net.SocketAddress;
 import java.util.Random;
 
 import javax.annotation.Resource;
-
-import net.foreworld.util.StringUtil;
-import net.foreworld.yx.model.ChannelInfo;
-import net.foreworld.yx.model.ProtocolModel;
-import net.foreworld.yx.util.ChannelUtil;
-import net.foreworld.yx.util.Constants;
-import net.foreworld.yx.util.MethodUtil;
-import net.foreworld.yx.util.SenderUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +13,20 @@ import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
+
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import net.foreworld.util.StringUtil;
+import net.foreworld.yx.model.ChannelInfo;
+import net.foreworld.yx.model.ProtocolModel;
+import net.foreworld.yx.util.ChannelUtil;
+import net.foreworld.yx.util.Constants;
+import net.foreworld.yx.util.MethodUtil;
+import net.foreworld.yx.util.SenderUtil;
 
 /**
  *
@@ -48,8 +47,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	@Resource(name = "gson")
 	private Gson gson;
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(TimeHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(TimeHandler.class);
 
 	/**
 	 *
@@ -63,8 +61,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	 *
 	 */
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg)
-			throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, ProtocolModel msg) throws Exception {
 		logger.info("{}:{}", msg.getMethod(), msg.getTimestamp());
 
 		String backId = StringUtil.isEmpty(msg.getBackId());
@@ -84,14 +81,12 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		msg.setServerId(server_id);
 		msg.setChannelId(ctx.channel().id().asLongText());
-		msg.setUserId(ChannelUtil.getDefault().getChannel(msg.getChannelId())
-				.getUserId());
+		msg.setUserId(ChannelUtil.getDefault().getChannel(msg.getChannelId()).getUserId());
 
 		String _data = gson.toJson(msg);
 
 		if (Constants.MQ.equals(chan_id)) {
-			jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX
-					+ _method, _data);
+			jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 			ctx.flush();
 			return;
 		}
@@ -100,8 +95,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		if (null == ci) {
 			if (MethodUtil.getDefault().contains(_method)) {
-				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX
-						+ _method, _data);
+				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 				ctx.flush();
 				return;
 			}
@@ -114,8 +108,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		if (null == c) {
 			if (MethodUtil.getDefault().contains(_method)) {
-				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX
-						+ _method, _data);
+				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
 				ctx.flush();
 				return;
 			}
@@ -135,8 +128,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		ctx.close().addListener(new ChannelFutureListener() {
 
 			@Override
-			public void operationComplete(ChannelFuture future)
-					throws Exception {
+			public void operationComplete(ChannelFuture future) throws Exception {
 				SocketAddress addr = ctx.channel().remoteAddress();
 
 				if (future.isSuccess()) {
@@ -151,8 +143,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	}
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-			throws Exception {
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		logger.error("", cause);
 		ctx.close();
 	}

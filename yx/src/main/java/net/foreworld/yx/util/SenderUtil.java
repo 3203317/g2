@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import net.foreworld.yx.model.ChannelInfo;
 
 /**
@@ -21,35 +23,50 @@ public final class SenderUtil {
 	 * @param data
 	 * @throws InterruptedException
 	 */
-	public static void send(Channel c, Object data) {
+	public static void send(Channel c, Object data) throws InterruptedException {
 		if (c.isWritable()) {
-			c.writeAndFlush(data.toString()).addListener(f -> {
-				if (!f.isSuccess()) {
-					logger.error("data: {}", data);
+
+			c.writeAndFlush(data.toString()).addListener(new ChannelFutureListener() {
+
+				@Override
+				public void operationComplete(ChannelFuture future) throws Exception {
+					if (!future.isSuccess()) {
+						logger.error("data: {}", data);
+						throw new Exception();
+					}
+
+					Throwable cause = future.cause();
+					if (null != cause)
+						throw new Exception(cause);
 				}
 			});
 
 			return;
 		}
 
-		try {
-			c.writeAndFlush(data.toString()).sync().addListener(f -> {
-				if (!f.isSuccess()) {
-					logger.error("sync data: {}", data);
+		c.writeAndFlush(data.toString()).sync().addListener(new ChannelFutureListener() {
+
+			@Override
+			public void operationComplete(ChannelFuture future) throws Exception {
+				if (!future.isSuccess()) {
+					logger.error("data: {}", data);
+					throw new Exception();
 				}
-			});
-		} catch (InterruptedException e) {
-			logger.error("", e);
-		}
+
+				Throwable cause = future.cause();
+				if (null != cause)
+					throw new Exception(cause);
+			}
+		});
 	}
 
 	/**
-	 *
+	 * 
 	 * @param receiver
 	 * @param data
 	 * @throws InterruptedException
 	 */
-	public static void backSend(String receiver, String data) {
+	public static void backSend(String receiver, String data) throws InterruptedException {
 		if (Constants.ALL.equals(receiver)) {
 			ChannelUtil.getDefault().broadcast(data).addListener(f -> {
 				if (!f.isSuccess()) {

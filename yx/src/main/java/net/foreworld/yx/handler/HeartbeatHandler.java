@@ -1,17 +1,16 @@
 package net.foreworld.yx.handler;
 
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-
 import java.util.Date;
-
-import net.foreworld.yx.model.BaseModel;
-import net.foreworld.yx.util.SenderUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import net.foreworld.yx.model.BaseModel;
+import net.foreworld.yx.util.SenderUtil;
 
 /**
  *
@@ -22,12 +21,10 @@ import org.springframework.stereotype.Component;
 @Sharable
 public class HeartbeatHandler extends SimpleChannelInboundHandler<BaseModel> {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(HeartbeatHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(HeartbeatHandler.class);
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, BaseModel msg)
-			throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, BaseModel msg) throws Exception {
 
 		switch (msg.getMethod()) {
 		case 6: {
@@ -45,8 +42,7 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<BaseModel> {
 	}
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-			throws Exception {
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		logger.error("", cause);
 		ctx.close();
 	}
