@@ -41,12 +41,6 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<BaseModel> {
 		ctx.fireChannelRead(msg);
 	}
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		logger.error("", cause);
-		ctx.close();
-	}
-
 	public static void main(String[] args) {
 		System.err.println(new Date().getTime());
 	}

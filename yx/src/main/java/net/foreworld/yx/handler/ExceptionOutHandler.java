@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
 
 /**
  *
@@ -16,9 +16,9 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  */
 @Component
 @Sharable
-public class ExceptionHandler extends ChannelInboundHandlerAdapter {
+public class ExceptionOutHandler extends ChannelOutboundHandlerAdapter {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExceptionOutHandler.class);
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

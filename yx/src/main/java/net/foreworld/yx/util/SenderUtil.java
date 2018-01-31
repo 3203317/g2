@@ -24,8 +24,16 @@ public final class SenderUtil {
 	 * @throws InterruptedException
 	 */
 	public static void send(Channel c, Object data) throws InterruptedException {
-		if (c.isWritable()) {
+		if (null == c)
+			return;
 
+		if (!c.isOpen())
+			return;
+
+		if (!c.isActive())
+			return;
+
+		if (c.isWritable()) {
 			c.writeAndFlush(data.toString()).addListener(new ChannelFutureListener() {
 
 				@Override
@@ -85,9 +93,6 @@ public final class SenderUtil {
 				continue;
 
 			Channel c = ci.getChannel();
-
-			if (null == c)
-				continue;
 
 			send(c, data);
 		}

@@ -27,10 +27,4 @@ public class BackTimeHandler extends SimpleChannelInboundHandler<BackModel> {
 		SenderUtil.backSend(msg.getReceiver(), msg.getData());
 	}
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		logger.error("", cause);
-		ctx.close();
-	}
-
 }
