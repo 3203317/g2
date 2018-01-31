@@ -87,7 +87,11 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 		if (Constants.MQ.equals(chan_id)) {
 			jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
-			ctx.flush();
+
+			Channel chan = ctx.channel();
+			if (null != chan && chan.isOpen() && chan.isActive())
+				chan.flush();
+
 			return;
 		}
 
@@ -96,7 +100,11 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		if (null == ci) {
 			if (MethodUtil.getDefault().contains(_method)) {
 				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
-				ctx.flush();
+
+				Channel chan = ctx.channel();
+				if (null != chan && chan.isOpen() && chan.isActive())
+					chan.flush();
+
 				return;
 			}
 
@@ -109,7 +117,11 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 		if (null == c) {
 			if (MethodUtil.getDefault().contains(_method)) {
 				jmsMessagingTemplate.convertAndSend(Constants.QUEUE_PREFIX + _method, _data);
-				ctx.flush();
+
+				Channel chan = ctx.channel();
+				if (null != chan && chan.isOpen() && chan.isActive())
+					chan.flush();
+
 				return;
 			}
 

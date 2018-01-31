@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -29,7 +30,11 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<BaseModel> {
 		switch (msg.getMethod()) {
 		case 6: {
 			logger.info("method: {}", msg.getMethod());
-			ctx.flush();
+
+			Channel chan = ctx.channel();
+			if (null != chan && chan.isOpen() && chan.isActive())
+				chan.flush();
+
 			return;
 		}
 		case 7: {
@@ -39,6 +44,15 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<BaseModel> {
 		}
 
 		ctx.fireChannelRead(msg);
+	}
+
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.error("", cause);
+
+		Channel chan = ctx.channel();
+		if (null != chan && chan.isOpen() && chan.isActive())
+			chan.close();
 	}
 
 	public static void main(String[] args) {

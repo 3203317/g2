@@ -18,19 +18,13 @@ public final class SenderUtil {
 	private static final Logger logger = LoggerFactory.getLogger(SenderUtil.class);
 
 	/**
-	 *
+	 * 
 	 * @param c
 	 * @param data
 	 * @throws InterruptedException
 	 */
 	public static void send(Channel c, Object data) throws InterruptedException {
-		if (null == c)
-			return;
-
-		if (!c.isOpen())
-			return;
-
-		if (!c.isActive())
+		if (null == c || !c.isOpen() || !c.isActive())
 			return;
 
 		if (c.isWritable()) {
@@ -38,10 +32,8 @@ public final class SenderUtil {
 
 				@Override
 				public void operationComplete(ChannelFuture future) throws Exception {
-					if (!future.isSuccess()) {
-						logger.error("data: {}", data);
-						throw new Exception();
-					}
+					if (!future.isSuccess())
+						throw new Exception(data.toString());
 
 					Throwable cause = future.cause();
 					if (null != cause)
@@ -56,10 +48,8 @@ public final class SenderUtil {
 
 			@Override
 			public void operationComplete(ChannelFuture future) throws Exception {
-				if (!future.isSuccess()) {
-					logger.error("data: {}", data);
-					throw new Exception();
-				}
+				if (!future.isSuccess())
+					throw new Exception(data.toString());
 
 				Throwable cause = future.cause();
 				if (null != cause)
@@ -92,9 +82,7 @@ public final class SenderUtil {
 			if (null == ci)
 				continue;
 
-			Channel c = ci.getChannel();
-
-			send(c, data);
+			send(ci.getChannel(), data);
 		}
 	}
 
