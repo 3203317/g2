@@ -45,21 +45,23 @@ public final class SenderUtil {
 
 			return;
 		}
+		
+		logger.error("sync");
 
-		c.writeAndFlush(data.toString()).sync().addListener(new ChannelFutureListener() {
-
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				if (future.isSuccess())
-					return;
-
-				logger.error("sync data: {}", data);
-
-				Throwable cause = future.cause();
-				if (null != cause)
-					throw new Exception(cause);
-			}
-		});
+//		c.writeAndFlush(data.toString()).sync().addListener(new ChannelFutureListener() {
+//
+//			@Override
+//			public void operationComplete(ChannelFuture future) throws Exception {
+//				if (future.isSuccess())
+//					return;
+//
+//				logger.error("sync data: {}", data);
+//
+//				Throwable cause = future.cause();
+//				if (null != cause)
+//					throw new Exception(cause);
+//			}
+//		});
 	}
 
 	/**
