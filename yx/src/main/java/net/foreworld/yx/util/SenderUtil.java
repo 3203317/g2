@@ -45,8 +45,8 @@ public final class SenderUtil {
 
 			return;
 		}
-		
-		logger.error("sync");
+
+		logger.error("sync data: {}", data);
 
 //		c.writeAndFlush(data.toString()).sync().addListener(new ChannelFutureListener() {
 //
