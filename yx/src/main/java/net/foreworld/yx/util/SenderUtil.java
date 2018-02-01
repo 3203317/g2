@@ -35,6 +35,8 @@ public final class SenderUtil {
 					if (future.isSuccess())
 						return;
 
+					logger.error("data: {}", data);
+
 					Throwable cause = future.cause();
 					if (null != cause)
 						throw new Exception(cause);
@@ -48,8 +50,10 @@ public final class SenderUtil {
 
 			@Override
 			public void operationComplete(ChannelFuture future) throws Exception {
-				if (!future.isSuccess())
-					throw new Exception(data.toString());
+				if (future.isSuccess())
+					return;
+
+				logger.error("sync data: {}", data);
 
 				Throwable cause = future.cause();
 				if (null != cause)
