@@ -32,8 +32,8 @@ public final class SenderUtil {
 
 				@Override
 				public void operationComplete(ChannelFuture future) throws Exception {
-					if (!future.isSuccess())
-						throw new Exception(data.toString());
+					if (future.isSuccess())
+						return;
 
 					Throwable cause = future.cause();
 					if (null != cause)
