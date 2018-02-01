@@ -1,5 +1,7 @@
 package net.foreworld.yx.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
@@ -18,6 +20,8 @@ import net.foreworld.yx.util.SenderUtil;
 @Sharable
 public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel> {
 
+	private static final Logger logger = LoggerFactory.getLogger(BackHeartbeatHandler.class);
+
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, BackModel msg) throws Exception {
 		switch (msg.getMethod()) {
@@ -29,6 +33,15 @@ public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel>
 		}
 
 		ctx.fireChannelRead(msg);
+	}
+
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.error("", cause);
+
+		Channel chan = ctx.channel();
+		if (null != chan && chan.isOpen() && chan.isActive())
+			chan.close();
 	}
 
 }
