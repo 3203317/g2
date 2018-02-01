@@ -70,6 +70,9 @@ public class WsServer extends Server {
 		b.option(ChannelOption.SO_KEEPALIVE, true);
 		b.option(ChannelOption.TCP_NODELAY, true);
 
+		b.option(ChannelOption.SO_SNDBUF, 1);
+		b.option(ChannelOption.SO_RCVBUF, 1);
+
 		b.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 		b.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
