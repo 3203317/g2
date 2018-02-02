@@ -1,11 +1,14 @@
 package net.foreworld.yx.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.net.SocketAddress;
+
 import net.foreworld.yx.model.ChannelInfo;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -14,10 +17,11 @@ import net.foreworld.yx.model.ChannelInfo;
  */
 public final class SenderUtil {
 
-	private static final Logger logger = LoggerFactory.getLogger(SenderUtil.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(SenderUtil.class);
 
 	/**
-	 * 
+	 *
 	 * @param ctx
 	 * @param data
 	 */
@@ -37,10 +41,21 @@ public final class SenderUtil {
 		}
 
 		logger.error("sync data: {}", data);
+
+		ctx.close().addListener(f -> {
+			SocketAddress addr = chan.remoteAddress();
+
+			if (f.isSuccess()) {
+				logger.info("ctx close: {}", addr);
+				return;
+			}
+
+			logger.error("ctx close: {}", addr);
+		});
 	}
 
 	/**
-	 * 
+	 *
 	 * @param chan
 	 * @param data
 	 */
@@ -58,10 +73,21 @@ public final class SenderUtil {
 		}
 
 		logger.error("sync data: {}", data);
+
+		chan.close().addListener(f -> {
+			SocketAddress addr = chan.remoteAddress();
+
+			if (f.isSuccess()) {
+				logger.info("ctx close: {}", addr);
+				return;
+			}
+
+			logger.error("ctx close: {}", addr);
+		});
 	}
 
 	/**
-	 * 
+	 *
 	 * @param receiver
 	 * @param data
 	 */
