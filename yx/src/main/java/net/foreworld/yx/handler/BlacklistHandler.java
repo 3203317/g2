@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -51,6 +52,15 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 		logger.info("client ip: {}", incoming);
 
 		ctx.pipeline().remove(this);
+	}
+
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.error("", cause);
+
+		Channel chan = ctx.channel();
+		if (null != chan && chan.isOpen() && chan.isActive())
+			ctx.close();
 	}
 
 	/**

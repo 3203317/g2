@@ -20,8 +20,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import net.foreworld.yx.codec.LoginCodec;
 import net.foreworld.yx.codec.OutEncoder;
 import net.foreworld.yx.handler.BlacklistHandler;
-import net.foreworld.yx.handler.ExceptionHandler;
-import net.foreworld.yx.handler.ExceptionOutHandler;
 import net.foreworld.yx.handler.HttpSafeHandler;
 import net.foreworld.yx.handler.LoginHandler;
 import net.foreworld.yx.handler.LoginTimeoutHandler;
@@ -53,12 +51,6 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 	@Resource(name = "blacklistHandler")
 	private BlacklistHandler blacklistHandler;
 
-	@Resource(name = "exceptionHandler")
-	private ExceptionHandler exceptionHandler;
-
-	@Resource(name = "exceptionOutHandler")
-	private ExceptionOutHandler exceptionOutHandler;
-
 	@Resource(name = "loginHandler")
 	private LoginHandler loginHandler;
 
@@ -77,8 +69,6 @@ public class WsInitializer extends ChannelInitializer<NioSocketChannel> {
 
 		// pipe.addLast(new LoggingHandler(LogLevel.INFO));
 
-		pipe.addLast(exceptionHandler);
-		pipe.addLast(exceptionOutHandler);
 		pipe.addLast(blacklistHandler);
 
 		pipe.addLast("loginTimeout", loginTimeoutHandler);
