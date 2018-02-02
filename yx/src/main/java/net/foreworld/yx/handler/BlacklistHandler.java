@@ -12,8 +12,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -49,18 +47,15 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
-		logger.info("client ip: {}", incoming);
-
 		ctx.pipeline().remove(this);
+
+		logger.info("client ip: {}", incoming);
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		logger.error("", cause);
-
-		Channel chan = ctx.channel();
-		if (null != chan && chan.isOpen() && chan.isActive())
-			ctx.close();
+		logout(ctx);
 	}
 
 	/**
@@ -91,20 +86,21 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 	 * @param ctx
 	 */
 	private void logout(ChannelHandlerContext ctx) {
-		ctx.close().addListener(new ChannelFutureListener() {
+		Channel chan = ctx.channel();
 
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				SocketAddress addr = ctx.channel().remoteAddress();
+		if (null == chan || !chan.isOpen() || !chan.isActive())
+			return;
 
-				if (future.isSuccess()) {
-					logger.info("ctx close: {}", addr);
-					return;
-				}
+		ctx.close().addListener(f -> {
+			SocketAddress addr = chan.remoteAddress();
 
-				logger.info("ctx close failure: {}", addr);
-				ctx.close();
+			if (f.isSuccess()) {
+				logger.info("ctx close: {}", addr);
+				return;
 			}
+
+			logger.error("ctx close: {}", addr);
 		});
 	}
+
 }

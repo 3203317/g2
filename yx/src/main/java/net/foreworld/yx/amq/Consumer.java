@@ -17,8 +17,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import net.foreworld.yx.model.ChannelInfo;
 import net.foreworld.yx.util.ChannelUtil;
 import net.foreworld.yx.util.SenderUtil;
@@ -49,10 +47,9 @@ public class Consumer {
 			String _data = _ja.get(1).getAsString();
 
 			// 开始发送
-
 			SenderUtil.backSend(_receiver, _data);
 
-		} catch (JMSException | InterruptedException e) {
+		} catch (JMSException e) {
 			logger.error("", e);
 		}
 	}
@@ -71,36 +68,27 @@ public class Consumer {
 
 		ChannelInfo ci = ChannelUtil.getDefault().getChannel(id);
 
-		if (null == ci)
-			return;
-
-		Channel c = ci.getChannel();
-
-		if (null == c)
-			return;
-
-		logout(c);
+		if (null != ci)
+			logout(ci.getChannel());
 	}
 
 	/**
-	 *
-	 * @param channel
+	 * 
+	 * @param chan
 	 */
-	private void logout(Channel channel) {
-		channel.close().addListener(new ChannelFutureListener() {
+	private void logout(Channel chan) {
+		if (null == chan || !chan.isOpen() || !chan.isActive())
+			return;
 
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				SocketAddress addr = channel.remoteAddress();
+		chan.close().addListener(f -> {
+			SocketAddress addr = chan.remoteAddress();
 
-				if (future.isSuccess()) {
-					logger.info("channel close: {}", addr);
-					return;
-				}
-
-				logger.info("channel close failure: {}", addr);
-				channel.close();
+			if (f.isSuccess()) {
+				logger.info("chan close: {}", addr);
+				return;
 			}
+
+			logger.error("chan close: {}", addr);
 		});
 	}
 

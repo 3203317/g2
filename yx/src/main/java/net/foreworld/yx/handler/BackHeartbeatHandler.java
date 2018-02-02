@@ -1,5 +1,7 @@
 package net.foreworld.yx.handler;
 
+import java.net.SocketAddress;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -38,10 +40,29 @@ public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel>
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		logger.error("", cause);
+		logout(ctx);
+	}
 
+	/**
+	 * 
+	 * @param ctx
+	 */
+	private void logout(ChannelHandlerContext ctx) {
 		Channel chan = ctx.channel();
-		if (null != chan && chan.isOpen() && chan.isActive())
-			chan.close();
+
+		if (null == chan || !chan.isOpen() || !chan.isActive())
+			return;
+
+		ctx.close().addListener(f -> {
+			SocketAddress addr = chan.remoteAddress();
+
+			if (f.isSuccess()) {
+				logger.info("ctx close: {}", addr);
+				return;
+			}
+
+			logger.error("ctx close: {}", addr);
+		});
 	}
 
 }

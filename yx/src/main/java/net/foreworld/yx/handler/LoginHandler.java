@@ -19,8 +19,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -119,9 +117,9 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		 * String code = _joo.getAsString();
 		 */
 
-		final Channel channel = ctx.channel();
+		final Channel chan = ctx.channel();
 
-		final String chan_id = channel.id().asLongText();
+		final String chan_id = chan.id().asLongText();
 
 		String str = verify(token, chan_id);
 
@@ -156,14 +154,14 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 
 		ChannelInfo ci = new ChannelInfo();
 		ci.setLoginTime(new Date().getTime());
-		ci.setChannel(channel);
+		ci.setChannel(chan);
 		ci.setType(chan_type);
 		ci.setUserId(text[1]);
 
 		ChannelUtil.getDefault().putChannel(chan_id, ci);
 
 		// 登陆成功，发送成功标记
-		SenderUtil.send(channel, "[1," + ci.getLoginTime() + "]");
+		SenderUtil.send(chan, "[1," + ci.getLoginTime() + "]");
 
 		if (Type.USER == chan_type)
 			jmsMessagingTemplate.convertAndSend(queue_channel_open,
@@ -215,25 +213,31 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		return text[0];
 	}
 
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.error("", cause);
+		logout(ctx);
+	}
+
 	/**
-	 *
+	 * 
 	 * @param ctx
 	 */
 	private void logout(ChannelHandlerContext ctx) {
-		ctx.close().addListener(new ChannelFutureListener() {
+		Channel chan = ctx.channel();
 
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				SocketAddress addr = ctx.channel().remoteAddress();
+		if (null == chan || !chan.isOpen() || !chan.isActive())
+			return;
 
-				if (future.isSuccess()) {
-					logger.info("ctx close: {}", addr);
-					return;
-				}
+		ctx.close().addListener(f -> {
+			SocketAddress addr = chan.remoteAddress();
 
-				logger.info("ctx close failure: {}", addr);
-				ctx.close();
+			if (f.isSuccess()) {
+				logger.info("ctx close: {}", addr);
+				return;
 			}
+
+			logger.error("ctx close: {}", addr);
 		});
 	}
 
