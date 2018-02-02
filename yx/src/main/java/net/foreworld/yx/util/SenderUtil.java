@@ -22,13 +22,22 @@ public final class SenderUtil {
 
 	/**
 	 *
+	 * @param chan
+	 * @return
+	 */
+	public static boolean canClose(Channel chan) {
+		return !(null == chan || !chan.isOpen());
+	}
+
+	/**
+	 *
 	 * @param ctx
 	 * @param data
 	 */
 	public static void send(ChannelHandlerContext ctx, Object data) {
 		Channel chan = ctx.channel();
 
-		if (null == chan || !chan.isOpen() || !chan.isActive())
+		if (null == chan || !chan.isActive())
 			return;
 
 		if (chan.isWritable()) {
@@ -40,18 +49,17 @@ public final class SenderUtil {
 			return;
 		}
 
-		logger.error("sync data: {}", data);
+		if (canClose(chan))
+			ctx.close().addListener(f -> {
+				SocketAddress addr = chan.remoteAddress();
 
-		ctx.close().addListener(f -> {
-			SocketAddress addr = chan.remoteAddress();
+				if (f.isSuccess()) {
+					logger.info("sync ctx close: {}", addr);
+					return;
+				}
 
-			if (f.isSuccess()) {
-				logger.info("ctx close: {}", addr);
-				return;
-			}
-
-			logger.error("ctx close: {}", addr);
-		});
+				logger.error("sync ctx close: {}", addr);
+			});
 	}
 
 	/**
@@ -60,7 +68,7 @@ public final class SenderUtil {
 	 * @param data
 	 */
 	public static void send(Channel chan, Object data) {
-		if (null == chan || !chan.isOpen() || !chan.isActive())
+		if (null == chan || !chan.isActive())
 			return;
 
 		if (chan.isWritable()) {
@@ -72,18 +80,17 @@ public final class SenderUtil {
 			return;
 		}
 
-		logger.error("sync data: {}", data);
+		if (canClose(chan))
+			chan.close().addListener(f -> {
+				SocketAddress addr = chan.remoteAddress();
 
-		chan.close().addListener(f -> {
-			SocketAddress addr = chan.remoteAddress();
+				if (f.isSuccess()) {
+					logger.info("sync chan close: {}", addr);
+					return;
+				}
 
-			if (f.isSuccess()) {
-				logger.info("ctx close: {}", addr);
-				return;
-			}
-
-			logger.error("ctx close: {}", addr);
-		});
+				logger.error("sync chan close: {}", addr);
+			});
 	}
 
 	/**
