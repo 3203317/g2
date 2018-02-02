@@ -161,7 +161,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<String> {
 		ChannelUtil.getDefault().putChannel(chan_id, ci);
 
 		// 登陆成功，发送成功标记
-		SenderUtil.send(chan, "[1," + ci.getLoginTime() + "]");
+		SenderUtil.send(ctx, "[1," + ci.getLoginTime() + "]");
 
 		if (Type.USER == chan_type)
 			jmsMessagingTemplate.convertAndSend(queue_channel_open,

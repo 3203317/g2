@@ -28,8 +28,7 @@ public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel>
 	protected void channelRead0(ChannelHandlerContext ctx, BackModel msg) throws Exception {
 		switch (msg.getMethod()) {
 		case 2: {
-			Channel c = ctx.channel();
-			SenderUtil.send(c, "[2,\"" + c.id().asLongText() + "\"]");
+			SenderUtil.send(ctx, "[2,\"" + ctx.channel().id().asLongText() + "\"]");
 			return;
 		}
 		}

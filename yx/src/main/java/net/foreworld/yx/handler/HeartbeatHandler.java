@@ -1,5 +1,6 @@
 package net.foreworld.yx.handler;
 
+import java.net.SocketAddress;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -33,12 +34,12 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<BaseModel> {
 
 			Channel chan = ctx.channel();
 			if (null != chan && chan.isOpen() && chan.isActive())
-				chan.flush();
+				ctx.flush();
 
 			return;
 		}
 		case 7: {
-			SenderUtil.send(ctx.channel(), "[7," + new Date().getTime() + "]");
+			SenderUtil.send(ctx, "[7," + new Date().getTime() + "]");
 			return;
 		}
 		}
@@ -49,10 +50,29 @@ public class HeartbeatHandler extends SimpleChannelInboundHandler<BaseModel> {
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		logger.error("", cause);
+		logout(ctx);
+	}
 
+	/**
+	 * 
+	 * @param ctx
+	 */
+	private void logout(ChannelHandlerContext ctx) {
 		Channel chan = ctx.channel();
-		if (null != chan && chan.isOpen() && chan.isActive())
-			chan.close();
+
+		if (null == chan || !chan.isOpen() || !chan.isActive())
+			return;
+
+		ctx.close().addListener(f -> {
+			SocketAddress addr = chan.remoteAddress();
+
+			if (f.isSuccess()) {
+				logger.info("ctx close: {}", addr);
+				return;
+			}
+
+			logger.error("ctx close: {}", addr);
+		});
 	}
 
 	public static void main(String[] args) {

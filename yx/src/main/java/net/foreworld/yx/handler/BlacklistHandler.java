@@ -52,12 +52,6 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 		logger.info("client ip: {}", incoming);
 	}
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		logger.error("", cause);
-		logout(ctx);
-	}
-
 	/**
 	 * 
 	 * @param ip
@@ -79,6 +73,12 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 		j.close();
 
 		return Constants.OK.equals(o.toString());
+	}
+
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.error("", cause);
+		logout(ctx);
 	}
 
 	/**

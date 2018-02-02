@@ -56,7 +56,6 @@ public class Consumer {
 
 	@JmsListener(destination = "${queue.channel.close.force}.${server.id}")
 	public void channel_close_force(TextMessage msg) {
-
 		String id = null;
 
 		try {
