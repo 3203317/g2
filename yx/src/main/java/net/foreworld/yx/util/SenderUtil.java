@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import net.foreworld.yx.model.ChannelInfo;
 
 /**
@@ -14,6 +15,29 @@ import net.foreworld.yx.model.ChannelInfo;
 public final class SenderUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(SenderUtil.class);
+
+	/**
+	 * 
+	 * @param ctx
+	 * @param data
+	 */
+	public static void send(ChannelHandlerContext ctx, Object data) {
+		Channel chan = ctx.channel();
+
+		if (null == chan || !chan.isOpen() || !chan.isActive())
+			return;
+
+		if (chan.isWritable()) {
+			ctx.writeAndFlush(data.toString()).addListener(f -> {
+				if (!f.isSuccess())
+					logger.error("data: {}", data);
+			});
+
+			return;
+		}
+
+		logger.error("sync data: {}", data);
+	}
 
 	/**
 	 * 
