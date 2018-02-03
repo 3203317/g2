@@ -11,6 +11,7 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import net.foreworld.yx.util.SenderUtil;
 
 /**
  *
@@ -53,18 +54,16 @@ public class ProtocolSafeHandler extends ChannelInboundHandlerAdapter {
 	private void logout(ChannelHandlerContext ctx) {
 		Channel chan = ctx.channel();
 
-		if (null == chan || !chan.isOpen() || !chan.isActive())
-			return;
+		if (SenderUtil.canClose(chan))
+			ctx.close().addListener(f -> {
+				SocketAddress addr = chan.remoteAddress();
 
-		ctx.close().addListener(f -> {
-			SocketAddress addr = chan.remoteAddress();
+				if (f.isSuccess()) {
+					logger.info("ctx close: {}", addr);
+					return;
+				}
 
-			if (f.isSuccess()) {
-				logger.info("ctx close: {}", addr);
-				return;
-			}
-
-			logger.error("ctx close: {}", addr);
-		});
+				logger.error("ctx close: {}", addr);
+			});
 	}
 }

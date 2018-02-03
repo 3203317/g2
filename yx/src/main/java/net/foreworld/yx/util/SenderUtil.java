@@ -1,14 +1,13 @@
 package net.foreworld.yx.util;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-
 import java.net.SocketAddress;
-
-import net.foreworld.yx.model.ChannelInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import net.foreworld.yx.model.ChannelInfo;
 
 /**
  *
@@ -17,8 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class SenderUtil {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(SenderUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(SenderUtil.class);
 
 	/**
 	 *
@@ -26,7 +24,16 @@ public final class SenderUtil {
 	 * @return
 	 */
 	public static boolean canClose(Channel chan) {
-		return !(null == chan || !chan.isOpen());
+		return (null != chan && chan.isOpen());
+	}
+
+	/**
+	 * 
+	 * @param chan
+	 * @return
+	 */
+	public static boolean canSend(Channel chan) {
+		return (null != chan && chan.isActive());
 	}
 
 	/**
@@ -37,7 +44,7 @@ public final class SenderUtil {
 	public static void send(ChannelHandlerContext ctx, Object data) {
 		Channel chan = ctx.channel();
 
-		if (null == chan || !chan.isActive())
+		if (!canSend(chan))
 			return;
 
 		if (chan.isWritable()) {
@@ -68,7 +75,7 @@ public final class SenderUtil {
 	 * @param data
 	 */
 	public static void send(Channel chan, Object data) {
-		if (null == chan || !chan.isActive())
+		if (!canSend(chan))
 			return;
 
 		if (chan.isWritable()) {

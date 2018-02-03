@@ -76,19 +76,17 @@ public class Consumer {
 	 * @param chan
 	 */
 	private void logout(Channel chan) {
-		if (null == chan || !chan.isOpen() || !chan.isActive())
-			return;
+		if (SenderUtil.canClose(chan))
+			chan.close().addListener(f -> {
+				SocketAddress addr = chan.remoteAddress();
 
-		chan.close().addListener(f -> {
-			SocketAddress addr = chan.remoteAddress();
+				if (f.isSuccess()) {
+					logger.info("chan close: {}", addr);
+					return;
+				}
 
-			if (f.isSuccess()) {
-				logger.info("chan close: {}", addr);
-				return;
-			}
-
-			logger.error("chan close: {}", addr);
-		});
+				logger.error("chan close: {}", addr);
+			});
 	}
 
 	public static void main(String[] args) {

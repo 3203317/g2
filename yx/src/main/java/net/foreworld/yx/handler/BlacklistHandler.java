@@ -17,6 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.foreworld.util.RedisUtil;
 import net.foreworld.yx.util.Constants;
+import net.foreworld.yx.util.SenderUtil;
 import redis.clients.jedis.Jedis;
 
 /**
@@ -88,19 +89,17 @@ public class BlacklistHandler extends ChannelInboundHandlerAdapter {
 	private void logout(ChannelHandlerContext ctx) {
 		Channel chan = ctx.channel();
 
-		if (null == chan || !chan.isOpen() || !chan.isActive())
-			return;
+		if (SenderUtil.canClose(chan))
+			ctx.close().addListener(f -> {
+				SocketAddress addr = chan.remoteAddress();
 
-		ctx.close().addListener(f -> {
-			SocketAddress addr = chan.remoteAddress();
+				if (f.isSuccess()) {
+					logger.info("ctx close: {}", addr);
+					return;
+				}
 
-			if (f.isSuccess()) {
-				logger.info("ctx close: {}", addr);
-				return;
-			}
-
-			logger.error("ctx close: {}", addr);
-		});
+				logger.error("ctx close: {}", addr);
+			});
 	}
 
 }

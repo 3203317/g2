@@ -49,19 +49,17 @@ public class BackHeartbeatHandler extends SimpleChannelInboundHandler<BackModel>
 	private void logout(ChannelHandlerContext ctx) {
 		Channel chan = ctx.channel();
 
-		if (null == chan || !chan.isOpen() || !chan.isActive())
-			return;
+		if (SenderUtil.canClose(chan))
+			ctx.close().addListener(f -> {
+				SocketAddress addr = chan.remoteAddress();
 
-		ctx.close().addListener(f -> {
-			SocketAddress addr = chan.remoteAddress();
+				if (f.isSuccess()) {
+					logger.info("ctx close: {}", addr);
+					return;
+				}
 
-			if (f.isSuccess()) {
-				logger.info("ctx close: {}", addr);
-				return;
-			}
-
-			logger.error("ctx close: {}", addr);
-		});
+				logger.error("ctx close: {}", addr);
+			});
 	}
 
 }

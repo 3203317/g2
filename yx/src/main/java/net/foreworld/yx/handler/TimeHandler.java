@@ -126,7 +126,7 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 
 	private void flush(ChannelHandlerContext ctx) {
 		Channel chan = ctx.channel();
-		if (null != chan && chan.isOpen() && chan.isActive())
+		if (SenderUtil.canSend(chan))
 			ctx.flush();
 	}
 
@@ -143,19 +143,17 @@ public class TimeHandler extends SimpleChannelInboundHandler<ProtocolModel> {
 	private void logout(ChannelHandlerContext ctx) {
 		Channel chan = ctx.channel();
 
-		if (null == chan || !chan.isOpen() || !chan.isActive())
-			return;
+		if (SenderUtil.canClose(chan))
+			ctx.close().addListener(f -> {
+				SocketAddress addr = chan.remoteAddress();
 
-		ctx.close().addListener(f -> {
-			SocketAddress addr = chan.remoteAddress();
+				if (f.isSuccess()) {
+					logger.info("ctx close: {}", addr);
+					return;
+				}
 
-			if (f.isSuccess()) {
-				logger.info("ctx close: {}", addr);
-				return;
-			}
-
-			logger.error("ctx close: {}", addr);
-		});
+				logger.error("ctx close: {}", addr);
+			});
 	}
 
 	public static void main(String[] args) {
