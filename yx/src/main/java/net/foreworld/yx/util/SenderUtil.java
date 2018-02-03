@@ -35,7 +35,7 @@ public final class SenderUtil {
 	 * @return
 	 */
 	public static boolean canSend(Channel chan) {
-		return (null != chan && chan.isOpen() && chan.isActive());
+		return (null != chan && chan.isOpen() && chan.isRegistered() && chan.isActive());
 	}
 
 	/**
