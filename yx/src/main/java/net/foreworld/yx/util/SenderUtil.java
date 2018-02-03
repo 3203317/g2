@@ -55,7 +55,7 @@ public final class SenderUtil {
 				@Override
 				public void operationComplete(ChannelFuture f) throws Exception {
 					if (!f.isSuccess())
-						logger.error("data: {}, {}", data, f.cause());
+						logger.error("send data:", data, f.cause());
 				}
 			});
 
@@ -90,7 +90,7 @@ public final class SenderUtil {
 				@Override
 				public void operationComplete(ChannelFuture f) throws Exception {
 					if (!f.isSuccess())
-						logger.error("data: {}, {}", data, f.cause());
+						logger.error("send data:", data, f.cause());
 				}
 			});
 
