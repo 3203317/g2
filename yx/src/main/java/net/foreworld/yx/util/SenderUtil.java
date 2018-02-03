@@ -35,7 +35,7 @@ public final class SenderUtil {
 	 * @return
 	 */
 	public static boolean canSend(Channel chan) {
-		return (null != chan && chan.isOpen() && chan.isRegistered() && chan.isActive());
+		return (null != chan && chan.isActive());
 	}
 
 	/**
@@ -55,7 +55,7 @@ public final class SenderUtil {
 				@Override
 				public void operationComplete(ChannelFuture f) throws Exception {
 					if (!f.isSuccess())
-						logger.error("send data:", data, f.cause());
+						logger.error("send data:", f.cause());
 				}
 			});
 
@@ -90,7 +90,7 @@ public final class SenderUtil {
 				@Override
 				public void operationComplete(ChannelFuture f) throws Exception {
 					if (!f.isSuccess())
-						logger.error("send data:", data, f.cause());
+						logger.error("send data:", f.cause());
 				}
 			});
 
