@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import net.foreworld.yx.model.ChannelInfo;
 
@@ -48,9 +50,13 @@ public final class SenderUtil {
 			return;
 
 		if (chan.isWritable()) {
-			ctx.writeAndFlush(data.toString()).addListener(f -> {
-				if (!f.isSuccess())
-					logger.error("data: {}", data);
+
+			ctx.writeAndFlush(data.toString()).addListener(new ChannelFutureListener() {
+				@Override
+				public void operationComplete(ChannelFuture f) throws Exception {
+					if (!f.isSuccess())
+						logger.error("data: {}, {}", data, f.cause());
+				}
 			});
 
 			return;
@@ -79,9 +85,13 @@ public final class SenderUtil {
 			return;
 
 		if (chan.isWritable()) {
-			chan.writeAndFlush(data.toString()).addListener(f -> {
-				if (!f.isSuccess())
-					logger.error("data: {}", data);
+
+			chan.writeAndFlush(data.toString()).addListener(new ChannelFutureListener() {
+				@Override
+				public void operationComplete(ChannelFuture f) throws Exception {
+					if (!f.isSuccess())
+						logger.error("data: {}, {}", data, f.cause());
+				}
 			});
 
 			return;
