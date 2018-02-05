@@ -12,7 +12,7 @@
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 			<fileNamePattern>yx-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-			<maxFileSize>1M</maxFileSize>
+			<maxFileSize>1MB</maxFileSize>
 			<maxHistory>60</maxHistory>
 			<totalSizeCap>10GB</totalSizeCap>
 		</rollingPolicy>
