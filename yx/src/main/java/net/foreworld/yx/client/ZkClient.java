@@ -120,18 +120,16 @@ public class ZkClient extends Client implements Watcher {
 				chan_id = Constants.MQ + _keys[2];
 				break;
 			case 4:
-				if (!server_id.equals(_keys[2]))
-					continue;
-
-				_method = _keys[0];
-				chan_id = _keys[3];
+				if (server_id.equals(_keys[2])) {
+					_method = _keys[0];
+					chan_id = _keys[3];
+				}
 				break;
 			case 5:
-				if (!server_id.equals(_keys[3]))
-					continue;
-
-				_method = _keys[1] + ":" + _keys[2];
-				chan_id = _keys[4];
+				if (server_id.equals(_keys[3])) {
+					_method = _keys[1] + ":" + _keys[2];
+					chan_id = _keys[4];
+				}
 				break;
 			default:
 				continue;

@@ -3,7 +3,6 @@ encoding//src/main/java=UTF-8
 encoding//src/main/resources=UTF-8
 encoding//src/main/resources/application.properties=UTF-8
 encoding//src/main/resources/config.properties=UTF-8
-encoding//src/main/resources/log4j.properties=UTF-8
 encoding//src/main/resources/redis.properties=UTF-8
 encoding//src/main/resources/zk.properties=UTF-8
 encoding//src/test/java=UTF-8
